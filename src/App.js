@@ -1,5 +1,7 @@
+import RootRoute from "routes/index";
+
 function App() {
-  return;
+  return <RootRoute />;
 }
 
 export default App;
