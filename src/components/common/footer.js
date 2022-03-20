@@ -9,8 +9,10 @@ const FooterStyle = styled.div`
   color: #757575;
   position: relative;
   background-color: ${(props) => props.registration && "#f3f3f3"};
+  background-color: ${(props) => props.dark && "rgba(0, 0, 0, 0.75)"};
 
   .footer-divider {
+    display: ${(props) => props.login && "none"};
     height: 0;
     width: 100%;
     border-top: ${(props) => props.registration && "1px solid #e5e5e5"};
@@ -20,6 +22,8 @@ const FooterStyle = styled.div`
     margin: 0 auto;
     width: 90%;
     padding-top: ${(props) => props.registration && "30px"};
+    padding-bottom: ${(props) => props.login && "30px"};
+    max-width: ${(props) => props.center && "1000px"};
   }
 
   .footer-top {
@@ -51,7 +55,7 @@ const FooterStyle = styled.div`
   }
 
   .language-selector {
-    margin-top: ${(props) => !props.registration && "20px"};
+    margin-top: ${(props) => (props.registration ? "null" : "20px")};
 
     .language-switcher {
       width: auto;
@@ -88,11 +92,11 @@ const FooterStyle = styled.div`
         padding: ${(props) =>
           props.registration ? "10px 30px 12px 42px" : "12px 26px 12px 50px"};
         line-height: 1.7;
-        background-color: ${(props) =>
-          props.registration ? "white" : "black"};
-        border: 1px solid #333333;
+        background-color: ${(props) => (props.dark ? "black" : "white")};
+        border: 1px solid
+          ${(props) => (props.registration ? "#a6a6a6" : "#333333")};
         color: #999;
-        font-size: 1rem;
+        font-size: ${(props) => (props.login ? "0.8125rem" : "1rem")};
         border-radius: 2px;
         width: 100%;
       }
@@ -123,7 +127,12 @@ const FooterStyle = styled.div`
 
 export default function Footer(props) {
   return (
-    <FooterStyle registration={props.registration}>
+    <FooterStyle
+      registration={props.registration}
+      dark={props.dark}
+      center={props.center}
+      login={props.login}
+    >
       <div className="footer-divider"></div>
       <div className="footer-site">
         <p className="footer-top">

@@ -2,6 +2,7 @@ import React from "react";
 import EmailForm from "components/main/EmailForm";
 import Footer from "components/common/footer";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 const HeaderWrapperStyle = styled.div`
   background-color: transparent;
@@ -32,6 +33,8 @@ const HeaderWrapperStyle = styled.div`
       font-size: 1rem;
       color: white;
       line-height: 1.3125;
+      cursor: pointer;
+      text-decoration: none;
     }
   }
 
@@ -91,7 +94,7 @@ const HeaderWrapperStyle = styled.div`
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        content: "ㅇ";
+        content: "";
       }
 
       &::after {
@@ -100,7 +103,7 @@ const HeaderWrapperStyle = styled.div`
         top: 50%;
         right: 10px;
         transform: translateY(-50%);
-        content: "ㅜ";
+        content: "";
       }
     }
   }
@@ -164,6 +167,12 @@ const MainCardsContainerStyle = styled.div`
         position: absolute;
         inset: 0;
         background-color: rgba(0, 0, 0, 0.4);
+        background-image: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.8) 0,
+          rgba(0, 0, 0, 0) 60%,
+          rgba(0, 0, 0, 0.8) 100%
+        );
       }
     }
   }
@@ -468,7 +477,7 @@ export default function Main() {
               </div>
             </div>
           </div>
-          <a>로그인</a>
+          <Link to="/login">로그인</Link>
         </div>
       </HeaderWrapperStyle>
       <MainCardsContainerStyle>
@@ -685,7 +694,7 @@ export default function Main() {
           </div>
         </div>
         <div className="main-card footer">
-          <Footer />
+          <Footer dark />
         </div>
       </MainCardsContainerStyle>
     </>

@@ -1,7 +1,8 @@
 import React from "react";
 import Header from "components/signup/Header";
-import styled from "styled-components";
+import { ReactComponent as CheckMark } from "images/checkmark.svg";
 import Footer from "components/common/footer";
+import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 const ScreenStyle = styled.div`
@@ -9,6 +10,10 @@ const ScreenStyle = styled.div`
   display: flex;
   flex-direction: column;
   word-break: keep-all;
+
+  b {
+    font-weight: 700;
+  }
 
   .main-container {
     padding-bottom: 95px;
@@ -23,22 +28,24 @@ const ScreenStyle = styled.div`
       margin: 0 auto 15px;
       max-width: 978px;
 
-      .registration-container {
+      .plan-container {
         max-width: 340px;
-        text-align: center;
         margin: 0 auto;
+        text-align: center;
 
         .step-logo-container {
           display: inline-block;
+          text-align: center;
 
           .step-logo {
-            display: block;
             margin: 100px 0 20px;
-            width: 260px;
-            background: url("https://assets.nflxext.com/ffe/siteui/acquisition/simplicity/Devices.png")
+            text-align: center;
+            width: 50px;
+            height: 50px;
+            display: block;
+            background: url("https://assets.nflxext.com/ffe/siteui/acquisition/simplicity/Checkmark.png")
               no-repeat 50% 50%;
-            height: 90px;
-            background-size: 260px;
+            background-size: 50px;
           }
         }
 
@@ -64,30 +71,63 @@ const ScreenStyle = styled.div`
           }
         }
 
-        .step-text {
-          font-size: 1.125rem;
-          line-height: 1.3333333333;
+        .context-body {
           max-width: 300px;
           display: inline-block;
+
+          .check-group {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin: 15px 0 20px;
+            text-align: left;
+
+            .check-item {
+              display: flex;
+              flex-direction: row;
+              justify-content: flex-start;
+              margin: 0;
+              margin-top: 20px;
+
+              svg {
+                align-self: flex-start;
+                color: #e50914;
+                flex: none;
+                height: 24px;
+                width: 24px;
+                overflow: hidden;
+              }
+
+              span {
+                margin-left: 10px;
+                font-size: 1.125rem;
+                line-height: 1.3333333333;
+              }
+            }
+
+            .check-item:first-child {
+              margin-top: 0;
+            }
+          }
         }
       }
 
       .submit-button-container {
-        display: block;
         max-width: 340px;
         margin: 0 auto;
         margin-top: 24px;
-        text-align: center;
 
         .submit-button {
           color: white;
+          background-color: #e50914;
           min-height: 64px;
           font-weight: 500;
           font-size: 1.5rem;
-          line-height: 1;
           border: none;
           border-radius: 4px;
-          background-color: #e50914;
+          line-height: 1;
+          padding: 0.75rem 25.33333333px;
+          min-width: 110px;
           width: 100%;
           cursor: pointer;
 
@@ -100,35 +140,47 @@ const ScreenStyle = styled.div`
   }
 `;
 
-export default function Registration() {
+export default function SignUp() {
   const navigate = useNavigate();
   return (
     <ScreenStyle>
       <Header />
       <div className="main-container">
         <div className="center-container">
-          <div className="registration-container">
+          <div className="plan-container">
             <div className="step-logo-container">
               <span className="step-logo"></span>
             </div>
             <div className="step-header-container">
               <div className="step-header">
                 <span className="step-indicator">
-                  <b>1</b>/<b>3</b>단계
+                  <b>2</b>/<b>3단계</b>
                 </span>
-                <h1 className="step-title">계정 설정 마무리하기</h1>
+                <h1 className="step-title">원하는 멤버십을 선택하세요.</h1>
               </div>
             </div>
-            <div className="step-text">
-              맞춤형 콘텐츠 서비스, 넷플릭스! 비밀번호를 설정해 다양한
-              디바이스에서 아무 때나 시청하세요.
+            <div className="context-body">
+              <ul className="check-group">
+                <li className="check-item">
+                  <CheckMark />
+                  <span>無약정, 無위약금. 해지도 쿨하게 언제든지.</span>
+                </li>
+                <li className="check-item">
+                  <CheckMark />
+                  <span>넷플릭스의 모든 콘텐츠를 하나의 요금으로.</span>
+                </li>
+                <li className="check-item">
+                  <CheckMark />
+                  <span>모든 디바이스에서 무제한 시청.</span>
+                </li>
+              </ul>
             </div>
           </div>
           <div className="submit-button-container">
             <button
               type="button"
               className="submit-button"
-              onClick={() => navigate(`/signup/regform`)}
+              onClick={() => navigate(`/signup/planform`)}
             >
               다음
             </button>

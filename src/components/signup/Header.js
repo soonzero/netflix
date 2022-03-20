@@ -3,15 +3,26 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const HeaderStyle = styled.div`
-  border-bottom: 1px solid #e6e6e6;
-  background-color: white;
+  border-bottom: ${(props) =>
+    props.login ? "transparent" : "1px solid #e6e6e6"};
+  background: ${(props) =>
+    props.login
+      ? "linear-gradient(to bottom,rgba(0,0,0,.5) 0,rgba(0,0,0,0) 100%)"
+      : "white"};
   height: 90px;
-  position: relative;
+  position: ${(props) => (props.login ? "absolute" : "relative")};
   box-sizing: content-box;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  ${(props) =>
+    props.login &&
+    `
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;`}
 
   .netflix-logo {
     margin-left: 3%;
@@ -42,9 +53,9 @@ const HeaderStyle = styled.div`
   }
 `;
 
-export default function Header() {
+export default function Header(props) {
   return (
-    <HeaderStyle>
+    <HeaderStyle login={props.login}>
       <Link to="/" className="netflix-logo">
         <svg
           viewBox="0 0 111 30"
@@ -59,9 +70,11 @@ export default function Header() {
           </g>
         </svg>
       </Link>
-      <Link to="/login" className="login-link">
-        로그인
-      </Link>
+      {!props.login && (
+        <Link to="/login" className="login-link">
+          로그인
+        </Link>
+      )}
     </HeaderStyle>
   );
 }
