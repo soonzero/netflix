@@ -144,7 +144,7 @@ export default function SignUp() {
   const navigate = useNavigate();
   return (
     <ScreenStyle>
-      <Header />
+      <Header logoutbtn />
       <div className="main-container">
         <div className="center-container">
           <div className="plan-container">

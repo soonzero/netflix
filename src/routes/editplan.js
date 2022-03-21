@@ -4,7 +4,7 @@ import { ReactComponent as CheckMark } from "images/checkmark.svg";
 import Footer from "components/common/footer";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const ScreenStyle = styled.div`
   min-height: 100vh;
@@ -275,10 +275,11 @@ const ScreenStyle = styled.div`
   }
 `;
 
-export default function PlanForm() {
+export default function EditPlan() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [selected, setSelected] = useState("basic");
+  const plan = useSelector((state) => state.membership.membership);
+  const [selected, setSelected] = useState(plan);
 
   const onChangeHandler = (event) => {
     setSelected(event.target.value);
@@ -286,7 +287,7 @@ export default function PlanForm() {
 
   const onClickHandler = () => {
     dispatch({ type: "SET", data: { membership: selected } });
-    navigate(`/signup/payment`);
+    navigate(`/signup/creditoption`);
   };
 
   return (
@@ -298,9 +299,6 @@ export default function PlanForm() {
             <div>
               <div className="step-header-container">
                 <div className="step-header">
-                  <span className="step-indicator">
-                    <b>2</b>/<b>3단계</b>
-                  </span>
                   <h1 className="step-title">원하는 멤버십을 선택하세요.</h1>
                 </div>
               </div>

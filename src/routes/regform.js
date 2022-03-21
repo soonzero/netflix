@@ -2,7 +2,9 @@ import React from "react";
 import Header from "components/signup/Header";
 import Footer from "components/common/footer";
 import styled from "styled-components";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ScreenStyle = styled.div`
   min-height: 100vh;
@@ -51,12 +53,12 @@ const ScreenStyle = styled.div`
           }
 
           & > div:last-child {
-            div {
+            & > div {
               font-size: 1.125rem;
               line-height: 1.3333333333;
             }
 
-            div:nth-child(2) {
+            & > div:nth-child(2) {
               margin-top: 10px;
             }
           }
@@ -85,6 +87,17 @@ const ScreenStyle = styled.div`
                     border: 1px solid #8c8c8c;
                     display: block;
                     color: black;
+                    outline: none;
+
+                    &#email {
+                      border-color: ${(props) =>
+                        props.email ? "#5fa53f" : "#b92d2b"};
+                    }
+
+                    &#password {
+                      border-color: ${(props) =>
+                        props.password ? "#5fa53f" : "#b92d2b"};
+                    }
                   }
 
                   .place-label {
@@ -95,6 +108,12 @@ const ScreenStyle = styled.div`
                     font-size: 0.8125rem;
                     color: #8c8c8c;
                   }
+                }
+
+                .input-error {
+                  font-size: 0.8125rem;
+                  line-height: 1.3076923077;
+                  color: #b92d2b;
                 }
               }
 
@@ -115,7 +134,7 @@ const ScreenStyle = styled.div`
                 }
 
                 label {
-                  margin-top: 8px;
+                  margin: 8px 0;
                   padding: 6px 0;
                   display: block;
                   position: relative;
@@ -123,7 +142,7 @@ const ScreenStyle = styled.div`
 
                   &::before {
                     content: "";
-                    border: 1px solid #b92d2b;
+                    border: 1px solid black;
                     width: 25px;
                     height: 25px;
                     display: block;
@@ -133,7 +152,18 @@ const ScreenStyle = styled.div`
                     box-sizing: content-box;
                   }
 
-                  &::after {
+                  &.privacy-consent::before {
+                    border-color: ${(props) => !props.mandatory && "#b92d2b"};
+                  }
+
+                  &.email-consent::before {
+                    border-color: ${(props) => !props.optional && "#b92d2b"};
+                  }
+
+                  ${(props) =>
+                    props.mandatory &&
+                    `
+                  &.privacy-consent::after {
                     display: block;
                     position: absolute;
                     top: 7px;
@@ -146,6 +176,23 @@ const ScreenStyle = styled.div`
                     transform: rotate(-45deg);
                     box-sizing: content-box;
                   }
+                  `}
+
+                  ${(props) =>
+                    props.optional &&
+                    `&.email-consent::after {
+                    display: block;
+                    position: absolute;
+                    top: 7px;
+                    left: -32px;
+                    height: 6px;
+                    width: 14px;
+                    content: "";
+                    border-left: 4px solid #0071eb;
+                    border-bottom: 4px solid #0071eb;
+                    transform: rotate(-45deg);
+                    box-sizing: content-box;
+                  }`}
                 }
 
                 .helper {
@@ -189,12 +236,76 @@ const ScreenStyle = styled.div`
 
 export default function RegForm() {
   const navigate = useNavigate();
+  const emailReg =
+    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{1,3}$/i;
+  const [email, setEmail] = useState(useSelector((state) => state.email.email));
+  const [validEmail, setValidEmail] = useState(false);
+  const [emailText, setEmailText] = useState("");
+  const [password, setPassword] = useState("");
+  const [validPassword, setValidPassword] = useState(false);
+  const [checkedMandatory, setCheckedMandatory] = useState(false);
+  const [checkedOptional, setCheckedOptional] = useState(false);
+
+  const onChangeHandler = (event) => {
+    if (event.target.name == "email") {
+      setEmail(event.target.value);
+    } else if (event.target.name == "password") {
+      setPassword(event.target.value);
+    }
+  };
+
+  const checkEmail = () => {
+    if (email.length >= 5 && email.length < 51) {
+      if (emailReg.test(email)) {
+        setValidEmail(true);
+        setEmailText("");
+      } else {
+        setValidEmail(false);
+        setEmailText("정확한 이메일 주소를 입력하세요.");
+      }
+    } else {
+      setValidEmail(false);
+      setEmailText("이메일 주소는 5 ~ 50자 사이여야 합니다.");
+    }
+  };
+
+  const checkPassword = () => {
+    if (password.length >= 6 && password.length < 60) {
+      setValidPassword(true);
+    } else {
+      setValidPassword(false);
+    }
+  };
+
+  useEffect(() => {
+    setEmail(email);
+    setPassword(password);
+    if (email) {
+      checkEmail();
+    }
+    if (password) {
+      checkPassword();
+    }
+  }, [email, password]);
+
+  const onSubmitHandler = (event) => {
+    event.preventDefault();
+    if (checkedMandatory) {
+      navigate(`/signup`);
+    }
+  };
+
   return (
-    <ScreenStyle>
+    <ScreenStyle
+      email={validEmail}
+      password={validPassword}
+      mandatory={checkedMandatory}
+      optional={checkedOptional}
+    >
       <Header />
       <div className="main-container">
         <div className="center-container">
-          <form onSubmit={() => navigate(`/signup`)}>
+          <form onSubmit={onSubmitHandler}>
             <div className="reg-form-container">
               <div>
                 <div className="step-header-container">
@@ -222,12 +333,19 @@ export default function RegForm() {
                             <input
                               type="email"
                               name="email"
+                              id="email"
                               maxLength={50}
                               minLength={5}
+                              required
+                              value={email}
+                              onChange={onChangeHandler}
                             ></input>
                             <label className="place-label">이메일 주소</label>
                           </label>
                         </div>
+                        {!validEmail && (
+                          <div className="input-error">{emailText}</div>
+                        )}
                       </div>
                     </li>
                     <li className="form-list">
@@ -237,14 +355,24 @@ export default function RegForm() {
                             <input
                               type="password"
                               name="password"
+                              id="password"
+                              required
                               maxLength={61}
                               minLength={6}
+                              onChange={onChangeHandler}
                             ></input>
                             <label className="place-label">
                               비밀번호를 추가하세요
                             </label>
                           </label>
                         </div>
+                        {!validPassword && (
+                          <div className="input-error">
+                            {password.length == 0
+                              ? "비밀번호를 입력해 주세요."
+                              : "비밀번호는 6~60자 사이여야 합니다."}
+                          </div>
+                        )}
                       </div>
                     </li>
                     <li className="form-list">
@@ -253,28 +381,38 @@ export default function RegForm() {
                           type="checkbox"
                           id="privacy-consent"
                           name="privacyConsent"
+                          onClick={() => setCheckedMandatory((prev) => !prev)}
                         ></input>
-                        <label htmlFor="privacy-consent">
+                        <label
+                          htmlFor="privacy-consent"
+                          className="privacy-consent"
+                        >
                           <span>
                             예, 저는 개인정보 처리방침에 따른 개인정보 수집 및
                             활용에 동의합니다.
                           </span>
                         </label>
-                        <div className="helper"></div>
+                        <div className="helper">
+                          {!checkedMandatory &&
+                            "먼저 이용 약관에 동의하셔야 합니다."}
+                        </div>
                       </div>
                     </li>
                     <li className="form-list">
                       <div className="checkbox-wrapper">
                         <input
                           type="checkbox"
-                          id="privacy-consent"
+                          id="email-consent"
                           name="emailConsent"
+                          onClick={() => setCheckedOptional((prev) => !prev)}
                         ></input>
-                        <label htmlFor="email-consent">
+                        <label
+                          htmlFor="email-consent"
+                          className="email-consent"
+                        >
                           예, 넷플릭스 특별 할인 알림 이메일을 보내주세요. (선택
                           사항)
                         </label>
-                        <div className="helper"></div>
                       </div>
                     </li>
                   </ul>

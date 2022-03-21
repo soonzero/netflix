@@ -51,6 +51,14 @@ const FooterStyle = styled.div`
       vertical-align: top;
       font-size: 0.8125rem;
       line-height: 1.3076923077;
+
+      & > span {
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 
@@ -73,7 +81,7 @@ const FooterStyle = styled.div`
         top: 17px;
         left: 15px;
         color: #999;
-        content: "\\e896";
+        content: "";
         font-size: 1rem;
       }
 
@@ -82,7 +90,7 @@ const FooterStyle = styled.div`
         top: 22px;
         right: 10px;
         color: #999;
-        content: "\\e896";
+        content: "";
         font-size: 6px;
       }
 
@@ -142,27 +150,57 @@ export default function Footer(props) {
           </a>
         </p>
         <ul className="footer-contents">
-          <li className="footer-list">자주 묻는 질문</li>
-          <li className="footer-list">고객 센터</li>
+          <li className="footer-list">
+            <span>자주 묻는 질문</span>
+          </li>
+          <li className="footer-list">
+            <span>고객 센터</span>
+          </li>
           {!props.registration && (
             <>
-              <li className="footer-list">계정</li>
-              <li className="footer-list">미디어 센터</li>
-              <li className="footer-list">투자 정보(IR)</li>
-              <li className="footer-list">입사 정보</li>
-              <li className="footer-list">넷플릭스 지원 디바이스</li>
+              <li className="footer-list">
+                <span>계정</span>
+              </li>
+              <li className="footer-list">
+                <span>미디어 센터</span>
+              </li>
+              <li className="footer-list">
+                <span>투자 정보(IR)</span>
+              </li>
+              <li className="footer-list">
+                <span>입사 정보</span>
+              </li>
+              <li className="footer-list">
+                <span>넷플릭스 지원 디바이스</span>
+              </li>
             </>
           )}
-          <li className="footer-list">이용 약관</li>
-          <li className="footer-list">개인정보</li>
-          <li className="footer-list">쿠키 설정</li>
-          <li className="footer-list">회사 정보</li>
+          <li className="footer-list">
+            <span>이용 약관</span>
+          </li>
+          <li className="footer-list">
+            <span>개인정보</span>
+          </li>
+          <li className="footer-list">
+            <span>쿠키 설정</span>
+          </li>
+          <li className="footer-list">
+            <span>회사 정보</span>
+          </li>
           {!props.registration && (
             <>
-              <li className="footer-list">문의하기</li>
-              <li className="footer-list">속도 테스트</li>
-              <li className="footer-list">법적 고지</li>
-              <li className="footer-list">오직 넷플릭스에서</li>
+              <li className="footer-list">
+                <span>문의하기</span>
+              </li>
+              <li className="footer-list">
+                <span>속도 테스트</span>
+              </li>
+              <li className="footer-list">
+                <span>법적 고지</span>
+              </li>
+              <li className="footer-list">
+                <span>오직 넷플릭스에서</span>
+              </li>
             </>
           )}
         </ul>

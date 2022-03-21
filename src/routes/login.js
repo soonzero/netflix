@@ -90,7 +90,6 @@ const ScreenStyle = styled.div`
                     color: white;
                     height: 50px;
                     font-size: 1rem;
-                    line-height: 50px;
                     padding: 16px 20px 0;
                     width: 100%;
                     outline: none;

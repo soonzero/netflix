@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -142,6 +143,7 @@ export default function EmailForm() {
   const [valid, setValid] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setEmail(email);
@@ -154,8 +156,10 @@ export default function EmailForm() {
 
   const submitEmail = (event) => {
     event.preventDefault();
-    console.log("submitted");
-    navigate(`/signup/registration`);
+    if (email && valid) {
+      dispatch({ type: "SET_EMAIL", data: { email: email } });
+      navigate(`/signup/registration`);
+    }
   };
 
   const checkValid = () => {
