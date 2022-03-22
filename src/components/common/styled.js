@@ -1,6 +1,48 @@
 import { createGlobalStyle } from "styled-components";
+import NetflixSansLight from "fonts/NetflixSans_W_Lt.woff2";
+import NetflixSansRegular from "fonts/NetflixSans_W_Rg.woff2";
+import NetflixSansMedium from "fonts/NetflixSans_W_Md.woff2";
+import NetflixSansBold from "fonts/NetflixSans_W_Bd.woff2";
+import NetflixSansThick from "fonts/NetflixSans_W_Th.woff2";
+import NetflixIcon from "fonts/nf-icon-v1-93.woff";
 
 export const GlobalStyle = createGlobalStyle`
+
+@font-face {
+    font-family: "Netflix Sans";
+    font-weight: 300;
+    src: url(${NetflixSansLight}) format("woff2");
+}
+
+@font-face {
+    font-family: "Netflix Sans";
+    font-weight: 400;
+    src: url(${NetflixSansRegular}) format("woff2");
+}
+
+@font-face {
+    font-family: "Netflix Sans";
+    font-weight: 500;
+    src: url(${NetflixSansMedium}) format("woff2");
+}
+
+@font-face {
+    font-family: "Netflix Sans";
+    font-weight: 600;
+    src: url(${NetflixSansBold}) format("woff2");
+}
+
+@font-face {
+    font-family: "Netflix Sans";
+    font-weight: 700;
+    src: url(${NetflixSansThick}) format("woff2");
+}
+
+@font-face {
+    font-family: "Netflix Icon";
+    src: url(${NetflixIcon}) format("woff");
+}
+
     html,
 body,
 div,
@@ -81,15 +123,24 @@ summary,
 time,
 mark,
 audio,
-video {
+video,
+select,
+button {
+  font-family: "Netflix Sans";
   margin: 0;
   padding: 0;
   border: 0;
   font-size: 100%;
-  font: inherit;
   vertical-align: baseline;
   word-break: keep-all;
 }
+
+[class*="icon-"] {
+          font-family: "Netflix Icon";
+          line-height: 1;
+        }
+
+        
 /* HTML5 display-role reset for older browsers */
 article,
 aside,

@@ -427,7 +427,7 @@ export default function CreditOption() {
   const onSubmitHandler = (event) => {
     event.preventDefault();
     if (isPossible) {
-      navigate(`/`);
+      navigate(`/browse`);
     }
   };
 

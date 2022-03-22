@@ -9,6 +9,7 @@ import Login from "./login";
 import Payment from "./payment";
 import CreditOption from "./creditoption";
 import EditPlan from "./editplan";
+import Browse from "./browse";
 
 export default function RootRoute() {
   return (
@@ -24,6 +25,7 @@ export default function RootRoute() {
         <Route path="/signup/creditoption" element={<CreditOption />} />
         <Route path="/signup/editplan" element={<EditPlan />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/browse" element={<Browse />} />
       </Routes>
     </Router>
   );

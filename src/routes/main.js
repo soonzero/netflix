@@ -69,6 +69,7 @@ const HeaderWrapperStyle = styled.div`
           line-height: 1.3em;
           white-space: nowrap;
           background-color: rgba(0, 0, 0, 0.4);
+          color: white;
           border: 1px solid #aaa;
           border-radius: 2px;
           font-size: 0.875rem;
@@ -88,22 +89,26 @@ const HeaderWrapperStyle = styled.div`
       }
 
       &::before {
+        font-family: "Netflix Icon";
         font-size: 0.75rem;
         left: 0.5rem;
         color: white;
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        content: "";
+        content: "\\e896";
+        z-index: 1;
       }
 
       &::after {
+        font-family: "Netflix Icon";
+        font-size: 0.375rem;
         color: white;
         position: absolute;
         top: 50%;
         right: 10px;
         transform: translateY(-50%);
-        content: "";
+        content: "\\e898";
       }
     }
   }
@@ -254,6 +259,7 @@ const MainCardsContainerStyle = styled.div`
 
       & > h2 {
         font-size: 1.625rem;
+        font-weight: 400;
         margin: 1rem auto;
         max-width: 800px;
         line-height: 1.3269230769;

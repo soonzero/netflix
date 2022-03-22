@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Footer from "components/common/footer";
 import styled from "styled-components";
 import Header from "components/signup/Header";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ScreenStyle = styled.div`
   background-color: black;
@@ -166,6 +166,7 @@ const ScreenStyle = styled.div`
               border: none;
               background-color: #e50914;
               color: white;
+              cursor: pointer;
             }
 
             .login-remember-or-help {
@@ -213,14 +214,17 @@ const ScreenStyle = styled.div`
                     left: -20px;
                   }
 
-                  &::after {
+                  ${(props) =>
+                    props.remember &&
+                    `&::after {
+                    font-family: "Netflix Icon";
                     content: "\\e804";
                     color: black;
-                    font-size: 1.125;
+                    font-size: 1.125rem;
                     position: absolute;
                     top: 0;
                     left: -21px;
-                  }
+                  }`}
                 }
               }
 
@@ -328,16 +332,28 @@ const ScreenStyle = styled.div`
 `;
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [validEmail, setValidEmail] = useState(false);
   const [password, setPassword] = useState("");
   const [validPassword, setValidPassword] = useState(false);
+  const [remember, setRemember] = useState(true);
 
   const onChangeHandler = (event) => {
     if (event.target.name == "email") {
       setEmail(event.target.value);
     } else if (event.target.name == "password") {
       setPassword(event.target.value);
+    }
+  };
+
+  const onSubmitHandler = (event) => {
+    event.preventDefault();
+    if (email && password) {
+      if (validEmail && validPassword) {
+        navigate(`/browse`);
+      }
     }
   };
 
@@ -365,7 +381,11 @@ export default function Login() {
   }, [email, password]);
 
   return (
-    <ScreenStyle validEmail={validEmail} validPassword={validPassword}>
+    <ScreenStyle
+      validEmail={validEmail}
+      validPassword={validPassword}
+      remember={remember}
+    >
       <div className="login-wrapper-background">
         <img src="https://assets.nflxext.com/ffe/siteui/vlv3/87a1d9d8-a21d-4109-ba3a-c10d9055f5cf/25155d75-2aae-4c0a-aee9-25c07646d644/KR-ko-20220307-popsignuptwoweeks-perspective_alpha_website_small.jpg" />
       </div>
@@ -375,7 +395,7 @@ export default function Login() {
           <div className="login-main">
             <div className="login-form-main">
               <h1 className="login-form-title">로그인</h1>
-              <form className="login-form">
+              <form className="login-form" onSubmit={onSubmitHandler}>
                 <div className="login-input">
                   <div className="login-input-placement">
                     <label className="input-email">
@@ -414,13 +434,16 @@ export default function Login() {
                     </div>
                   )}
                 </div>
-                <button className="login-button">로그인</button>
+                <button className="login-button" type="submit">
+                  로그인
+                </button>
                 <div className="login-remember-or-help">
                   <div className="login-remember">
                     <input
                       type="checkbox"
                       className="login-remember-me"
                       id="login-remember-me"
+                      onChange={() => setRemember((prev) => !prev)}
                       defaultChecked
                     />
                     <label htmlFor="login-remember-me">
@@ -438,7 +461,7 @@ export default function Login() {
                 <div className="fb-login-form">
                   <div className="fb-minimal">
                     <hr />
-                    <button className="fb-login">
+                    <button className="fb-login" type="button">
                       {/* 페이스북 로그인 api 연결 필요 */}
                       <div className="fb-login-button">
                         <img src="https://assets.nflxext.com/ffe/siteui/login/images/FB-f-Logo__blue_57.png" />
