@@ -10,6 +10,8 @@ import Payment from "./payment";
 import CreditOption from "./creditoption";
 import EditPlan from "./editplan";
 import Browse from "./browse";
+import ManageProfiles from "./manageprofile";
+import Logout from "./logout";
 
 export default function RootRoute() {
   return (
@@ -26,6 +28,8 @@ export default function RootRoute() {
         <Route path="/signup/editplan" element={<EditPlan />} />
         <Route path="/login" element={<Login />} />
         <Route path="/browse" element={<Browse />} />
+        <Route path="/ManageProfiles" element={<ManageProfiles />} />
+        <Route path="/logout" element={<Logout />} />
       </Routes>
     </Router>
   );

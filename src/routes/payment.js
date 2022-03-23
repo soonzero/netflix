@@ -195,7 +195,7 @@ export default function Payment() {
   const navigate = useNavigate();
   return (
     <ScreenStyle>
-      <Header logoutbtn />
+      <Header />
       <div className="main-container">
         <div className="center-container">
           <div className="payment-container">

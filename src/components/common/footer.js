@@ -40,7 +40,6 @@ const FooterStyle = styled.div`
       props.home &&
       `
       margin: 0;
-      margin-bottom: 15px;
       width: 100%;
       box-sizing: content-box;
     `}
@@ -56,6 +55,14 @@ const FooterStyle = styled.div`
       color: white;
       cursor: pointer;
       background-color: transparent;
+
+      svg {
+        height: 25px;
+        width: 36px;
+        border: 1px solid transparent;
+        margin: 0 -1px;
+        box-sizing: content-box;
+      }
     }
   }
 
@@ -72,6 +79,7 @@ const FooterStyle = styled.div`
   .footer-contents {
     max-width: 1000px;
     font-size: 0.8125rem;
+    margin-bottom: 14px;
 
     .footer-list {
       list-style: none;
@@ -200,7 +208,7 @@ const FooterStyle = styled.div`
   .footer-text {
     font-size: 0.75rem;
     line-height: 1em;
-    margin: 20px 0;
+    margin: 20px 0 0;
     color: #757575;
     padding-bottom: ${(props) => props.home && "15px"};
 

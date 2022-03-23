@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const ScreenStyle = styled.div`
   min-height: 100vh;

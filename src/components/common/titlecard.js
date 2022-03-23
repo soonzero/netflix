@@ -311,7 +311,7 @@ export default function TitleCard(props) {
     const data = dummy.map((item, index) => {
       if (props.headerTitle == "오늘 한국의 TOP 10 콘텐츠") {
         return (
-          <div className={`slider-item slider-item-${index}`}>
+          <div key={item.title} className={`slider-item slider-item-${index}`}>
             <div className={`title-card-container css-0`}>
               <div className="title-card title-card-top-10">
                 <div className="ptrack-content">
@@ -354,7 +354,7 @@ export default function TitleCard(props) {
         );
       } else {
         return (
-          <div className={`slider-item slider-item-${index}`}>
+          <div key={item.title} className={`slider-item slider-item-${index}`}>
             <div className={`title-card-container css-0`}>
               <div className="title-card" id={`title-card-1-${index + 17}`}>
                 <div className="ptrack-content">

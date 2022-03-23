@@ -291,7 +291,7 @@ export default function PlanForm() {
 
   return (
     <ScreenStyle selected={selected}>
-      <Header logoutbtn />
+      <Header />
       <div className="main-container">
         <div className="center-container">
           <div className="plan-form-container">

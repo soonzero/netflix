@@ -465,7 +465,7 @@ export default function CreditOption() {
       gateway={gateway}
       anytime={anytime}
     >
-      <Header logoutbtn />
+      <Header />
       <div className="main-container">
         <div className="center-container">
           <form className="payment-form" onSubmit={onSubmitHandler}>
@@ -703,7 +703,7 @@ export default function CreditOption() {
                             >
                               <span>
                                 멤버십을 해지하지 않으면 Netflix에서 자동으로
-                                멤버십을 계속하며, 멤버십 요금(현 9,500원)이
+                                멤버십을 계속하며, 멤버십 요금(현 {price()}원)이
                                 등록한 결제 수단으로 매월 청구됩니다. 멤버십은
                                 www.netflix.com의 '계정' 페이지에서 언제든지
                                 해지할 수 있습니다. 이 경우 결제 주기가 종료될

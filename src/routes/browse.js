@@ -1,9 +1,10 @@
 import Header from "components/common/header";
 import Footer from "components/common/footer";
 import React from "react";
-import { useState, useEffect } from "react";
 import styled from "styled-components";
 import MainView from "components/common/mainview";
+import SelectProfile from "components/common/profiles";
+import { useSelector } from "react-redux";
 
 const HomeStyle = styled.div`
   background-color: #141414;
@@ -23,15 +24,19 @@ const HomeStyle = styled.div`
 `;
 
 export default function Browse() {
+  const profiles = useSelector((state) => state.profiles);
+  const selectedProfile = profiles.filter((p) => p.selected == true).length;
+
   return (
     <HomeStyle>
-      <Header />
+      <Header display={selectedProfile} />
       <div className="main-view">
         <div className="main-view-container">
           <MainView />
         </div>
       </div>
       <Footer home center dark />
+      {selectedProfile == 0 && <SelectProfile />}
     </HomeStyle>
   );
 }
