@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { store } from "index.js";
+// import { store } from "index.js";
 
 const FixedHeader = styled.div`
   color: white;
@@ -14,7 +14,6 @@ const FixedHeader = styled.div`
     left: 0;
     right: 0;
     z-index: 1;
-    position: ${(props) => (props.fixed ? "fixed" : "relative")};
 
     .main-header {
       background-color: transparent;
@@ -32,7 +31,7 @@ const FixedHeader = styled.div`
       align-items: center;
       transition: background-color 400ms ease;
       background-color: ${(props) =>
-        props.fixed ? "rgb(20, 20, 20)" : "transparent"};
+        props.fixed && !props.mylist ? "rgb(20, 20, 20)" : "transparent"};
 
       .main-header-logo {
         text-decoration: none;
@@ -320,10 +319,106 @@ const FixedHeader = styled.div`
         }
       }
     }
+
+    .sub-header {
+      position: relative;
+      height: 68px;
+      z-index: 1;
+
+      .sub-header-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        padding: 0 60px;
+        height: 68px;
+
+        .gallery-header {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          margin: 0;
+          min-height: 0;
+          padding: 0;
+          flex-grow: 1;
+
+          .title {
+            font-size: 2.1875rem;
+            display: inline-block;
+            margin-right: 20px;
+            line-height: 1.0285714286;
+          }
+
+          .genre-title {
+            font-size: 2.375rem;
+            line-height: 1;
+            font-weight: 600;
+            margin-right: 15px;
+          }
+
+          .sub-genres {
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 30px;
+          }
+        }
+      }
+    }
+
+    .arrow-genre-details {
+      display: flex;
+      flex-grow: 1;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .nfDropDown.theme-lakira {
+      position: relative;
+      text-align: left;
+
+      .label {
+        height: 2.1875rem;
+        padding-left: 10px;
+        line-height: 2.1875rem;
+        letter-spacing: 1px;
+        font-size: 1.09375rem;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        display: inline-block;
+        color: white;
+        background-color: black;
+        appearance: none;
+        border-radius: 0;
+        position: relative;
+        padding-right: 50px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+          cursor: pointer;
+          outline: 0;
+        }
+
+        .arrow {
+          border-color: white transparent transparent;
+          border-style: solid;
+          border-width: 5px 5px 0;
+          height: 0;
+          position: absolute;
+          right: 10px;
+          top: 44%;
+          width: 0;
+        }
+      }
+    }
   }
 `;
 
 export default function Header(props) {
+  const dispatch = useDispatch();
   const [fixed, setFixed] = useState(false);
   const [scrollY, setScrollY] = useState(window.scrollY);
   const [menu, setMenu] = useState(false);
@@ -331,6 +426,8 @@ export default function Header(props) {
     useSelector((state) => state.profiles)
   );
   const [display, setDisplay] = useState(0);
+  const [position, setPosition] = useState();
+  const [height, setHeight] = useState();
 
   function handleScroll() {
     setScrollY(window.scrollY);
@@ -339,19 +436,38 @@ export default function Header(props) {
     } else {
       setFixed(true);
     }
+
+    if (props.mylist) {
+      if (window.scrollY == 0) {
+        setPosition("relative");
+      } else if (window.scrollY >= 68) {
+        setPosition("fixed");
+        setHeight(-68);
+      } else {
+        setPosition("absolute");
+        setHeight((0 - window.scrollY) / 68);
+      }
+    } else {
+      setHeight(0);
+      if (window.scrollY == 0) {
+        setPosition("relative");
+      } else {
+        setPosition("fixed");
+      }
+    }
   }
 
   useEffect(() => {
     setDisplay(display);
   }, [display]);
 
-  const getProfiles = () => {
-    setProfiles(store.getState().profiles[0]);
-    const selectedProfile = profiles.filter((p) => p.selected == true);
-    setDisplay(selectedProfile.length);
-  };
+  // const getProfiles = () => {
+  //   setProfiles(store.getState().profiles[0]);
+  //   const selectedProfile = profiles.filter((p) => p.selected == true);
+  //   setDisplay(selectedProfile.length);
+  // };
 
-  store.subscribe(getProfiles);
+  // store.subscribe(getProfiles);
 
   useEffect(() => {
     setScrollY(scrollY);
@@ -372,9 +488,26 @@ export default function Header(props) {
     }
   }
 
+  const logout = () => {
+    dispatch({ type: "LOG_OUT" });
+  };
+
   return (
-    <FixedHeader fixed={fixed} menu={menu} display={display}>
-      <div className="fixed-header-container">
+    <FixedHeader
+      fixed={fixed}
+      menu={menu}
+      mylist={props.mylist} /* display={display} */
+    >
+      <div
+        className="fixed-header-container"
+        style={{
+          position: `${position}`,
+          background: `${
+            window.scrollY == 0 ? "transparent" : "rgb(20, 20, 20)"
+          }`,
+          top: `${height}px`,
+        }}
+      >
         <div className="main-header">
           <Link to="/browse" className="main-header-logo" />
           <ul className="first-nav">
@@ -382,10 +515,16 @@ export default function Header(props) {
             <li className="nav-tab">
               <Link to="/browse">홈</Link>
             </li>
-            <li className="nav-tab">시리즈</li>
+            <li className="nav-tab">
+              <Link to="/browse/genre/83">시리즈</Link>
+            </li>
             <li className="nav-tab">영화</li>
-            <li className="nav-tab">NEW! 요즘 대세 콘텐츠</li>
-            <li className="nav-tab">내가 찜한 콘텐츠</li>
+            <li className="nav-tab">
+              <Link to="/latest">NEW! 요즘 대세 콘텐츠</Link>
+            </li>
+            <li className="nav-tab">
+              <Link to="/browse/my-list">내가 찜한 콘텐츠</Link>
+            </li>
           </ul>
           <div className="secondary-nav">
             <div className="nav-element">
@@ -429,7 +568,7 @@ export default function Header(props) {
                                 <div>
                                   <a
                                     className="profile-link"
-                                    href={`/SwitchProfile`}
+                                    href="/SwitchProfile"
                                   >
                                     <div className="avatar-wrapper">
                                       <img
@@ -446,9 +585,9 @@ export default function Header(props) {
                             );
                           })}
                         <li className="submenu-item profile-link">
-                          <a
+                          <Link
+                            to="/ManageProfiles"
                             className="submenu-link submenu-link-icon"
-                            href="/profiles/manage"
                           >
                             <svg
                               width="24"
@@ -465,10 +604,8 @@ export default function Header(props) {
                                 fill="currentColor"
                               ></path>
                             </svg>
-                            <Link to="/ManageProfiles">
-                              <span className="profile-name">프로필 관리</span>
-                            </Link>
-                          </a>
+                            <span className="profile-name">프로필 관리</span>
+                          </Link>
                         </li>
                       </ul>
                       <ul className="submenu-list account-links">
@@ -521,9 +658,13 @@ export default function Header(props) {
                       </ul>
                       <ul className="account-links submenu-list sign-out-links">
                         <li className="submenu-item">
-                          <a className="submenu-link" href="/logout">
+                          <Link
+                            to="/logout"
+                            className="submenu-link"
+                            onClick={logout}
+                          >
                             넷플릭스에서 로그아웃
-                          </a>
+                          </Link>
                         </li>
                       </ul>
                     </div>
@@ -533,6 +674,39 @@ export default function Header(props) {
             </div>
           </div>
         </div>
+        {props.subheader && (
+          <div className="sub-header">
+            <div>
+              <div className="sub-header-wrapper">
+                <div className="gallery-header">
+                  {props.mylist && (
+                    <div className="title">내가 찜한 콘텐츠</div>
+                  )}
+                  {props.genre && (
+                    <>
+                      {/* <div className="title"></div> */}
+                      <div className="arrow-genre-details">
+                        <span className="genre-title">{props.genre}</span>
+                        <div className="sub-genres">
+                          <div className="ptrack-container">
+                            <div className="ptrack-content">
+                              <div className="nfDropDown theme-lakira">
+                                <div className="label">
+                                  장르
+                                  <span className="arrow"></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </FixedHeader>
   );

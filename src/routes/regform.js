@@ -4,7 +4,7 @@ import Footer from "components/common/footer";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 const ScreenStyle = styled.div`
@@ -237,6 +237,7 @@ const ScreenStyle = styled.div`
 
 export default function RegForm() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const emailReg =
     /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{1,3}$/i;
   const [email, setEmail] = useState(useSelector((state) => state.email.email));
@@ -289,10 +290,53 @@ export default function RegForm() {
     }
   }, [email, password]);
 
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = async (event) => {
     event.preventDefault();
     if (checkedMandatory) {
-      navigate(`/signup`);
+      try {
+        const signup = await axios({
+          method: "post",
+          url: "/users/signup",
+          baseURL: "https://rtflix.site",
+          data: {
+            email: email,
+            password: password,
+          },
+        });
+        if (signup.data.code == 1000) {
+          login();
+        } else if (signup.data.code == 2017) {
+          alert("이미 존재하는 계정입니다.");
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
+  const login = async () => {
+    try {
+      const login = await axios({
+        method: "POST",
+        url: "/users/login",
+        baseURL: "https://rtflix.site",
+        data: {
+          email: email,
+          password: password,
+        },
+      });
+      if (login.data.code == 1000) {
+        dispatch({
+          type: "LOGGED_IN",
+          data: {
+            userIdx: login.data.result.userIdx,
+            jwt: login.data.result.jwt,
+          },
+        });
+        navigate(`/signup/planform`);
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -360,6 +404,7 @@ export default function RegForm() {
                               required
                               maxLength={61}
                               minLength={6}
+                              value={password}
                               onChange={onChangeHandler}
                             ></input>
                             <label className="place-label">

@@ -3,7 +3,8 @@ import Footer from "components/common/footer";
 import Header from "components/signup/Header";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 const ScreenStyle = styled.div`
   min-height: 100vh;
@@ -352,6 +353,7 @@ const ScreenStyle = styled.div`
 
 export default function CreditOption() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [cardNumber, setCardNumber] = useState("");
   const [validCard, setValidCard] = useState(false);
   const [username, setUsername] = useState("");
@@ -367,11 +369,12 @@ export default function CreditOption() {
   const [isPossible, setIsPossible] = useState(false);
 
   const membership = useSelector((state) => state.membership.membership);
+  const userIdx = useSelector((state) => state.user.userIdx);
 
   const plan = () => {
-    if (membership == "basic") {
+    if (membership == "B") {
       return "베이식";
-    } else if (membership == "standard") {
+    } else if (membership == "S") {
       return "스탠다드";
     } else {
       return "프리미엄";
@@ -379,9 +382,9 @@ export default function CreditOption() {
   };
 
   const price = () => {
-    if (membership == "basic") {
+    if (membership == "B") {
       return "9,500";
-    } else if (membership == "standard") {
+    } else if (membership == "S") {
       return "13,500";
     } else {
       return "17,000";
@@ -424,10 +427,33 @@ export default function CreditOption() {
     }
   };
 
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = async (event) => {
     event.preventDefault();
-    if (isPossible) {
-      navigate(`/browse`);
+    if (isPossible && validCard && validUsername) {
+      try {
+        const purchase = await axios({
+          method: "POST",
+          url: "/users/payment",
+          baseURL: "https://rtflix.site/",
+          data: {
+            userIdx: userIdx,
+            cardNumber: cardNumber,
+            name: username,
+            membershipType: membership,
+          },
+        });
+        if (purchase.data.code == 1000) {
+          dispatch({
+            type: "SET_MEMBERSHIP",
+            data: {
+              membershipIdx: purchase.data.result,
+            },
+          });
+          navigate(`/browse`);
+        }
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
@@ -465,7 +491,7 @@ export default function CreditOption() {
       gateway={gateway}
       anytime={anytime}
     >
-      <Header />
+      <Header logoutbtn />
       <div className="main-container">
         <div className="center-container">
           <form className="payment-form" onSubmit={onSubmitHandler}>

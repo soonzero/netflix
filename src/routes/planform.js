@@ -278,7 +278,7 @@ const ScreenStyle = styled.div`
 export default function PlanForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [selected, setSelected] = useState("basic");
+  const [selected, setSelected] = useState("B");
 
   const onChangeHandler = (event) => {
     setSelected(event.target.value);
@@ -291,7 +291,7 @@ export default function PlanForm() {
 
   return (
     <ScreenStyle selected={selected}>
-      <Header />
+      <Header logoutbtn />
       <div className="main-container">
         <div className="center-container">
           <div className="plan-form-container">
@@ -329,10 +329,10 @@ export default function PlanForm() {
                       type="radio"
                       className="plan-choice"
                       name="plan-choice"
-                      value="basic"
+                      value="B"
                       onChange={onChangeHandler}
                     />
-                    <span className={`${selected == "basic" && "checked"}`}>
+                    <span className={`${selected == "B" && "checked"}`}>
                       베이식
                     </span>
                   </label>
@@ -341,10 +341,10 @@ export default function PlanForm() {
                       type="radio"
                       className="plan-choice"
                       name="plan-choice"
-                      value="standard"
+                      value="S"
                       onChange={onChangeHandler}
                     />
-                    <span className={`${selected == "standard" && "checked"}`}>
+                    <span className={`${selected == "S" && "checked"}`}>
                       스탠다드
                     </span>
                   </label>
@@ -353,10 +353,10 @@ export default function PlanForm() {
                       type="radio"
                       className="plan-choice"
                       name="plan-choice"
-                      value="premium"
+                      value="P"
                       onChange={onChangeHandler}
                     />
-                    <span className={`${selected == "premium" && "checked"}`}>
+                    <span className={`${selected == "P" && "checked"}`}>
                       프리미엄
                     </span>
                   </label>
@@ -368,21 +368,21 @@ export default function PlanForm() {
                     <td className="plan-grid-feature">월 요금</td>
                     <td
                       className={`plan-grid-string ${
-                        selected == "basic" && "checked"
+                        selected == "B" && "checked"
                       }`}
                     >
                       9,500원
                     </td>
                     <td
                       className={`plan-grid-string ${
-                        selected == "standard" && "checked"
+                        selected == "S" && "checked"
                       }`}
                     >
                       13,500원
                     </td>
                     <td
                       className={`plan-grid-string ${
-                        selected == "premium" && "checked"
+                        selected == "P" && "checked"
                       }`}
                     >
                       17,000원
@@ -394,21 +394,21 @@ export default function PlanForm() {
                     </td>
                     <td
                       className={`plan-grid-string ${
-                        selected == "basic" && "checked"
+                        selected == "B" && "checked"
                       }`}
                     >
                       <div>좋음</div>
                     </td>
                     <td
                       className={`plan-grid-string ${
-                        selected == "standard" && "checked"
+                        selected == "S" && "checked"
                       }`}
                     >
                       <div>매우 좋음</div>
                     </td>
                     <td
                       className={`plan-grid-string ${
-                        selected == "premium" && "checked"
+                        selected == "P" && "checked"
                       }`}
                     >
                       <div>가장 좋음</div>
@@ -418,21 +418,21 @@ export default function PlanForm() {
                     <td className="plan-grid-feature">해상도</td>
                     <td
                       className={`plan-grid-string ${
-                        selected == "basic" && "checked"
+                        selected == "B" && "checked"
                       }`}
                     >
                       <div>480p</div>
                     </td>
                     <td
                       className={`plan-grid-string ${
-                        selected == "standard" && "checked"
+                        selected == "S" && "checked"
                       }`}
                     >
                       <div>1080p</div>
                     </td>
                     <td
                       className={`plan-grid-string ${
-                        selected == "premium" && "checked"
+                        selected == "P" && "checked"
                       }`}
                     >
                       <div>4K+HDR</div>
@@ -444,7 +444,7 @@ export default function PlanForm() {
                     </td>
                     <td
                       className={`plan-grid-boolean ${
-                        selected == "basic" && "checked"
+                        selected == "B" && "checked"
                       }`}
                     >
                       <span>
@@ -453,7 +453,7 @@ export default function PlanForm() {
                     </td>
                     <td
                       className={`plan-grid-boolean ${
-                        selected == "standard" && "checked"
+                        selected == "S" && "checked"
                       }`}
                     >
                       <span>
@@ -462,7 +462,7 @@ export default function PlanForm() {
                     </td>
                     <td
                       className={`plan-grid-boolean ${
-                        selected == "premium" && "checked"
+                        selected == "P" && "checked"
                       }`}
                     >
                       <span>

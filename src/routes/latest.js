@@ -1,10 +1,7 @@
-import Header from "components/common/header";
 import Footer from "components/common/footer";
-import React, { useState } from "react";
+import Header from "components/common/header";
+import React from "react";
 import styled from "styled-components";
-import MainView from "components/common/mainview";
-import SelectProfile from "components/common/profiles";
-import { useSelector } from "react-redux";
 import { ReactComponent as Rank1 } from "images/rank-1.svg";
 import { ReactComponent as Rank2 } from "images/rank-2.svg";
 import { ReactComponent as Rank3 } from "images/rank-3.svg";
@@ -15,28 +12,14 @@ import { ReactComponent as Rank7 } from "images/rank-7.svg";
 import { ReactComponent as Rank8 } from "images/rank-8.svg";
 import { ReactComponent as Rank9 } from "images/rank-9.svg";
 import { ReactComponent as Rank10 } from "images/rank-10.svg";
+import MainView from "components/common/mainview";
 
-const HomeStyle = styled.div`
+const LatestStyle = styled.div`
   background-color: #141414;
-
-  .main-view {
-    position: relative;
-    min-height: 1000px;
-    z-index: 0;
-
-    .main-view-container {
-      margin-top: -70px;
-      padding: 0 0 50px;
-      z-index: 0;
-      overflow: hidden;
-    }
-  }
+  color: white;
 `;
 
-export default function Browse() {
-  const profiles = useSelector((state) => state.profiles);
-  const selectedProfile = profiles.filter((p) => p.selected == true);
-
+export default function Latest() {
   const wishlist = [
     {
       title: "아미 오브 더 데드",
@@ -125,56 +108,46 @@ export default function Browse() {
     },
   ];
 
-  const foreignMovie = [
+  const waiting = [
     {
-      title: "애덤 프로젝트",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABeTraESWinzhSJIaPesk37GZej5XwuZg5uaYDAgAd8Le73K7jxf6DaXx2CbmanXCXUJtucEPszMv0dmilfyaGK4PAyyeMx0GCIh43hBbUg_Uw5jR0qnlqZC_mpZA.jpg?r=7ba`,
+      title: "야차",
+      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABbO_g2NEPHLEeWGOjXVMxj8Llqqb2b2H1VxMiK6qnZBFQrxeZDX5rUhR0CSHffBKehHFslWYUHM2Drp1fvGuMk_PT-CjebmsVbU24LQ3NZ04wHYNRSmxSlrHqii6.jpg?r=774`,
     },
     {
-      title: "돈 룩 업",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABahVYGWhYyf2fMuO5eWzaQXCBg_Jp6blF-7yEKGK3li3BoxO9at6_T148Nf1fhp3wgGcPPhBDFvUYjyulpm-qgq4zBE2nSrWYjvkYgVHcKNJ0QOCd6mKhmDhw8gl.jpg?r=371`,
+      title: "엘리트들",
+      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABd6-aB1M8ufSgNEY8d9vObe0eEnxWwU44vOVc_vqwH301GqKIk-u7rYHIwhQf6Ydmr_hGOwT3NsP7jiXIwaciR4HCg0dAt-HlnnbDEsmDnwQXwUqTUlUDXQnq018.jpg?r=48e`,
     },
     {
-      title: "블랙 크랩",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABaDJj_ri5gK8RhHfhcwJgkZKLiTbruDiWnj_ibEq1k1yTRS09qL7gSQ-g-MkrjE1EMZ4NWDFLJy6kRCy5WFtiovDxW-HZ_voupSxyvDmjVpvvSSeYkepAjhFuKbm2jjc27x56NWVRKe-eBzYBpzTblVxiHVqdNDXripemMVagms126ApODa1X_4.jpg?r=eb8`,
+      title: "인비트윈",
+      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABfDFGrJl3TW0U1Z_Og97FIEnBFPmrA3qGsjXEg1P6jjya2BrroZYWmgPBpNpvqg79HSpiwgTGfCwv4bOC-Bg4xhlGZY7c5tUxJ4PsYExoSW-kCMdvFXNSRrmxkhY.jpg?r=810`,
     },
     {
-      title: "구조견 루비",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABSLSw8vp56EEHXoM89rr3a_HWGLXWv2Ncc7bmWCPuMEUKxGHqC3-3Mf_H_YeNFoNIuW8yGmqGHAcRH-XTDEW_s407Pg9gCfNmF9rAXIazqXLk_Df1-NNfIDIMNar.jpg?r=4cf`,
+      title: "오자크",
+      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABeNAdOWMOLXLh9wG5p2EJojuQNvH63ur-3gAnRJXZjocJBkhMB9nOrYFO_dBiJwl0VJo3bW7Aje-cnHg-ZbaltT2KXgCLBamqobENtTVy8FW6Gyxx3prJA-VGkAf.jpg?r=61c`,
     },
     {
-      title: "인 타임",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABbJHbTGw07w7T2BZOvD_-x_48tOXdWz_fz3VIpZynuudoCVsc2qN5W3qN83LHyUXkJt63fT1Fyl98iB4wgOvzqRrTvg.webp?r=84c`,
+      title: "기묘한 이야기",
+      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABRHsBrdakL0PxNTUzwocBAx96wvFBF4_Wrz_uOYDUGcuci8IeMYfpscY2ZTEKF2Vwg73E9byAqO8AfxPIsy-lt01Fqpyvginccgex43vBWPORhg9bKTXnAJSq0Pm.jpg?r=600`,
     },
     {
-      title: "이미테이션 게임",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABWVTp1CoYHKW1KwMkmm0HmXY1F3SeRlvUZDu_hSxkpLl4KcHJbgJTyUpUpm_KnlgX_5Or5UluekHFMXfrAJ0UfW7ux0.webp?r=233`,
+      title: "땅의 상속자들",
+      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABW3HjoP7i0dwo-rs22fmwMHnIEPZMEQ_0rjiy4l_jowQFuTMCUdG0Vs9WvKdciBlCCeriu83ZLt_lSB98sliJuZraKkXmmFv2Hdwbiv5LGeJUOP6TuGCXi4uIDu5.jpg?r=c14`,
     },
     {
-      title: "인턴",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABfyRE92_CeVKVNxiVOOGFZqz3dVyJ1Wbyxk80gyoSvxhKSXAeHJvgPLnvXZtf9VcWBjkorPYwY1GaaTjsxMLsrCgVYc.webp?r=14c`,
+      title: "메탈 로드",
+      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABaFDHnmrW5ipzw0lfo5FGk_ZtflLkpgkB_bkT4ksD3zZmzxUFr6sxGpAsqT3QGIHajY3O7Ib1bkzwfVDr9gkD3O-U5jHwTL-lOerpL1dS9G9n50R-ZUUcXfHQYHF.jpg?r=e2c`,
     },
     {
-      title: "트루먼쇼",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABXT-fHBaLnYtjtNrh1qB5ap4yjJSAybcAB3re4Ml10i5554NzpEfToBjLQQf5SkGqSx_goGc7gJCMhLmTKh82o3IoCc.webp?r=408`,
+      title: "아나토미 오브 스캔들",
+      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABVhEzSVBkriJYZXR9iYzue4N81kOK6ohf7YatbcyjafvoSWxhs4YbBxcm9EYjlKYylzms_mShOTsKDKzFaEKBIpxpbfrCrbFW-N-_SBnOSkU4YrZBEm43_vZSsbf.jpg?r=9ba`,
     },
   ];
 
   return (
-    <HomeStyle>
-      <Header display={selectedProfile} />
-      <div className="main-view">
-        <div className="main-view-container">
-          <MainView
-            main
-            wishlist={wishlist}
-            top10={top10}
-            foreignMovie={foreignMovie}
-          />
-        </div>
-      </div>
-      <Footer home center dark />
-      <SelectProfile />
-    </HomeStyle>
+    <LatestStyle>
+      <Header fixed />
+      <MainView top10={top10} wishlist={wishlist} waiting={waiting} />
+      <Footer center home />
+    </LatestStyle>
   );
 }

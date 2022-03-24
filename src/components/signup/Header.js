@@ -71,8 +71,11 @@ export default function Header(props) {
         </svg>
       </Link>
       {!props.login && (
-        <Link to="/login" className="login-link">
-          로그인
+        <Link
+          to={`${props.logoutbtn ? "/logout" : "/login"}`}
+          className="login-link"
+        >
+          {props.logoutbtn ? "로그아웃" : "로그인"}
         </Link>
       )}
     </HeaderStyle>

@@ -1,10 +1,8 @@
-import Header from "components/common/header";
 import Footer from "components/common/footer";
-import React, { useState } from "react";
-import styled from "styled-components";
+import Header from "components/common/header";
 import MainView from "components/common/mainview";
-import SelectProfile from "components/common/profiles";
-import { useSelector } from "react-redux";
+import React from "react";
+import styled from "styled-components";
 import { ReactComponent as Rank1 } from "images/rank-1.svg";
 import { ReactComponent as Rank2 } from "images/rank-2.svg";
 import { ReactComponent as Rank3 } from "images/rank-3.svg";
@@ -33,10 +31,7 @@ const HomeStyle = styled.div`
   }
 `;
 
-export default function Browse() {
-  const profiles = useSelector((state) => state.profiles);
-  const selectedProfile = profiles.filter((p) => p.selected == true);
-
+export default function Series() {
   const wishlist = [
     {
       title: "아미 오브 더 데드",
@@ -159,10 +154,9 @@ export default function Browse() {
       image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABXT-fHBaLnYtjtNrh1qB5ap4yjJSAybcAB3re4Ml10i5554NzpEfToBjLQQf5SkGqSx_goGc7gJCMhLmTKh82o3IoCc.webp?r=408`,
     },
   ];
-
   return (
     <HomeStyle>
-      <Header display={selectedProfile} />
+      <Header subheader genre="시리즈" />
       <div className="main-view">
         <div className="main-view-container">
           <MainView
@@ -173,8 +167,7 @@ export default function Browse() {
           />
         </div>
       </div>
-      <Footer home center dark />
-      <SelectProfile />
+      <Footer home />
     </HomeStyle>
   );
 }

@@ -12,6 +12,9 @@ import EditPlan from "./editplan";
 import Browse from "./browse";
 import ManageProfiles from "./manageprofile";
 import Logout from "./logout";
+import MyList from "./mylist";
+import Latest from "./latest";
+import Series from "pages/series";
 
 export default function RootRoute() {
   return (
@@ -27,9 +30,12 @@ export default function RootRoute() {
         <Route path="/signup/creditoption" element={<CreditOption />} />
         <Route path="/signup/editplan" element={<EditPlan />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/browse" element={<Browse />} />
-        <Route path="/ManageProfiles" element={<ManageProfiles />} />
         <Route path="/logout" element={<Logout />} />
+        <Route path="/browse" element={<Browse />} />
+        <Route path="/latest" element={<Latest />} />
+        <Route path="/browse/my-list" element={<MyList />} />
+        <Route path="/ManageProfiles" element={<ManageProfiles />} />
+        <Route path="/browse/genre/83" element={<Series />} />
       </Routes>
     </Router>
   );

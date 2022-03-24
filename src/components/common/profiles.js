@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { store } from "index";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -181,8 +182,8 @@ export default function Profiles(props) {
 
   const selectProfile = (event) => {
     const name = event.currentTarget.getAttribute("name");
-    setDisplay(false);
     dispatch({ type: "SELECT", data: { name: name } });
+    setDisplay(false);
   };
 
   return (
