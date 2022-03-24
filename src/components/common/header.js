@@ -437,7 +437,7 @@ export default function Header(props) {
       setFixed(true);
     }
 
-    if (props.mylist) {
+    if (props.subheader) {
       if (window.scrollY == 0) {
         setPosition("relative");
       } else if (window.scrollY >= 68) {
