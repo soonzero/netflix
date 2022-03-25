@@ -1,13 +1,13 @@
-// export default function selected(currentState, action) {
-//   if (currentState === undefined) {
-//     return { selected: false };
-//   }
+export default function selected(currentState, action) {
+  if (currentState === undefined) {
+    return { selected: false };
+  }
 
-//   const newState = { ...currentState };
+  const newState = { ...currentState };
 
-//   if (action.type == "SELECTED") {
-//     newState.selected = true;
-//   }
+  if (action.type == "SELECTED") {
+    newState.selected = true;
+  }
 
-//   return newState;
-// }
+  return newState;
+}

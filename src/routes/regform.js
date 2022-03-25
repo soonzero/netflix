@@ -307,6 +307,7 @@ export default function RegForm() {
           login();
         } else if (signup.data.code == 2017) {
           alert("이미 존재하는 계정입니다.");
+          navigate(`/login`);
         }
       } catch (e) {
         console.log(e);
@@ -326,13 +327,7 @@ export default function RegForm() {
         },
       });
       if (login.data.code == 1000) {
-        dispatch({
-          type: "LOGGED_IN",
-          data: {
-            userIdx: login.data.result.userIdx,
-            jwt: login.data.result.jwt,
-          },
-        });
+        sessionStorage.setItem("user", JSON.stringify(login.data.result));
         navigate(`/signup/planform`);
       }
     } catch (e) {

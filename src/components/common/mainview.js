@@ -175,6 +175,12 @@ const MainContainerStyle = styled.span`
             align-items: center;
             height: 2.4vw;
 
+            span {
+              padding: 0;
+              margin: 0;
+              color: white;
+            }
+
             svg {
               margin: 0;
               width: 2em;
@@ -225,6 +231,12 @@ const MainContainerStyle = styled.span`
                   width: 100%;
                   transform-origin: bottom left;
                 }
+
+                .title-logo.awards {
+                  max-width: 100%;
+                  height: 13.2vw;
+                  width: auto;
+                }
               }
             }
 
@@ -239,6 +251,8 @@ const MainContainerStyle = styled.span`
                   font-size: 1.4vw;
                   line-height: 1.3253348214;
                   text-shadow: 2px 2px 4px rgb(0 0 0 / 45%);
+                  margin-top: 0.1vw;
+                  width: 100%;
                 }
 
                 .synopsis.nosupplemental {
@@ -283,6 +297,39 @@ const MainContainerStyle = styled.span`
               }
             }
           }
+
+          .supplemental-message {
+            font-size: 1.6vw;
+            color: white;
+            transition: color 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+            text-shadow: 2px 2px 4px rgb(0 0 0 / 45%);
+            margin: 1vw 0;
+            line-height: 1.4;
+          }
+        }
+      }
+    }
+
+    .supplemental-message {
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+
+      & > .svg-icon {
+        width: 1.5em;
+        height: 1.5em;
+        border: solid 1px transparent;
+        margin: 0 -1px;
+        margin-right: 0.5em;
+      }
+    }
+  }
+
+  .billboard-row.genre {
+    .billboard {
+      .fill-container {
+        .info {
+          bottom: 30%;
         }
       }
     }
@@ -290,37 +337,26 @@ const MainContainerStyle = styled.span`
 `;
 
 export default function MainView(props) {
+  let randomNumber;
+  if (props.main) {
+    randomNumber = Math.floor(Math.random() * props.main.length);
+  }
+
   return (
     <MainContainerStyle>
       {props.main && (
-        <div className="billboard-row">
+        <div className={props.genre ? "billboard-row genre" : "billboard-row"}>
           <div className="billboard">
             <div className="hero-image-wrapper">
               <img
                 className="hero-static-image"
-                src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/6AYY37jfdO6hpXcMjf9Yu5cnmO0/AAAABV-7msNc9tTXqMACKMVjUf5mOfL0TG_Zynkq_fnWAdNYHi0mYAFvRtSLM3Qpnnbf5hLNm4wiNURzKplrrW05hXctrT5W.webp?r=36b"
+                src={props.main[randomNumber].image}
               />
               <div className="trailer-vignette vignette-layer"></div>
               <div className="hero-vignette vignette-layer"></div>
               <div className="embedded-components button-layer">
                 <span className="rating">
-                  <span>
-                    <svg
-                      viewBox="0 0 100 100"
-                      className="svg-icon svg-icon-maturity-rating-977 "
-                    >
-                      <path
-                        id="Fill---Orange"
-                        fill="#CD6D34"
-                        d="M88.727 100H11.27C5.05 100 0 94.952 0 88.727V11.273C0 5.047 5.05 0 11.27 0h77.457C94.952 0 100 5.047 100 11.273v77.454C100 94.952 94.952 100 88.727 100"
-                      ></path>
-                      <path
-                        id="15"
-                        fill="#FFFFFE"
-                        d="M36.876 15.482v68.651H21.509v-49.51h-5.484l7.097-19.141h13.754zm45.46 0V28.87H57.175v10.063h24.08c.845 0 1.533.687 1.533 1.534v42.13c0 .845-.688 1.532-1.534 1.532H43.616a1.533 1.533 0 01-1.533-1.533V62.202H57v8.988h10.874V52.052h-25.79v-36.57h40.254z"
-                      ></path>
-                    </svg>
-                  </span>
+                  <span>{props.main[randomNumber].rating}</span>
                 </span>
               </div>
             </div>
@@ -330,19 +366,33 @@ export default function MainView(props) {
                   <div className="title-wrapper">
                     <div className="billboard-title">
                       <img
-                        className="title-logo"
-                        src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/LmEnxtiAuzezXBjYXPuDgfZ4zZQ/AAAABTT5N3V9cPPivP0rzNOWIUMx3oFaffhXpCKMUP8Ebz3WWB8hrSpXGoG25Oe97SRn1ADVmTGWMZ725BCQjJ181pBwN4LPE9fVA6_Gh33x2m-g2QD2zZA7_ZzQPZFkzAiUnotM1zXX3tvkOx2rUBUtUxhTirXDg62bVz5-T15G_lWKVQ.webp?r=ca0"
+                        className={
+                          props.main[randomNumber].message ==
+                          "2022년 아카데미 후보작"
+                            ? "title-logo awards"
+                            : "title-logo"
+                        }
+                        src={props.main[randomNumber].logo}
                       />
                     </div>
                   </div>
                   <div className="info-wrapper">
                     <div className="info-wrapper-fade">
+                      {props.main[randomNumber].message && (
+                        <div className="supplemental-message">
+                          {props.main[randomNumber].supplement}
+                          {props.main[randomNumber].message}
+                        </div>
+                      )}
                       <div className="episode-title-container"></div>
-                      <div className="synopsis nosupplemental">
-                        눈에서 멀어지면 마음에서도 멀어진다? 장거리 연애를
-                        시작한 한 커플이 현실의 벽에 부딪힌다. 달콤했던 그들의
-                        연애가 점점 쓴맛으로 변해가는 느낌. 아무리 애써봐도
-                        소용없는 걸까?
+                      <div
+                        className={
+                          props.main[randomNumber].supplement
+                            ? "synopsis"
+                            : "synopsis nosupplemental"
+                        }
+                      >
+                        {props.main[randomNumber].synopsis}
                       </div>
                     </div>
                   </div>

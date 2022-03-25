@@ -29,6 +29,8 @@ const MyListStyle = styled.div`
 `;
 
 export default function MyList() {
+  const selectedProfile = JSON.parse(sessionStorage.getItem("selectedProfile"));
+
   const items = [
     {
       title: "아미 오브 더 데드",
@@ -97,7 +99,7 @@ export default function MyList() {
   ];
   return (
     <MyListStyle>
-      <Header subheader="내가 찜한 콘텐츠" mylist />
+      <Header display={selectedProfile} subheader="내가 찜한 콘텐츠" mylist />
       <div className="main-view">
         <div className="gallery row-with-x-columns">
           <div className="gallery-content">

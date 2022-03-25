@@ -15,6 +15,7 @@ import Logout from "./logout";
 import MyList from "./mylist";
 import Latest from "./latest";
 import Series from "pages/series";
+import Movies from "pages/movies";
 
 export default function RootRoute() {
   return (
@@ -36,6 +37,7 @@ export default function RootRoute() {
         <Route path="/browse/my-list" element={<MyList />} />
         <Route path="/ManageProfiles" element={<ManageProfiles />} />
         <Route path="/browse/genre/83" element={<Series />} />
+        <Route path="/browse/genre/34399" element={<Movies />} />
       </Routes>
     </Router>
   );

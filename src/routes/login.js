@@ -366,13 +366,14 @@ export default function Login() {
             },
           });
           if (login.data.code == 1000) {
-            dispatch({
-              type: "LOGGED_IN",
-              data: {
-                userIdx: login.data.result.userIdx,
-                jwt: login.data.result.jwt,
-              },
-            });
+            // dispatch({
+            //   type: "LOGGED_IN",
+            //   data: {
+            //     userIdx: login.data.result.userIdx,
+            //     jwt: login.data.result.jwt,
+            //   },
+            // });
+            sessionStorage.setItem("user", JSON.stringify(login.data.result));
             navigate(`/browse`);
           } else if (login.data.code == 3015) {
             alert("가입되지 않은 이메일입니다.");
