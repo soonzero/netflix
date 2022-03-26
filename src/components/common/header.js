@@ -499,6 +499,7 @@ export default function Header(props) {
         },
       });
       const array = allProfiles.data.result;
+      sessionStorage.setItem("profiles", JSON.stringify(array));
       const filteredArray = array.filter((p) => p.profileIdx == profileIdx);
       setImage(filteredArray[0].profileImageUrl);
       setProfiles(array.filter((p) => p.profileIdx != profileIdx));
@@ -509,6 +510,14 @@ export default function Header(props) {
   };
 
   store.subscribe(getProfilesInfo);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("selectedProfile") != null) {
+      getProfilesInfo();
+    } else {
+      return;
+    }
+  }, [isLoading]);
 
   return (
     <FixedHeader fixed={fixed} menu={menu} mylist={props.mylist}>
@@ -524,7 +533,7 @@ export default function Header(props) {
       >
         <div className="main-header">
           <Link to="/browse" className="main-header-logo" />
-          {!isLoading && (
+          {!isLoading && props.display != 0 && (
             <>
               <ul className="first-nav">
                 <li className="nav-menu"></li>
@@ -583,7 +592,7 @@ export default function Header(props) {
                               profiles.map((p) => {
                                 return (
                                   <li
-                                    key={p.profileName}
+                                    key={p.profileIdx}
                                     className="submenu-item profile"
                                   >
                                     <div>

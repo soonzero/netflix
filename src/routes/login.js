@@ -3,7 +3,7 @@ import Footer from "components/common/footer";
 import styled from "styled-components";
 import Header from "components/signup/Header";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
 const ScreenStyle = styled.div`
@@ -335,7 +335,6 @@ const ScreenStyle = styled.div`
 
 export default function Login() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [validEmail, setValidEmail] = useState(false);
@@ -366,17 +365,16 @@ export default function Login() {
             },
           });
           if (login.data.code == 1000) {
-            // dispatch({
-            //   type: "LOGGED_IN",
-            //   data: {
-            //     userIdx: login.data.result.userIdx,
-            //     jwt: login.data.result.jwt,
-            //   },
-            // });
             sessionStorage.setItem("user", JSON.stringify(login.data.result));
-            navigate(`/browse`);
+            if (login.data.result.hasMembership == 0) {
+              alert("가입된 멤버십이 없습니다.");
+              navigate(`/signup/planform`);
+            } else {
+              navigate(`/browse`);
+            }
           } else if (login.data.code == 3015) {
             alert("가입되지 않은 이메일입니다.");
+            navigate(`/`);
           } else if (login.data.code == 3014) {
             alert("비밀번호가 올바르지 않습니다.");
           }

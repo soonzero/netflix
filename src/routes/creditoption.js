@@ -369,7 +369,10 @@ export default function CreditOption() {
   const [isPossible, setIsPossible] = useState(false);
 
   const membership = useSelector((state) => state.membership.membership);
-  const userIdx = useSelector((state) => state.user.userIdx);
+  const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+  const hasMembership = JSON.parse(
+    sessionStorage.getItem("user")
+  ).hasMembership;
 
   const plan = () => {
     if (membership == "B") {
@@ -442,6 +445,7 @@ export default function CreditOption() {
             membershipType: membership,
           },
         });
+        console.log(purchase);
         if (purchase.data.code == 1000) {
           dispatch({
             type: "SET_MEMBERSHIP",

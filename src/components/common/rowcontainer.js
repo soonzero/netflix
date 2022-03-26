@@ -344,9 +344,9 @@ export default function RowContainer(props) {
       for (let i = 0; i < lines; i++) {
         newArray.push(dummy.slice(6 * i, 6 * i + 6));
       }
-      const list = newArray.map((array) => {
+      const list = newArray.map((array, index) => {
         return (
-          <div className={`row-container row-0`}>
+          <div key={index} className={`row-container row-${index}`}>
             <div className="ptrack-container">
               <div className="row-content slider-hover-trigger-layer">
                 <div className="slider">

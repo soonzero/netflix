@@ -43,7 +43,8 @@ const HomeStyle = styled.div`
 export default function Browse() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-
+  const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+  const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const selectedProfile = JSON.parse(sessionStorage.getItem("selectedProfile"));
 
   const main = [
@@ -283,6 +284,7 @@ export default function Browse() {
           <div className="main-view">
             <div className="main-view-container">
               <MainView
+                home
                 main={main}
                 wishlist={wishlist}
                 top10={top10}

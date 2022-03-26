@@ -307,7 +307,7 @@ export default function RegForm() {
           login();
         } else if (signup.data.code == 2017) {
           alert("이미 존재하는 계정입니다.");
-          navigate(`/login`);
+          login();
         }
       } catch (e) {
         console.log(e);
@@ -326,9 +326,18 @@ export default function RegForm() {
           password: password,
         },
       });
+      console.log(login);
       if (login.data.code == 1000) {
         sessionStorage.setItem("user", JSON.stringify(login.data.result));
-        navigate(`/signup/planform`);
+        if (login.data.result.hasMembership == 0) {
+          alert("멤버십 등록이 필요합니다.");
+          navigate(`/signup/planform`);
+        } else {
+          navigate(`/browse`);
+        }
+      } else if (login.data.code == 3014) {
+        alert("비밀번호가 틀렸습니다. 다시 입력해주세요.");
+        navigate(`/login`);
       }
     } catch (e) {
       console.log(e);

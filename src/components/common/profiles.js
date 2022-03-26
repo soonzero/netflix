@@ -88,6 +88,12 @@ const MainStyle = styled.div`
         border-radius: 4px;
       }
     }
+
+    .svg-icon-profile-lock {
+      width: 20px;
+      height: 20px;
+      color: #666;
+    }
   }
 
   li.profile:not(:last-child) {
@@ -368,12 +374,16 @@ export default function Profiles(props) {
   const [isLoading, setIsLoading] = useState(true);
 
   const selectProfile = (event) => {
-    sessionStorage.setItem(
-      "selectedProfile",
-      event.currentTarget.getAttribute("profileidx")
-    );
-    dispatch({ type: "SELECT" });
-    setDisplay(false);
+    if (!props.manage) {
+      sessionStorage.setItem(
+        "selectedProfile",
+        event.currentTarget.getAttribute("profileidx")
+      );
+      dispatch({ type: "SELECT" });
+      setDisplay(false);
+    } else {
+      console.log("selected");
+    }
   };
 
   const onChangeHandler = (event) => {
@@ -439,6 +449,15 @@ export default function Profiles(props) {
     getAllProfiles();
   }, [addProfile]);
 
+  const reselectProfile = () => {
+    sessionStorage.removeItem("selectedProfile");
+    navigate(`/browse`);
+  };
+
+  const goToManageProfiles = () => {
+    navigate(`/ManageProfiles`);
+  };
+
   return (
     <>
       {display && (
@@ -494,6 +513,25 @@ export default function Profiles(props) {
                                   {p.profileName}
                                 </span>
                               </a>
+                              {p.lockPin != "N" && (
+                                <>
+                                  <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="svg-icon svg-icon-profile-lock"
+                                  >
+                                    <path
+                                      fill-rule="evenodd"
+                                      clip-rule="evenodd"
+                                      d="M7 8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V9H19C20.1046 9 21 9.89543 21 11V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V11C3 9.89543 3.89543 9 5 9H7V8ZM15 8V9H9V8C9 6.34315 10.3431 5 12 5C13.6569 5 15 6.34315 15 8ZM5 11V19H19V11H5ZM11 13V17H13V13H11Z"
+                                      fill="currentColor"
+                                    ></path>
+                                  </svg>
+                                </>
+                              )}
                             </li>
                           );
                         })}
@@ -512,10 +550,12 @@ export default function Profiles(props) {
                   </div>
                   <span>
                     <a
-                      // to="/browse"
                       className={`profile-button ${
                         props.manage && "preferred-action"
                       }`}
+                      onClick={
+                        props.manage ? reselectProfile : goToManageProfiles
+                      }
                     >
                       {props.manage ? "완료" : "프로필 관리"}
                     </a>

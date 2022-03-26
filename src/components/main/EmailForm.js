@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -154,11 +155,25 @@ export default function EmailForm() {
     setEmail(event.target.value);
   };
 
-  const submitEmail = (event) => {
+  const submitEmail = async (event) => {
     event.preventDefault();
     if (email && valid) {
-      dispatch({ type: "SET_EMAIL", data: { email: email } });
-      navigate(`/signup/registration`);
+      try {
+        const check = await axios({
+          method: "GET",
+          url: `/users/check-email?email=${email}`,
+          baseURL: "https://rtflix.site/",
+        });
+        dispatch({ type: "SET_EMAIL", data: { email: email } });
+        if (check.data.result == 1) {
+          alert("이미 가입된 이메일입니다.");
+          navigate(`/login`);
+        } else if (check.data.result == 0) {
+          navigate(`/signup/registration`);
+        }
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 

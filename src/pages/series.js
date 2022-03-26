@@ -212,6 +212,7 @@ export default function Series() {
       <div className="main-view">
         <div className="main-view-container">
           <MainView
+            series
             main={main}
             wishlist={wishlist}
             top10={top10}

@@ -11,6 +11,7 @@ const FooterStyle = styled.div`
   position: relative;
   background-color: ${(props) => props.registration && "#f3f3f3"};
   background-color: ${(props) => props.dark && "rgba(0, 0, 0, 0.75)"};
+  margin-top: ${(props) => props.youraccount && "80px"};
 
   ${(props) =>
     props.home &&
@@ -22,17 +23,20 @@ const FooterStyle = styled.div`
     box-sizing: content-box;
     background-color: transparent;
   `}
+
   .footer-divider {
     display: ${(props) => props.login && "none"};
     height: 0;
     width: 100%;
-    border-top: ${(props) => props.registration && "1px solid #e5e5e5"};
+    border-top: ${(props) =>
+      (props.registration || props.youraccount) && "1px solid #e5e5e5"};
   }
 
   .footer-site {
     margin: 0 auto;
     width: 90%;
-    padding-top: ${(props) => props.registration && "30px"};
+    padding-top: ${(props) =>
+      (props.registration || props.youraccount) && "30px"};
     padding-bottom: ${(props) => props.login && "30px"};
     max-width: ${(props) => props.center && "1000px"};
 
@@ -211,6 +215,7 @@ const FooterStyle = styled.div`
     margin: 20px 0 0;
     color: #757575;
     padding-bottom: ${(props) => props.home && "15px"};
+    padding-bottom: ${(props) => props.youraccount && "20px"};
 
     ${(props) =>
       props.home &&
@@ -234,6 +239,22 @@ const FooterStyle = styled.div`
       display: inline-block;
     }
   }
+
+  .service-code-wrapper {
+    color: #757575;
+    margin: 45px 0 20px;
+  }
+
+  .service-code {
+    border: 1px solid #757575;
+    padding: 8px;
+    display: inline-block;
+    color: #757575;
+    font-size: 0.8521em;
+    min-width: 90px;
+    text-align: center;
+    box-sizing: content-box;
+  }
 `;
 
 export default function Footer(props) {
@@ -244,6 +265,7 @@ export default function Footer(props) {
       center={props.center}
       login={props.login}
       home={props.home}
+      youraccount={props.youraccount}
     >
       <div className="footer-divider"></div>
       {props.home && (
@@ -320,100 +342,138 @@ export default function Footer(props) {
       <div className="footer-site">
         {!props.home && (
           <p className="footer-top">
-            질문이 있으신가요? 문의 전화: &nbsp;
-            <a className="footer-top-a" href="tel:080-001-9587">
-              080-001-9587
-            </a>
+            {!props.youraccount ? (
+              <>
+                질문이 있으신가요? 문의 전화: &nbsp;
+                <a className="footer-top-a" href="tel:080-001-9587">
+                  080-001-9587
+                </a>
+              </>
+            ) : (
+              <>질문이 있으신가요? 고객센터에 문의하세요</>
+            )}
           </p>
         )}
-        <ul className="footer-contents">
-          {!props.home && (
+        {props.youraccount ? (
+          <ul className="footer-contents">
             <li className="footer-list">
-              <span>자주 묻는 질문</span>
+              <span>음성 및 자막</span>
             </li>
-          )}
-          {props.home && (
-            <>
-              <li className="footer-list">
-                <span>자막 및 음성</span>
-              </li>
-              <li className="footer-list">
-                <span>음성 지원</span>
-              </li>
-            </>
-          )}
-          <li className="footer-list">
-            <span>고객 센터</span>
-          </li>
-          {props.home && (
+            <li className="footer-list">
+              <span>고객 센터</span>
+            </li>
             <li className="footer-list">
               <span>기프트카드</span>
             </li>
-          )}
-          {!props.registration && (
-            <>
-              {!props.home && (
-                <li className="footer-list">
-                  <span>계정</span>
-                </li>
-              )}
-              <li className="footer-list">
-                <span>미디어 센터</span>
-              </li>
-              <li className="footer-list">
-                <span>투자 정보(IR)</span>
-              </li>
-              <li className="footer-list">
-                <span>입사 정보</span>
-              </li>
-              {!props.home && (
-                <li className="footer-list">
-                  <span>넷플릭스 지원 디바이스</span>
-                </li>
-              )}
-            </>
-          )}
-          <li className="footer-list">
-            <span>이용 약관</span>
-          </li>
-          <li className="footer-list">
-            <span>개인정보</span>
-          </li>
-          {props.home && (
             <li className="footer-list">
-              <span>법적 고지</span>
+              <span>투자 정보(IR)</span>
             </li>
-          )}
-          <li className="footer-list">
-            <span>쿠키 설정</span>
-          </li>
-          <li className="footer-list">
-            <span>회사 정보</span>
-          </li>
-          {!props.registration && (
-            <>
-              {props.home && (
+            <li className="footer-list">
+              <span>미디어 센터</span>
+            </li>
+            <li className="footer-list">
+              <span>입사 정보</span>
+            </li>
+            <li className="footer-list">
+              <span>쿠키 설정</span>
+            </li>
+            <li className="footer-list">
+              <span>이용 약관</span>
+            </li>
+            <li className="footer-list">
+              <span>개인정보 처리방침</span>
+            </li>
+          </ul>
+        ) : (
+          <ul className="footer-contents">
+            {!props.home && (
+              <li className="footer-list">
+                <span>자주 묻는 질문</span>
+              </li>
+            )}
+            {props.home && (
+              <>
                 <li className="footer-list">
-                  <span>문의하기</span>
+                  <span>자막 및 음성</span>
                 </li>
-              )}
-              {!props.home && (
-                <>
+                <li className="footer-list">
+                  <span>음성 지원</span>
+                </li>
+              </>
+            )}
+            <li className="footer-list">
+              <span>고객 센터</span>
+            </li>
+            {props.home && (
+              <li className="footer-list">
+                <span>기프트카드</span>
+              </li>
+            )}
+            {!props.registration && (
+              <>
+                {!props.home && (
                   <li className="footer-list">
-                    <span>속도 테스트</span>
+                    <span>계정</span>
                   </li>
+                )}
+                <li className="footer-list">
+                  <span>미디어 센터</span>
+                </li>
+                <li className="footer-list">
+                  <span>투자 정보(IR)</span>
+                </li>
+                <li className="footer-list">
+                  <span>입사 정보</span>
+                </li>
+                {!props.home && (
                   <li className="footer-list">
-                    <span>법적 고지</span>
+                    <span>넷플릭스 지원 디바이스</span>
                   </li>
+                )}
+              </>
+            )}
+            <li className="footer-list">
+              <span>이용 약관</span>
+            </li>
+            <li className="footer-list">
+              <span>개인정보</span>
+            </li>
+            {props.home && (
+              <li className="footer-list">
+                <span>법적 고지</span>
+              </li>
+            )}
+            <li className="footer-list">
+              <span>쿠키 설정</span>
+            </li>
+            <li className="footer-list">
+              <span>회사 정보</span>
+            </li>
+            {!props.registration && (
+              <>
+                {props.home && (
                   <li className="footer-list">
-                    <span>오직 넷플릭스에서</span>
+                    <span>문의하기</span>
                   </li>
-                </>
-              )}
-            </>
-          )}
-        </ul>
-        {!props.home && (
+                )}
+                {!props.home && (
+                  <>
+                    <li className="footer-list">
+                      <span>속도 테스트</span>
+                    </li>
+                    <li className="footer-list">
+                      <span>법적 고지</span>
+                    </li>
+                    <li className="footer-list">
+                      <span>오직 넷플릭스에서</span>
+                    </li>
+                  </>
+                )}
+              </>
+            )}
+          </ul>
+        )}
+        {!props.home && !props.youraccount && (
           <div className="language-selector">
             <div className="language-switcher">
               <div className="select">
@@ -431,6 +491,11 @@ export default function Footer(props) {
         {props.home && (
           <div className="member-footer-service">
             <button className="service-code">서비스 코드</button>
+          </div>
+        )}
+        {props.youraccount && (
+          <div className="service-code-wrapper">
+            <a className="service-code pointer">서비스 코드</a>
           </div>
         )}
         <div className="footer-text">

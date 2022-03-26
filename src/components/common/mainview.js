@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import styled from "styled-components";
 import TitleCard from "./titlecard";
+import { useEffect } from "react";
 
 const MainContainerStyle = styled.span`
   display: block;
@@ -337,146 +339,182 @@ const MainContainerStyle = styled.span`
 `;
 
 export default function MainView(props) {
+  const token = JSON.parse(sessionStorage.getItem("user")).jwt;
+  const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+  const profileIdx = sessionStorage.getItem("selectedProfile");
   let randomNumber;
   if (props.main) {
     randomNumber = Math.floor(Math.random() * props.main.length);
   }
+  const [isLoading, setIsLoading] = useState(true);
+
+  const getMain = async () => {
+    try {
+      const content = await axios({
+        method: "GET",
+        url: "/browse/main",
+        baseURL: "https://rtflix.site",
+        headers: {
+          "X-ACCESS-TOKEN": token,
+        },
+        data: {
+          userIdx: 12,
+          profileIdx: 16,
+          browseType: `H`,
+        },
+      });
+      console.log(content);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getMain();
+    setIsLoading(false);
+  }, []);
 
   return (
     <MainContainerStyle>
-      {props.main && (
-        <div className={props.genre ? "billboard-row genre" : "billboard-row"}>
-          <div className="billboard">
-            <div className="hero-image-wrapper">
-              <img
-                className="hero-static-image"
-                src={props.main[randomNumber].image}
-              />
-              <div className="trailer-vignette vignette-layer"></div>
-              <div className="hero-vignette vignette-layer"></div>
-              <div className="embedded-components button-layer">
-                <span className="rating">
-                  <span>{props.main[randomNumber].rating}</span>
-                </span>
-              </div>
-            </div>
-            <div className="fill-container">
-              <div className="info meta-layer">
-                <div className="logo-and-text meta-layer">
-                  <div className="title-wrapper">
-                    <div className="billboard-title">
-                      <img
-                        className={
-                          props.main[randomNumber].message ==
-                          "2022년 아카데미 후보작"
-                            ? "title-logo awards"
-                            : "title-logo"
-                        }
-                        src={props.main[randomNumber].logo}
-                      />
-                    </div>
+      {!isLoading && (
+        <>
+          {props.main && (
+            <div
+              className={props.genre ? "billboard-row genre" : "billboard-row"}
+            >
+              <div className="billboard">
+                <div className="hero-image-wrapper">
+                  <img
+                    className="hero-static-image"
+                    src={props.main[randomNumber].image}
+                  />
+                  <div className="trailer-vignette vignette-layer"></div>
+                  <div className="hero-vignette vignette-layer"></div>
+                  <div className="embedded-components button-layer">
+                    <span className="rating">
+                      <span>{props.main[randomNumber].rating}</span>
+                    </span>
                   </div>
-                  <div className="info-wrapper">
-                    <div className="info-wrapper-fade">
-                      {props.main[randomNumber].message && (
-                        <div className="supplemental-message">
-                          {props.main[randomNumber].supplement}
-                          {props.main[randomNumber].message}
+                </div>
+                <div className="fill-container">
+                  <div className="info meta-layer">
+                    <div className="logo-and-text meta-layer">
+                      <div className="title-wrapper">
+                        <div className="billboard-title">
+                          <img
+                            className={
+                              props.main[randomNumber].message ==
+                              "2022년 아카데미 후보작"
+                                ? "title-logo awards"
+                                : "title-logo"
+                            }
+                            src={props.main[randomNumber].logo}
+                          />
                         </div>
-                      )}
-                      <div className="episode-title-container"></div>
-                      <div
-                        className={
-                          props.main[randomNumber].supplement
-                            ? "synopsis"
-                            : "synopsis nosupplemental"
-                        }
-                      >
-                        {props.main[randomNumber].synopsis}
                       </div>
-                    </div>
-                  </div>
-                  <div className="billboard-links button-layer forward-leaning">
-                    <a href="/">
-                      <button
-                        className="color-first hasLabel hasIcon hero-button"
-                        type="button"
-                      >
-                        <div className="button-svg-container">
-                          <div>
-                            <svg
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="Hawkins-Icon Hawkins-Icon-Standard"
-                            >
-                              <path
-                                d="M4 2.69127C4 1.93067 4.81547 1.44851 5.48192 1.81506L22.4069 11.1238C23.0977 11.5037 23.0977 12.4963 22.4069 12.8762L5.48192 22.1849C4.81546 22.5515 4 22.0693 4 21.3087V2.69127Z"
-                                fill="currentColor"
-                              ></path>
-                            </svg>
+                      <div className="info-wrapper">
+                        <div className="info-wrapper-fade">
+                          {props.main[randomNumber].message && (
+                            <div className="supplemental-message">
+                              {props.main[randomNumber].supplement}
+                              {props.main[randomNumber].message}
+                            </div>
+                          )}
+                          <div className="episode-title-container"></div>
+                          <div
+                            className={
+                              props.main[randomNumber].supplement
+                                ? "synopsis"
+                                : "synopsis nosupplemental"
+                            }
+                          >
+                            {props.main[randomNumber].synopsis}
                           </div>
                         </div>
-                        <div className="space"></div>
-                        <span className="button-text">재생</span>
-                      </button>
-                    </a>
-                    <button
-                      className="color-secondary hasLabel hasIcon hero-button"
-                      type="button"
-                    >
-                      <div className="button-svg-container">
-                        <div>
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="Hawkins-Icon Hawkins-Icon-Standard"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              clipRule="evenodd"
-                              d="M12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3ZM1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12ZM13 10V18H11V10H13ZM12 8.5C12.8284 8.5 13.5 7.82843 13.5 7C13.5 6.17157 12.8284 5.5 12 5.5C11.1716 5.5 10.5 6.17157 10.5 7C10.5 7.82843 11.1716 8.5 12 8.5Z"
-                              fill="currentColor"
-                            ></path>
-                          </svg>
-                        </div>
                       </div>
-                      <div className="space"></div>
-                      <span className="button-text">상세 정보</span>
-                    </button>
+                      <div className="billboard-links button-layer forward-leaning">
+                        <a href="/">
+                          <button
+                            className="color-first hasLabel hasIcon hero-button"
+                            type="button"
+                          >
+                            <div className="button-svg-container">
+                              <div>
+                                <svg
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="Hawkins-Icon Hawkins-Icon-Standard"
+                                >
+                                  <path
+                                    d="M4 2.69127C4 1.93067 4.81547 1.44851 5.48192 1.81506L22.4069 11.1238C23.0977 11.5037 23.0977 12.4963 22.4069 12.8762L5.48192 22.1849C4.81546 22.5515 4 22.0693 4 21.3087V2.69127Z"
+                                    fill="currentColor"
+                                  ></path>
+                                </svg>
+                              </div>
+                            </div>
+                            <div className="space"></div>
+                            <span className="button-text">재생</span>
+                          </button>
+                        </a>
+                        <button
+                          className="color-secondary hasLabel hasIcon hero-button"
+                          type="button"
+                        >
+                          <div className="button-svg-container">
+                            <div>
+                              <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="Hawkins-Icon Hawkins-Icon-Standard"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  clipRule="evenodd"
+                                  d="M12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3ZM1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12ZM13 10V18H11V10H13ZM12 8.5C12.8284 8.5 13.5 7.82843 13.5 7C13.5 6.17157 12.8284 5.5 12 5.5C11.1716 5.5 10.5 6.17157 10.5 7C10.5 7.82843 11.1716 8.5 12 8.5Z"
+                                  fill="currentColor"
+                                ></path>
+                              </svg>
+                            </div>
+                          </div>
+                          <div className="space"></div>
+                          <span className="button-text">상세 정보</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-      {props.wishlist && (
-        <TitleCard
-          items={props.wishlist}
-          url="my-list"
-          headerTitle="내가 찜한 콘텐츠"
-        />
-      )}
-      {props.top10 && (
-        <TitleCard
-          items={props.top10}
-          headerTitle="오늘 한국의 TOP 10 콘텐츠"
-        />
-      )}
-      {props.waiting && (
-        <TitleCard
-          items={props.waiting}
-          headerTitle="기다림이 아깝지 않은 콘텐츠"
-        />
-      )}
-      {props.foreignMovie && (
-        <TitleCard items={props.foreignMovie} headerTitle="해외 영화" />
+          )}
+          {props.wishlist && (
+            <TitleCard
+              items={props.wishlist}
+              url="my-list"
+              headerTitle="내가 찜한 콘텐츠"
+            />
+          )}
+          {props.top10 && (
+            <TitleCard
+              items={props.top10}
+              headerTitle="오늘 한국의 TOP 10 콘텐츠"
+            />
+          )}
+          {props.waiting && (
+            <TitleCard
+              items={props.waiting}
+              headerTitle="기다림이 아깝지 않은 콘텐츠"
+            />
+          )}
+          {props.foreignMovie && (
+            <TitleCard items={props.foreignMovie} headerTitle="해외 영화" />
+          )}
+        </>
       )}
     </MainContainerStyle>
   );

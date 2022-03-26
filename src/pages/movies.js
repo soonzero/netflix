@@ -219,6 +219,7 @@ export default function Movies() {
       <div className="main-view">
         <div className="main-view-container">
           <MainView
+            movies
             main={main}
             wishlist={wishlist}
             top10={top10}

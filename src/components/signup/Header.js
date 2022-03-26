@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const HeaderStyle = styled.div`
@@ -54,6 +54,17 @@ const HeaderStyle = styled.div`
 `;
 
 export default function Header(props) {
+  const navigate = useNavigate();
+
+  const logout = () => {
+    sessionStorage.clear();
+    navigate(`/logout`);
+  };
+
+  const goToLogin = () => {
+    navigate(`/login`);
+  };
+
   return (
     <HeaderStyle login={props.login}>
       <Link to="/" className="netflix-logo">
@@ -71,12 +82,12 @@ export default function Header(props) {
         </svg>
       </Link>
       {!props.login && (
-        <Link
-          to={`${props.logoutbtn ? "/logout" : "/login"}`}
+        <a
+          onClick={props.logoutbtn ? logout : goToLogin}
           className="login-link"
         >
           {props.logoutbtn ? "로그아웃" : "로그인"}
-        </Link>
+        </a>
       )}
     </HeaderStyle>
   );
