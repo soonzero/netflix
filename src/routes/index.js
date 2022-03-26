@@ -17,6 +17,7 @@ import Latest from "./latest";
 import Series from "pages/series";
 import Movies from "pages/movies";
 import YourAccount from "./youraccount";
+import New from "components/common/new";
 
 export default function RootRoute() {
   return (

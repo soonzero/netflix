@@ -17,23 +17,10 @@ import { ReactComponent as Orange15 } from "images/orange-15.svg";
 import { ReactComponent as Red18 } from "images/red-18.svg";
 import { ReactComponent as Yellow12 } from "images/yellow-12.svg";
 import { ReactComponent as GreenAll } from "images/green-all.svg";
-
-const HomeStyle = styled.div`
-  background-color: #141414;
-
-  .main-view {
-    position: relative;
-    min-height: 1000px;
-    z-index: 0;
-
-    .main-view-container {
-      margin-top: -70px;
-      padding: 0 0 50px;
-      z-index: 0;
-      overflow: hidden;
-    }
-  }
-`;
+import Top10 from "components/common/top10";
+import ThisWeek from "components/common/thisweek";
+import { HomeStyle } from "components/common/styled";
+import New from "components/common/new";
 
 export default function Series() {
   const main = [
@@ -215,10 +202,12 @@ export default function Series() {
             series
             main={main}
             wishlist={wishlist}
-            top10={top10}
             foreignMovie={foreignMovie}
             genre
           />
+          <Top10 />
+          <ThisWeek />
+          <New />
         </div>
       </div>
       <Footer home />

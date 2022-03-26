@@ -139,7 +139,7 @@ const EmailFormStyle = styled.form`
 
 export default function EmailForm() {
   const emailReg =
-    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{1,3}$/i;
+    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
   const [email, setEmail] = useState("");
   const [valid, setValid] = useState(true);
   const [error, setError] = useState("");
@@ -157,7 +157,7 @@ export default function EmailForm() {
 
   const submitEmail = async (event) => {
     event.preventDefault();
-    if (email && valid) {
+    if (email.length > 0 && valid) {
       try {
         const check = await axios({
           method: "GET",
@@ -186,9 +186,12 @@ export default function EmailForm() {
         setValid(false);
         setError("정확한 이메일 주소를 입력하세요.");
       }
-    } else if (email.length >= 0) {
+    } else if (email.length > 0) {
       setValid(false);
       setError("이메일 주소를 입력해 주세요.");
+    } else if (email.length == 0) {
+      setValid(true);
+      setError("");
     }
   };
 

@@ -1,8 +1,9 @@
 import Header from "components/common/header";
 import Footer from "components/common/footer";
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import RowContainer from "components/common/rowcontainer";
+import axios from "axios";
 
 const MyListStyle = styled.div`
   background-color: #141414;
@@ -97,6 +98,7 @@ export default function MyList() {
       image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABXT-fHBaLnYtjtNrh1qB5ap4yjJSAybcAB3re4Ml10i5554NzpEfToBjLQQf5SkGqSx_goGc7gJCMhLmTKh82o3IoCc.webp?r=408`,
     },
   ];
+
   return (
     <MyListStyle>
       <Header display={selectedProfile} subheader="내가 찜한 콘텐츠" mylist />

@@ -3,6 +3,9 @@ import axios from "axios";
 import styled from "styled-components";
 import TitleCard from "./titlecard";
 import { useEffect } from "react";
+import Top10 from "./top10";
+import New from "./new";
+import ThisWeek from "./thisweek";
 
 const MainContainerStyle = styled.span`
   display: block;
@@ -341,7 +344,17 @@ const MainContainerStyle = styled.span`
 export default function MainView(props) {
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
-  const profileIdx = sessionStorage.getItem("selectedProfile");
+  const profileIdx = parseInt(sessionStorage.getItem("selectedProfile"));
+  const browseType = () => {
+    if (props.contents == "main") {
+      return "H";
+    } else if (props.contents == "series") {
+      return "S";
+    } else {
+      return "M";
+    }
+  };
+
   let randomNumber;
   if (props.main) {
     randomNumber = Math.floor(Math.random() * props.main.length);
@@ -352,15 +365,15 @@ export default function MainView(props) {
     try {
       const content = await axios({
         method: "GET",
-        url: "/browse/main",
-        baseURL: "https://rtflix.site",
+        url: `/browse/main`,
+        baseURL: "https://rtflix.site/",
         headers: {
           "X-ACCESS-TOKEN": token,
         },
         data: {
-          userIdx: 12,
-          profileIdx: 16,
-          browseType: `H`,
+          userIdx: userIdx,
+          profileIdx: profileIdx,
+          browseType: browseType(),
         },
       });
       console.log(content);
@@ -370,9 +383,13 @@ export default function MainView(props) {
   };
 
   useEffect(() => {
-    getMain();
-    setIsLoading(false);
-  }, []);
+    if (isLoading) {
+      getMain();
+      setIsLoading(false);
+    } else {
+      return;
+    }
+  }, [isLoading]);
 
   return (
     <MainContainerStyle>
@@ -497,12 +514,6 @@ export default function MainView(props) {
               items={props.wishlist}
               url="my-list"
               headerTitle="내가 찜한 콘텐츠"
-            />
-          )}
-          {props.top10 && (
-            <TitleCard
-              items={props.top10}
-              headerTitle="오늘 한국의 TOP 10 콘텐츠"
             />
           )}
           {props.waiting && (

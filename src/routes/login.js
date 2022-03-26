@@ -335,7 +335,8 @@ const ScreenStyle = styled.div`
 
 export default function Login() {
   const navigate = useNavigate();
-
+  const emailReg =
+    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
   const [email, setEmail] = useState("");
   const [validEmail, setValidEmail] = useState(false);
   const [password, setPassword] = useState("");
@@ -352,7 +353,7 @@ export default function Login() {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
-    if (email && password) {
+    if (email.length > 0 && password.length > 0) {
       if (validEmail && validPassword) {
         try {
           const login = await axios({
@@ -382,11 +383,19 @@ export default function Login() {
           console.log(e);
         }
       }
+    } else {
+      alert("이메일과 비밀번호를 올바르게 입력하세요.");
     }
   };
 
   const checkEmail = () => {
     if (email.length >= 5 && email.length < 51) {
+      if (emailReg.test(email)) {
+        setValidEmail(true);
+      } else {
+        setValidEmail(false);
+      }
+    } else if (email.length == 0) {
       setValidEmail(true);
     } else {
       setValidEmail(false);
@@ -395,6 +404,8 @@ export default function Login() {
 
   const checkPassword = () => {
     if (password.length >= 4 && password.length < 60) {
+      setValidPassword(true);
+    } else if (password.length == 0) {
       setValidPassword(true);
     } else {
       setValidPassword(false);
