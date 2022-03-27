@@ -412,10 +412,10 @@ export default function Profiles(props) {
           },
         });
         if (newProfile.data.code == 1000) {
-          sessionStorage.setItem(
-            "profile",
-            JSON.stringify(newProfile.data.result)
-          );
+          // sessionStorage.setItem(
+          //   "profile",
+          //   JSON.stringify(newProfile.data.result)
+          // );
           setAddProfile(false);
         }
       } catch (e) {

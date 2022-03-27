@@ -17,6 +17,7 @@ import { ReactComponent as Orange15 } from "images/orange-15.svg";
 import { ReactComponent as Red18 } from "images/red-18.svg";
 import { ReactComponent as Yellow12 } from "images/yellow-12.svg";
 import { ReactComponent as GreenAll } from "images/green-all.svg";
+import { useState } from "react";
 import Top10 from "components/common/top10";
 import ThisWeek from "components/common/thisweek";
 import { HomeStyle } from "components/common/styled";
@@ -193,6 +194,10 @@ export default function Series() {
       image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABXT-fHBaLnYtjtNrh1qB5ap4yjJSAybcAB3re4Ml10i5554NzpEfToBjLQQf5SkGqSx_goGc7gJCMhLmTKh82o3IoCc.webp?r=408`,
     },
   ];
+
+  const [modal, setModal] = useState(false);
+  const [index, setIndex] = useState();
+
   return (
     <HomeStyle>
       <Header subheader genre="시리즈" />
@@ -205,9 +210,9 @@ export default function Series() {
             foreignMovie={foreignMovie}
             genre
           />
-          <Top10 />
-          <ThisWeek />
-          <New />
+          <Top10 setIndex={setIndex} modal={modal} setModal={setModal} />
+          <New setIndex={setIndex} modal={modal} setModal={setModal} />
+          <ThisWeek setIndex={setIndex} modal={modal} setModal={setModal} />
         </div>
       </div>
       <Footer home />

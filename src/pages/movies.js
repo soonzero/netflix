@@ -2,6 +2,7 @@ import Footer from "components/common/footer";
 import Header from "components/common/header";
 import MainView from "components/common/mainview";
 import React from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { ReactComponent as Orange15 } from "images/orange-15.svg";
 import { ReactComponent as Red18 } from "images/red-18.svg";
@@ -137,6 +138,9 @@ export default function Movies() {
     },
   ];
 
+  const [modal, setModal] = useState(false);
+  const [index, setIndex] = useState();
+
   return (
     <HomeStyle>
       <Header subheader genre="영화" />
@@ -149,9 +153,9 @@ export default function Movies() {
             foreignMovie={foreignMovie}
             genre
           />
-          <Top10 />
-          <ThisWeek />
-          <New />
+          <Top10 setIndex={setIndex} modal={modal} setModal={setModal} />
+          <New setIndex={setIndex} modal={modal} setModal={setModal} />
+          <ThisWeek setIndex={setIndex} modal={modal} setModal={setModal} />
         </div>
       </div>
       <Footer home />

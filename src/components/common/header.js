@@ -517,7 +517,7 @@ export default function Header(props) {
     } else {
       return;
     }
-  }, [isLoading]);
+  }, []);
 
   return (
     <FixedHeader fixed={fixed} menu={menu} mylist={props.mylist}>

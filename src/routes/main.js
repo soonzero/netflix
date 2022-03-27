@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import EmailForm from "components/main/EmailForm";
 import Footer from "components/common/footer";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const HeaderWrapperStyle = styled.div`
   background-color: transparent;
@@ -487,6 +487,7 @@ const MainCardsContainerStyle = styled.div`
 `;
 
 export default function Main() {
+  const navigate = useNavigate();
   const [answer, setAnswer] = useState(undefined);
 
   function answerHandler(number) {
@@ -496,6 +497,12 @@ export default function Main() {
       setAnswer(undefined);
     }
   }
+
+  useEffect(() => {
+    if (sessionStorage.getItem("user") != null) {
+      navigate(`/browse`);
+    }
+  }, []);
 
   return (
     <>

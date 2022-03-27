@@ -1,11 +1,8 @@
 import Header from "components/common/header";
 import Footer from "components/common/footer";
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import axios from "axios";
 import MainView from "components/common/mainview";
 import SelectProfile from "components/common/profiles";
-import { useSelector } from "react-redux";
 import { ReactComponent as Orange15 } from "images/orange-15.svg";
 import { ReactComponent as Red18 } from "images/red-18.svg";
 import { ReactComponent as Yellow12 } from "images/yellow-12.svg";
@@ -17,12 +14,15 @@ import New from "components/common/new";
 import ThisWeek from "components/common/thisweek";
 import { HomeStyle } from "components/common/styled";
 import Loading from "components/common/loading";
+import Modal from "components/common/modal";
+import { store } from "index";
 
 export default function Browse() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
-  const token = JSON.parse(sessionStorage.getItem("user")).jwt;
+  const [modal, setModal] = useState(false);
+  const [index, setIndex] = useState();
+
   const selectedProfile = JSON.parse(sessionStorage.getItem("selectedProfile"));
 
   const main = [
@@ -214,14 +214,17 @@ export default function Browse() {
                 wishlist={wishlist}
                 foreignMovie={foreignMovie}
               />
-              <Top10 />
-              <New />
-              <ThisWeek />
+              <Top10 setIndex={setIndex} modal={modal} setModal={setModal} />
+              <New setIndex={setIndex} modal={modal} setModal={setModal} />
+              <ThisWeek setIndex={setIndex} modal={modal} setModal={setModal} />
             </div>
           </div>
           <Footer home center dark />
           {selectedProfile == null && <SelectProfile />}
         </>
+      )}
+      {modal && (
+        <Modal row={0} index={index} modal={modal} setModal={setModal} />
       )}
     </HomeStyle>
   );
