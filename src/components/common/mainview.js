@@ -344,6 +344,9 @@ const MainContainerStyle = styled.span`
 `;
 
 export default function MainView(props) {
+  const [mainContent, setMainContent] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const profileIdx = JSON.parse(sessionStorage.getItem("selectedProfile"));
@@ -362,33 +365,30 @@ export default function MainView(props) {
   // if (props.main) {
   //   randomNumber = Math.floor(Math.random() * props.main.length);
   // }
-  const [isLoading, setIsLoading] = useState(true);
 
   const getMain = async () => {
-    try {
-      const contents = await axios({
-        method: "GET",
-        url: "/browse/main",
-        baseURL: "https://rtflix.site",
-        headers: {
-          "X-ACCESS-TOKEN": token,
-        },
-        data: {
-          userIdx: userIdx,
-          profileIdx: profileIdx,
-          browseType: "H",
-        },
-      });
-      console.log(contents);
-    } catch (e) {
-      console.log(e);
+    if (isLoading) {
+      try {
+        const contents = await axios({
+          method: "GET",
+          url: `/browse/main?userIdx=${userIdx}&profileIdx=${profileIdx}&browseType=${browseType()}`,
+          baseURL: "https://rtflix.site",
+          headers: {
+            "X-ACCESS-TOKEN": token,
+          },
+        });
+        console.log(contents.data.result);
+        setMainContent(contents.data.result);
+        setIsLoading(false);
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
   useEffect(() => {
     if (isLoading) {
       getMain();
-      setIsLoading(false);
     } else {
       return;
     }
@@ -396,95 +396,86 @@ export default function MainView(props) {
 
   return (
     <MainContainerStyle>
-      {!isLoading && (
+      {!isLoading && mainContent && (
         <>
-          {props.main && (
-            <div
-              className={props.genre ? "billboard-row genre" : "billboard-row"}
-            >
-              <div className="billboard">
-                <div className="hero-image-wrapper">
-                  <img
-                    className="hero-static-image"
-                    src={props.main[0].image}
-                  />
-                  <div className="trailer-vignette vignette-layer"></div>
-                  <div className="hero-vignette vignette-layer"></div>
-                  <div className="embedded-components button-layer">
-                    <span className="rating">
-                      <span>{props.main[0].rating}</span>
-                    </span>
-                  </div>
+          <div
+            className={props.genre ? "billboard-row genre" : "billboard-row"}
+          >
+            <div className="billboard">
+              <div className="hero-image-wrapper">
+                <img
+                  className="hero-static-image"
+                  src={mainContent.thumbnailUrl}
+                />
+                <div className="trailer-vignette vignette-layer"></div>
+                <div className="hero-vignette vignette-layer"></div>
+                <div className="embedded-components button-layer">
+                  <span className="rating">
+                    <span>{`${mainContent.ageRate}+`}</span>
+                  </span>
                 </div>
-                <div className="fill-container">
-                  <div className="info meta-layer">
-                    <div className="logo-and-text meta-layer">
-                      <div className="title-wrapper">
-                        <div className="billboard-title">
-                          <img
-                            className={
-                              props.main[0].message == "2022년 아카데미 후보작"
-                                ? "title-logo awards"
-                                : "title-logo"
-                            }
-                            src={props.main[0].logo}
-                          />
-                        </div>
+              </div>
+              <div className="fill-container">
+                <div className="info meta-layer">
+                  <div className="logo-and-text meta-layer">
+                    <div className="title-wrapper">
+                      <div className="billboard-title">
+                        <img
+                          className={
+                            props.main[0].message == "2022년 아카데미 후보작"
+                              ? "title-logo awards"
+                              : "title-logo"
+                          }
+                          src={mainContent.logoImageUrl}
+                        />
                       </div>
-                      <div className="info-wrapper">
-                        <div className="info-wrapper-fade">
-                          {props.main[0].message && (
-                            <div className="supplemental-message">
-                              {props.main[0].supplement}
-                              {props.main[0].message}
-                            </div>
-                          )}
-                          <div className="episode-title-container"></div>
-                          <div
-                            className={
-                              props.main[0].supplement
-                                ? "synopsis"
-                                : "synopsis nosupplemental"
-                            }
-                          >
-                            {props.main[0].synopsis}
+                    </div>
+                    <div className="info-wrapper">
+                      <div className="info-wrapper-fade">
+                        {/* {mainContent.message && (
+                          <div className="supplemental-message">
+                            {mainContent.supplement}
+                            {mainContent.message}
                           </div>
-                        </div>
+                        )} */}
+                        <div className="episode-title-container"></div>
+                        <div className="synopsis">{mainContent.summary}</div>
                       </div>
-                      <div className="billboard-links button-layer forward-leaning">
-                        <a href="/">
-                          <button
-                            className="color-first hasLabel hasIcon hero-button"
-                            type="button"
-                          >
-                            <div className="button-svg-container">
-                              <div>
-                                <Play />
-                              </div>
-                            </div>
-                            <div className="space"></div>
-                            <span className="button-text">재생</span>
-                          </button>
-                        </a>
+                    </div>
+                    <div className="billboard-links button-layer forward-leaning">
+                      <a href="/">
                         <button
-                          className="color-secondary hasLabel hasIcon hero-button"
+                          className="color-first hasLabel hasIcon hero-button"
                           type="button"
                         >
                           <div className="button-svg-container">
                             <div>
-                              <DetailInfo />
+                              <Play />
                             </div>
                           </div>
                           <div className="space"></div>
-                          <span className="button-text">상세 정보</span>
+                          <span className="button-text">재생</span>
                         </button>
-                      </div>
+                      </a>
+                      <button
+                        className="color-secondary hasLabel hasIcon hero-button"
+                        type="button"
+                        onClick={() => props.setModal("detail")}
+                      >
+                        <div className="button-svg-container">
+                          <div>
+                            <DetailInfo />
+                          </div>
+                        </div>
+                        <div className="space"></div>
+                        <span className="button-text">상세 정보</span>
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          )}
+          </div>
           {/* {props.wishlist && (
             <TitleCard
               items={props.wishlist}

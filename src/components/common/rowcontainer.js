@@ -362,7 +362,7 @@ export default function RowContainer(props) {
                                     <div className="boxart-container boxart-rounded boxart-size-16x9">
                                       <img
                                         className="boxart-image-in-padded-container"
-                                        src={`${item.image}`}
+                                        src={`${item.thumbnailUrl}`}
                                       />
                                       <div className="fallback-text-container">
                                         <p className="fallback-text">

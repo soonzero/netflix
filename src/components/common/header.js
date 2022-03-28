@@ -488,7 +488,7 @@ export default function Header(props) {
   const getProfilesInfo = async () => {
     const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
     const token = JSON.parse(sessionStorage.getItem("user")).jwt;
-    const profileIdx = JSON.parse(sessionStorage.getItem("selectedProfile"));
+    const profileIdx = sessionStorage.getItem("selectedProfile");
     try {
       const allProfiles = await axios({
         method: "GET",

@@ -1,5 +1,5 @@
 import Header from "components/common/header";
-import Profiles from "components/common/profiles";
+import Profiles from "components/common/selectprofiles.js";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 

@@ -1,6 +1,6 @@
 import Header from "components/common/header";
 import Footer from "components/common/footer";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import RowContainer from "components/common/rowcontainer";
 import axios from "axios";
@@ -30,7 +30,11 @@ const MyListStyle = styled.div`
 `;
 
 export default function MyList() {
+  const token = JSON.parse(sessionStorage.getItem("user")).jwt;
+  const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const selectedProfile = JSON.parse(sessionStorage.getItem("selectedProfile"));
+  const [isLoading, setIsLoading] = useState(true);
+  const [myList, setMyList] = useState();
 
   const items = [
     {
@@ -99,21 +103,51 @@ export default function MyList() {
     },
   ];
 
+  const getMyList = async () => {
+    try {
+      const list = await axios({
+        method: "GET",
+        url: `/my-list?userIdx=${userIdx}&profileIdx=${selectedProfile}`,
+        baseURL: "https://rtflix.site/",
+        headers: {
+          "X-ACCESS-TOKEN": token,
+        },
+      });
+      setMyList(list.data.result);
+      console.log(myList);
+      setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getMyList();
+  }, []);
+
   return (
     <MyListStyle>
-      <Header display={selectedProfile} subheader="내가 찜한 콘텐츠" mylist />
-      <div className="main-view">
-        <div className="gallery row-with-x-columns">
-          <div className="gallery-content">
-            <div>
-              <div className="gallery-lockups">
-                <RowContainer items={items} mylist />
+      {!isLoading && (
+        <>
+          <Header
+            display={selectedProfile}
+            subheader="내가 찜한 콘텐츠"
+            mylist
+          />
+          <div className="main-view">
+            <div className="gallery row-with-x-columns">
+              <div className="gallery-content">
+                <div>
+                  <div className="gallery-lockups">
+                    <RowContainer items={myList} mylist />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <Footer center home />
+          <Footer center home />
+        </>
+      )}
     </MyListStyle>
   );
 }

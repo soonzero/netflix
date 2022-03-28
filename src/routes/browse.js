@@ -2,7 +2,7 @@ import Header from "components/common/header";
 import Footer from "components/common/footer";
 import React, { useEffect, useState } from "react";
 import MainView from "components/common/mainview";
-import SelectProfile from "components/common/profiles";
+import SelectProfile from "components/common/selectprofiles.js";
 import { ReactComponent as Orange15 } from "images/orange-15.svg";
 import { ReactComponent as Red18 } from "images/red-18.svg";
 import { ReactComponent as Yellow12 } from "images/yellow-12.svg";
@@ -16,14 +16,18 @@ import { HomeStyle } from "components/common/styled";
 import Loading from "components/common/loading";
 import Modal from "components/common/modal";
 import { store } from "index";
+import NewSeason from "components/common/newseason";
 
 export default function Browse() {
   const navigate = useNavigate();
+  const [display, setDisplay] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const [modal, setModal] = useState(false);
+  const [scrollY, setScrollY] = useState(window.scrollY);
+  const [modal, setModal] = useState();
   const [index, setIndex] = useState();
-
-  const selectedProfile = JSON.parse(sessionStorage.getItem("selectedProfile"));
+  const [content, setContent] = useState();
+  const [selected, setSelectedProfile] = useState();
+  const selectedProfile = sessionStorage.getItem("selectedProfile");
 
   const main = [
     {
@@ -193,38 +197,93 @@ export default function Browse() {
     },
   ];
 
+  function handleScroll() {
+    setScrollY(window.scrollY);
+  }
+
+  useEffect(() => {
+    setScrollY(scrollY);
+    function scrollListener() {
+      window.addEventListener("scroll", handleScroll);
+    }
+    scrollListener();
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [scrollY]);
+
   useEffect(() => {
     if (sessionStorage.getItem("user") == null) {
       navigate(`/login`);
     } else {
+      setDisplay(false);
+    }
+
+    if (sessionStorage.getItem("selectedProfile")) {
       setIsLoading(false);
     }
   }, []);
 
   return (
     <HomeStyle>
-      {!isLoading && (
+      {!display && (
         <>
-          <Header display={selectedProfile} />
-          <div className="main-view">
-            <div className="main-view-container">
-              <MainView
-                contents="main"
-                main={main}
-                wishlist={wishlist}
-                foreignMovie={foreignMovie}
-              />
-              <Top10 setIndex={setIndex} modal={modal} setModal={setModal} />
-              <New setIndex={setIndex} modal={modal} setModal={setModal} />
-              <ThisWeek setIndex={setIndex} modal={modal} setModal={setModal} />
+          {!isLoading && (
+            <div
+              style={{
+                position: modal == "detail" && "fixed",
+                top: modal == "detail" && "0",
+                right: modal == "detail" && "0",
+                left: modal == "detail" && "0",
+              }}
+            >
+              <Header display={selectedProfile} />
+              <div className="main-view">
+                <div className="main-view-container">
+                  <MainView
+                    contents="main"
+                    main={main}
+                    wishlist={wishlist}
+                    foreignMovie={foreignMovie}
+                    modal={modal}
+                    setModal={setModal}
+                  />
+                  <Top10
+                    setIndex={setIndex}
+                    modal={modal}
+                    setModal={setModal}
+                    setContent={setContent}
+                  />
+                  <New
+                    setIndex={setIndex}
+                    modal={modal}
+                    setModal={setModal}
+                    setContent={setContent}
+                  />
+                  <ThisWeek
+                    setIndex={setIndex}
+                    modal={modal}
+                    setModal={setModal}
+                    setContent={setContent}
+                  />
+                </div>
+              </div>
+              <Footer home center dark />
             </div>
-          </div>
-          <Footer home center dark />
-          {selectedProfile == null && <SelectProfile />}
+          )}
+          {selectedProfile == null && (
+            <SelectProfile setIsLoading={setIsLoading} />
+          )}
         </>
       )}
-      {modal && (
-        <Modal row={0} index={index} modal={modal} setModal={setModal} />
+      {(modal == "mini" || modal == "detail") && (
+        <Modal
+          row={0}
+          content={content}
+          index={index}
+          modal={modal}
+          setModal={setModal}
+        />
       )}
     </HomeStyle>
   );

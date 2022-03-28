@@ -364,7 +364,7 @@ const MainStyle = styled.div`
   }
 `;
 
-export default function Profiles(props) {
+export default function SelectProfiles(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [profiles, setProfiles] = useState();
@@ -375,12 +375,14 @@ export default function Profiles(props) {
 
   const selectProfile = (event) => {
     if (!props.manage) {
+      const selectedProfileIdx = event.currentTarget.getAttribute("profileidx");
       sessionStorage.setItem(
         "selectedProfile",
         event.currentTarget.getAttribute("profileidx")
       );
-      dispatch({ type: "SELECT" });
+      dispatch({ type: "SELECT_PROFILE", data: selectedProfileIdx });
       setDisplay(false);
+      props.setIsLoading(false);
     } else {
       console.log("selected");
     }
@@ -412,10 +414,10 @@ export default function Profiles(props) {
           },
         });
         if (newProfile.data.code == 1000) {
-          // sessionStorage.setItem(
-          //   "profile",
-          //   JSON.stringify(newProfile.data.result)
-          // );
+          sessionStorage.setItem(
+            "profile",
+            JSON.stringify(newProfile.data.result)
+          );
           setAddProfile(false);
         }
       } catch (e) {
@@ -451,6 +453,7 @@ export default function Profiles(props) {
 
   const reselectProfile = () => {
     sessionStorage.removeItem("selectedProfile");
+    dispatch({ type: "UNSELECT_PROFILE" });
     navigate(`/browse`);
   };
 

@@ -36,9 +36,11 @@ export default function Card(props) {
     }
   };
 
-  const setModalAndIdx = () => {
+  const setModalAndIdx = (event) => {
+    const contentIdx = event.currentTarget.getAttribute("name");
+    props.setContent(contentIdx);
     props.setIndex(props.index);
-    props.setModal(true);
+    props.setModal("mini");
   };
 
   return (

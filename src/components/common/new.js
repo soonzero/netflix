@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ContainerStyle, TitleCardsStyle } from "./styled";
+import { store } from "index";
 import Card from "./card";
 
 export default function New(props) {
@@ -11,6 +12,7 @@ export default function New(props) {
   const [isLoading, setIsLoading] = useState(true);
 
   const getNewContents = async () => {
+    setIsLoading(true);
     try {
       const contents = await axios({
         method: "GET",
@@ -34,6 +36,8 @@ export default function New(props) {
       return;
     }
   }, []);
+
+  store.subscribe(getNewContents);
 
   return (
     <TitleCardsStyle>
@@ -70,6 +74,7 @@ export default function New(props) {
                               modal={props.modal}
                               setModal={props.setModal}
                               setIndex={props.setIndex}
+                              setContent={props.setContent}
                             />
                           );
                         })}

@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { store } from "index";
 import { spinAnimation } from "./styled";
 
 const LoadingStyle = styled.div`
@@ -32,7 +33,7 @@ const LoadingStyle = styled.div`
     opacity: 1;
   }
 
-  .loading.profile-wrapper {
+  .loading-profile-wrapper {
     transform: scale(0.4);
     opacity: 1;
     transition-duration: 450ms;
@@ -50,12 +51,12 @@ const LoadingStyle = styled.div`
   .akira-spinner {
     color: #e50914;
     display: inline-block;
-    animation-name: ${spinAnimation} 750ms infinite;
+    animation: ${spinAnimation} 750ms infinite;
     animation-timing-function: linear;
 
     &::before {
       font-family: "Netflix Icon";
-      content: "\e765";
+      content: "\\e765";
     }
   }
 
@@ -65,7 +66,7 @@ const LoadingStyle = styled.div`
     max-height: 200px;
     max-width: 200px;
     min-height: 84px;
-    max-height: 84px;
+    min-height: 84px;
     position: relative;
     text-decoration: none;
     background-repeat: no-repeat;
@@ -122,28 +123,44 @@ export default function Loading() {
   };
 
   useEffect(() => {
-    getProfileImage();
+    if (profileIdx) {
+      getProfileImage();
+    } else {
+      return;
+    }
   }, []);
+
+  function getImage() {
+    if (sessionStorage.getItem("selectedProfile")) {
+      getProfileImage();
+    } else {
+      return;
+    }
+  }
+
+  store.subscribe(getImage);
 
   return (
     <LoadingStyle>
-      <div className="centered-div loading-wrapper">
-        <div>
-          <div className="loading-profile-wrapper">
-            <ul>
-              <li className="profile-link">
-                <div
-                  className="profile-icon"
-                  style={{
-                    backgroundImage: `url(${image})`,
-                  }}
-                ></div>
-                <span className="icon-spinner akira-spinner"></span>
-              </li>
-            </ul>
+      {image && (
+        <div className="centered-div loading-wrapper">
+          <div>
+            <div className="loading-profile-wrapper">
+              <ul>
+                <li className="profile-link">
+                  <div
+                    className="profile-icon"
+                    style={{
+                      backgroundImage: `url(${image})`,
+                    }}
+                  ></div>
+                  <span className="icon-spinner akira-spinner"></span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </LoadingStyle>
   );
 }
