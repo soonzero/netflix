@@ -339,7 +339,7 @@ export default function RowContainer(props) {
       });
       return data;
     } else {
-      const lines = Math.round(dummy.length / 6);
+      const lines = Math.ceil(dummy.length / 6);
       const newArray = [];
       for (let i = 0; i < lines; i++) {
         newArray.push(dummy.slice(6 * i, 6 * i + 6));
@@ -411,7 +411,7 @@ export default function RowContainer(props) {
 
   return (
     <ContainerStyle mylist={props.mylist}>
-      {!props.mylist && (
+      {/* {!props.mylist && (
         <div className="row-container">
           <div className="ptrack-container">
             <div className="row-content slider-hover-trigger-layer">
@@ -443,7 +443,7 @@ export default function RowContainer(props) {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       {props.mylist && sliderItems(props.items)}
     </ContainerStyle>
   );

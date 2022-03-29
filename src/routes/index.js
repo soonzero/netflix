@@ -17,6 +17,7 @@ import Latest from "./latest";
 import Series from "pages/series";
 import Movies from "pages/movies";
 import YourAccount from "./youraccount";
+import Lock from "./lock";
 import New from "components/common/new";
 
 export default function RootRoute() {
@@ -38,9 +39,11 @@ export default function RootRoute() {
         <Route path="/latest" element={<Latest />} />
         <Route path="/browse/my-list" element={<MyList />} />
         <Route path="/ManageProfiles" element={<ManageProfiles />} />
-        <Route path="/browse/genre/83" element={<Series />} />
-        <Route path="/browse/genre/34399" element={<Movies />} />
+        <Route path="/browse/series" element={<Series />} />
+        <Route path="/browse/series/:genre" element={<Series />} />
+        <Route path="/browse/genre/movies" element={<Movies />} />
         <Route path="/YourAccount" element={<YourAccount />} />
+        <Route path="/lock" element={<Lock />} />
       </Routes>
     </Router>
   );

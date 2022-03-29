@@ -1,602 +1,9 @@
 import axios from "axios";
 import Footer from "components/common/footer";
 import React, { useEffect, useState } from "react";
+import { AccountBodyStyle } from "components/common/styled";
+import AccountHeader from "components/common/accountheader";
 import { Link } from "react-router-dom";
-import { ReactComponent as Logo } from "images/nflogo.svg";
-import styled from "styled-components";
-
-const HeaderStyle = styled.div`
-  height: 90px;
-  position: relative;
-  color: #333;
-  font-size: 1rem;
-
-  .member-header {
-    min-width: 190px;
-    background-color: rgba(0, 0, 0, 0.97);
-    padding: 0 45px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 20;
-
-    .header {
-      min-width: 1020px;
-      height: 70px;
-      padding-left: 135px;
-      max-width: 1130px;
-
-      .logo {
-        position: absolute;
-        left: 45px;
-        top: 0;
-        text-decoration: none;
-        padding: 18px 0;
-        font-size: 2rem;
-        display: inline-block;
-        vertical-align: middle;
-        cursor: pointer;
-        width: 118px;
-
-        .svg-icon-netflix-logo {
-          fill: #e50914;
-        }
-      }
-    }
-
-    .last {
-      width: auto !important;
-    }
-
-    .secondary-navigation {
-      position: absolute;
-      right: 0;
-      top: 0;
-      line-height: 70px;
-    }
-
-    .account-tools {
-      float: right;
-      height: 70px;
-
-      .current-profile {
-        padding: 0 45px 0 0;
-
-        .profile-arrow {
-          width: 0;
-          height: 0;
-          border-style: solid;
-          border-width: 5px 5px 0 5px;
-          border-color: white transparent transparent transparent;
-          margin-left: 6px;
-          display: inline-block;
-          vertical-align: middle;
-          font-weight: 700;
-        }
-      }
-
-      .name {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-
-    #profile-selector {
-      height: 70px;
-      cursor: pointer;
-      font-size: 0.75rem;
-      position: relative;
-      outline: 0;
-
-      .current-profile {
-        .avatar {
-          margin: 5px;
-          width: 32px;
-          display: inline-block;
-          vertical-align: middle;
-          border-radius: 4px;
-        }
-      }
-
-      .trigger {
-        visibility: hidden;
-        opacity: 0;
-        bottom: 0;
-        top: inherit;
-        left: 11px;
-        width: 0;
-        border-left: 10px solid transparent;
-        border-right: 10px solid transparent;
-        border-bottom: 10px solid #e5e5e5;
-        position: absolute;
-        margin-top: -3px;
-        right: 15px;
-        transition: opacity 200ms;
-      }
-
-      .trigger-active {
-        visibility: visible;
-        opacity: 1;
-      }
-
-      .profiles-container {
-        visibility: hidden;
-        position: absolute;
-        width: 156px;
-        left: -56px;
-        opacity: 0;
-        transition: opacity 200ms;
-        line-height: normal;
-      }
-
-      .profiles-container-active {
-        visibility: visible;
-        opacity: 1;
-      }
-
-      .profiles {
-        overflow: hidden;
-        height: auto;
-        background-color: rgba(0, 0, 0, 0.97);
-        border-top: 2px solid #e5e5e5;
-        position: relative;
-      }
-
-      .profile {
-        overflow: hidden;
-        padding: 10px 5px 0 0;
-        display: flex;
-        align-items: center;
-
-        a {
-          flex-grow: 1;
-        }
-
-        img {
-          float: left;
-          margin-right: 10px;
-          width: 32px;
-          border-radius: 4px;
-        }
-      }
-
-      .profile-manage {
-        background-color: rgba(0, 0, 0, 0.97);
-      }
-
-      .manage {
-        margin-bottom: 0;
-        padding: 10px 5px 10px 0;
-      }
-
-      .links {
-        overflow: hidden;
-        border-top: 1px solid #666;
-        padding: 10px 0;
-        padding-bottom: 0;
-        background-color: rgba(0, 0, 0, 0.97);
-
-        a {
-          padding: 0 10px;
-        }
-
-        .sign-out-link {
-          text-align: center;
-          border-top: 1px solid rgba(255, 255, 255, 0.25);
-          margin-bottom: 0;
-          padding: 5px 0;
-        }
-      }
-
-      a {
-        text-decoration: none;
-        color: white;
-        padding: 0 10px;
-        line-height: 32px;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-
-    ul.structural {
-      padding: 0;
-      margin: 0;
-
-      & > li {
-        list-style: none;
-        margin-left: 0;
-      }
-    }
-
-    ul {
-      & > li {
-        margin-bottom: 5px;
-      }
-    }
-  }
-`;
-
-const BodyStyle = styled.div`
-  margin: 20px 30px 0;
-  padding: 0;
-  color: #333;
-  font-size: 1rem;
-  direction: ltr;
-  line-height: 1.328125;
-
-  a {
-    text-decoration: none;
-    color: #0080ff;
-    cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
-
-    &.profile-link:hover {
-      text-decoration: none;
-    }
-  }
-
-  ul {
-    margin: 1rem 0;
-
-    ul {
-      margin: 0;
-    }
-  }
-
-  .responsive-account-container {
-    display: block;
-    min-width: 300px;
-    min-height: 400px;
-    position: relative;
-    margin: 0 auto;
-    overflow-wrap: anywhere;
-  }
-
-  .responsive-account-container {
-    width: 95%;
-    max-width: 1024px;
-    font-size: 1em;
-  }
-
-  .account-header-inline {
-    vertical-align: middle;
-    display: inline-block;
-    font-size: 2.15rem;
-    margin: 0 0 0.55em;
-    font-weight: 400;
-    line-height: 1.3226744186;
-  }
-
-  .account-section-membersince {
-    display: inline-flex;
-    align-items: center;
-    color: #555;
-    font-size: 0.8rem;
-    font-weight: 800;
-    margin-left: 20px;
-    padding: 5px 14px 5px 0;
-    text-align: center;
-  }
-
-  .account-section-membersince {
-    display: inline-flex;
-    align-items: center;
-    color: #555;
-    font-size: 0.8rem;
-    font-weight: 800;
-    margin-left: 20px;
-    padding: 5px 14px 5px 0;
-    text-align: center;
-  }
-
-  .account-section-membersince-svg {
-    background: url(https://assets.nflxext.com/ffe/siteui/account/svg/membersince.svg)
-      no-repeat 0 0;
-    height: 26px;
-    width: 26px;
-    margin-right: 5px;
-    padding-right: 26px;
-  }
-
-  .responsive-account-content {
-    font-size: 1em;
-  }
-
-  .membership-section-wrapper.membership-section-with-button {
-    padding-bottom: 10px;
-  }
-
-  .account-section {
-    margin-bottom: 5px;
-    background-color: white;
-    border: 1px solid #999;
-    position: relative;
-    border-top: 1px solid #999;
-    border-right: none;
-    border-bottom: none;
-    border-left: none;
-    padding: 0;
-    background-color: inherit;
-    min-height: 4.5em;
-  }
-
-  .account-section-header {
-    width: 270px;
-    position: absolute;
-    left: 0;
-    padding-right: 10px;
-    z-index: 2;
-  }
-
-  .account-section-heading {
-    font-size: 1.125em;
-    color: #757575;
-    font-weight: 400;
-    padding: 0;
-    margin-top: 15px;
-    margin-bottom: 20px;
-    /* height: 81px; */
-  }
-
-  .btn {
-    text-decoration: none;
-    vertical-align: middle;
-    cursor: pointer;
-    font-weight: 400;
-    letter-spacing: 0.1px;
-    border-radius: 2px;
-    user-select: none;
-    text-align: center;
-    border: 0;
-  }
-
-  .btn-gray,
-  .btn-plain {
-    color: black;
-    background-color: #e6e6e6;
-    background-image: linear-gradient(to bottom, #e6e6e6, #ddd);
-    box-shadow: 0 1px 0 rgb(0 0 0 / 20%);
-  }
-
-  .btn.btn-small {
-    font-size: 0.8125rem;
-    padding: 12px 2em;
-    min-width: 98px;
-    min-height: 37px;
-    padding-left: 1em;
-    padding-right: 1em;
-    line-height: 1em;
-  }
-
-  .btn.account-cancel-button,
-  .btn.account-pause-button {
-    position: relative;
-    bottom: 10px;
-    left: 0;
-    width: 200px;
-    max-width: 200px;
-    display: block;
-    margin: 20px 10px 10px 0;
-    text-transform: none;
-  }
-
-  .account-section-content {
-    margin-top: 15px;
-    padding-left: 270px;
-  }
-
-  .account-subsection {
-    position: relative;
-
-    &::after {
-      content: " ";
-      display: block;
-      width: 0;
-      height: 0;
-      overflow: hidden;
-      clear: both;
-    }
-
-    & ~ .account-subsection {
-      border-top: 1px solid #999;
-      padding-top: 15px;
-
-      .u-ta-right-desktop {
-        text-align: right;
-      }
-    }
-
-    & ~ .account-subsection.light-divider {
-      border-color: #e5e5e5;
-    }
-  }
-
-  .account-section-group {
-    float: left;
-    width: 50%;
-    background-color: inherit;
-
-    & + .account-section-group {
-      text-align: right;
-      float: right;
-    }
-  }
-
-  .account-section-group.-wide {
-    width: 66%;
-  }
-
-  .account-section-group.-thin {
-    width: 34%;
-  }
-
-  .account-section-group.payment-details {
-    padding-bottom: 12px;
-  }
-
-  .account-section-item {
-    margin-bottom: 10px;
-    line-height: 1.25;
-  }
-
-  .account-section-email {
-    font-weight: 500;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .account-section-item-disabled {
-    color: #757575;
-  }
-
-  .account-section-link {
-    width: 100%;
-    padding: 15px 0 5px;
-    color: #0073e6;
-    display: inline;
-    padding-right: 0;
-    padding-top: 5px;
-    border-top: none;
-  }
-
-  .quality-icon {
-    height: 20px;
-    margin-top: -3px;
-    padding: 0 5px;
-    vertical-align: middle;
-  }
-
-  .clearfix::after {
-    content: " ";
-    display: block;
-    width: 0;
-    height: 0;
-    overflow: hidden;
-    clear: both;
-  }
-
-  .profile-hub {
-    .profile-header {
-      display: flex;
-      cursor: pointer;
-      border-bottom: 1px solid #ccc;
-      padding: 15px 0;
-
-      svg {
-        width: 20px;
-        height: 20px;
-        fill: #aaa;
-      }
-
-      img {
-        height: 60px;
-        border-radius: 4px;
-      }
-    }
-
-    .profile-summary {
-      flex-grow: 1;
-      align-self: center;
-      padding-left: 20px;
-      font-size: 0.8em;
-      color: #787878;
-    }
-
-    .profile-action-icons {
-      display: flex;
-      align-items: center;
-      align-self: center;
-      border: none;
-      background-color: transparent;
-
-      svg {
-        color: #aaa;
-      }
-    }
-
-    .profile-links {
-      display: none;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 10px;
-    }
-
-    .account-section-item:first-child {
-      .profile-link {
-        border: none;
-      }
-    }
-
-    .profile-link {
-      padding: 16px 0 20px;
-      margin-left: 84px;
-      display: flex;
-      min-height: 90px;
-      border-top: 1px solid #ccc;
-    }
-
-    .profile-main {
-      flex-grow: 1;
-      color: #787878;
-      font-size: 0.8em;
-      align-self: center;
-    }
-
-    .profile-change {
-      font-size: 0.8em;
-      align-self: center;
-    }
-
-    .expanded {
-      .profile-links {
-        display: block;
-      }
-
-      .profile-action-icons {
-        svg.svg-icon-chevron-down {
-          transform: rotate(180deg);
-        }
-      }
-    }
-
-    li {
-      padding: 0;
-      margin: 0;
-      list-style-type: none;
-
-      &:first-child {
-        .profile-header {
-          padding: 0 0 20px 0;
-        }
-      }
-
-      &:last-of-type {
-        .profile-header {
-          border-bottom: 0;
-        }
-      }
-    }
-
-    h3 {
-      margin: 0 0 0.3em 0;
-      font-weight: 600;
-      font-size: 1.2em;
-      color: #333;
-    }
-
-    h4 {
-      margin: 4px 0;
-      font-size: 1.2em;
-      color: #333;
-    }
-  }
-`;
 
 export default function YourAccount() {
   const [menu, setMenu] = useState(false);
@@ -612,45 +19,22 @@ export default function YourAccount() {
   const profiles = JSON.parse(sessionStorage.getItem("profiles"));
   const [expand, setExpand] = useState();
 
-  const getUserInfo = async () => {
+  const getMembershipInfo = async (index) => {
     try {
-      const info = await axios({
+      const membershipInfo = await axios({
         method: "GET",
-        url: `/users/account?userIdx=${userIdx}`,
+        url: `/users/membership?userIdx=${userIdx}&membershipIdx=${index}`,
+        baseURL: "https://rtflix.site/",
         headers: {
           "X-ACCESS-TOKEN": token,
         },
-        baseURL: "https://rtflix.site",
       });
-
-      if (info.data.code == 1000) {
-        console.log(info.data.result);
-        setInfo(info.data.result);
-        try {
-          const membershipInfo = await axios({
-            method: "GET",
-            url: `/users/membership?userIdx=${userIdx}&membershipIdx=${info.data.result.membershipIdx}`,
-            baseURL: "https://rtflix.site/",
-            headers: {
-              "X-ACCESS-TOKEN": token,
-            },
-          });
-          setMembershipInfo(membershipInfo.data.result);
-        } catch (e) {
-          console.log(e);
-        }
-        setIsLoading(false);
-      }
+      setMembershipInfo(membershipInfo.data.result);
+      setIsLoading(false);
     } catch (e) {
       console.log(e);
     }
   };
-
-  useEffect(() => {
-    if (isLoading) {
-      getUserInfo();
-    }
-  }, []);
 
   const membershipText = (type) => {
     if (type == "P") {
@@ -672,79 +56,20 @@ export default function YourAccount() {
 
   return (
     <div style={{ backgroundColor: "#f3f3f3" }}>
-      <HeaderStyle>
-        <div className="member-header">
-          <div className="header-container">
-            <div className="header">
-              <Link to="/browse" className="svg-nfLogo logo">
-                <Logo />
-              </Link>
-            </div>
-            <div className="secondary-navigation last">
-              <div className="account-tools">
-                <div id="profile-selector">
-                  <div
-                    className="current-profile"
-                    onMouseOver={() => setMenu((prev) => !prev)}
-                    onClick={() => setMenu((prev) => !prev)}
-                  >
-                    <img className="avatar" src={myImage[0].profileImageUrl} />
-                    <span className="profile-arrow"></span>
-                    <span
-                      className={menu ? "trigger trigger-active" : "trigger"}
-                    ></span>
-                  </div>
-                  <div
-                    className={
-                      menu
-                        ? "profiles-container profiles-container-active"
-                        : "profiles-container"
-                    }
-                  >
-                    <div className="profile-selector">
-                      <ul className="profiles structural">
-                        {exceptMe.map((p) => {
-                          return (
-                            <li key={p.profileIdx} className="profile">
-                              <a>
-                                <img src={p.profileImageUrl} />
-                                <div className="name">{p.profileName}</div>
-                              </a>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                    <ul className="profile-manage structural">
-                      <li className="manage">
-                        <Link to="/ManageProfiles">프로필 관리</Link>
-                      </li>
-                    </ul>
-                    <ul className="links structural">
-                      <li>
-                        <Link to="/YourAccount">계정</Link>
-                      </li>
-                      <li>
-                        <a>고객 센터</a>
-                      </li>
-                      <li className="sign-out-link">
-                        <a>넷플릭스에서 로그아웃</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </HeaderStyle>
+      <AccountHeader
+        setMenu={setMenu}
+        menu={menu}
+        exceptMe={exceptMe}
+        myImage={myImage}
+        setInfo={setInfo}
+        getMembershipInfo={getMembershipInfo}
+        isLoading={isLoading}
+      />
       {!isLoading && (
-        <BodyStyle>
+        <AccountBodyStyle>
           <div className="responsive-account-container">
             <div>
-              <h1 className="account-header-inline" onClick={getUserInfo}>
-                계정
-              </h1>
+              <h1 className="account-header-inline">계정</h1>
               <div className="account-section-membersince">
                 <div className="account-section-membersince-svg"></div>
                 멤버십 시작: {membershipInfo && membershipInfo.startTime}
@@ -1009,13 +334,17 @@ export default function YourAccount() {
                                     </a>
                                   </li>
                                   <li className="account-section-item">
-                                    <a className="profile-link">
+                                    <Link
+                                      to="/lock"
+                                      className="profile-link"
+                                      name={p.profileIdx}
+                                    >
                                       <div className="profile-main">
                                         <h4>프로필 잠금</h4>
                                         꺼짐
                                       </div>
                                       <div className="profile-change">변경</div>
-                                    </a>
+                                    </Link>
                                   </li>
                                   <li className="account-section-item">
                                     <a className="profile-link">
@@ -1098,7 +427,7 @@ export default function YourAccount() {
               </div>
             </div>
           </div>
-        </BodyStyle>
+        </AccountBodyStyle>
       )}
       <Footer youraccount />
     </div>

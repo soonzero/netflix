@@ -1,28 +1,30 @@
-import React, { useEffect, useState } from "react";
-import Card from "./card";
+import React from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { ContainerStyle, TitleCardsStyle } from "./styled";
-import { store } from "index";
+import { TitleCardsStyle, ContainerStyle } from "./styled";
+import Card from "./card";
+import Indicator from "./indicator";
 
-export default function Top10(props) {
+export default function Theme(props) {
   const profileIdx = sessionStorage.getItem("selectedProfile");
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
-  const [top10, setTop10] = useState();
+  const [contents, setContents] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [indicator, setIndicator] = useState();
 
-  const getTop10 = async () => {
+  const getContents = async (theme) => {
     setIsLoading(true);
     try {
       const contents = await axios({
         method: "GET",
-        url: `/browse/top-ten?userIdx=${userIdx}&profileIdx=${profileIdx}`,
+        url: `/browse/genre/series?userIdx=${userIdx}&profileIdx=${profileIdx}&genre=${theme}`,
         baseURL: "https://rtflix.site/",
         headers: {
           "X-ACCESS-TOKEN": token,
         },
       });
-      setTop10(contents.data.result);
+      setContents(contents.data.result);
       props.setModalInfo(contents.data.result);
       setIsLoading(false);
     } catch (e) {
@@ -32,7 +34,7 @@ export default function Top10(props) {
 
   useEffect(() => {
     if (isLoading) {
-      getTop10();
+      getContents(props.theme);
     } else {
       return;
     }
@@ -43,7 +45,7 @@ export default function Top10(props) {
       {!isLoading && (
         <h2 className="row-header" onMouseOver={() => props.setRow(props.row)}>
           <div className="row-title">
-            <div className="row-header-title">오늘 한국의 TOP10 콘텐츠</div>
+            <div className="row-header-title">{props.theme}</div>
             <div className="arrow-header"></div>
           </div>
           <ContainerStyle>
@@ -55,18 +57,16 @@ export default function Top10(props) {
                       <b className="indicator-icon icon-left-caret"></b>
                     </span>
                     <ul className="pagination-indicator">
-                      <li className="active"></li>
-                      <li></li>
+                      {indicator > 1 && <Indicator indicator={indicator} />}
                     </ul>
                     <div className="slider-mask show-peek">
                       <div className="slider-content row-with-x-columns">
                         {!isLoading &&
-                          top10.map((content, index) => {
+                          contents.map((content, index) => {
                             return (
                               <Card
                                 key={index}
                                 name={content.contentIdx}
-                                top10
                                 content={content}
                                 row={props.row}
                                 index={index}

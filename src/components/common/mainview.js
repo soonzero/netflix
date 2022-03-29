@@ -361,10 +361,11 @@ export default function MainView(props) {
     }
   };
 
-  // let randomNumber;
-  // if (props.main) {
-  //   randomNumber = Math.floor(Math.random() * props.main.length);
-  // }
+  const setModalAndIdx = (event) => {
+    const contentIdx = event.currentTarget.getAttribute("name");
+    props.setContent(contentIdx);
+    props.setModal("detail");
+  };
 
   const getMain = async () => {
     if (isLoading) {
@@ -377,7 +378,6 @@ export default function MainView(props) {
             "X-ACCESS-TOKEN": token,
           },
         });
-        console.log(contents.data.result);
         setMainContent(contents.data.result);
         setIsLoading(false);
       } catch (e) {
@@ -405,7 +405,7 @@ export default function MainView(props) {
               <div className="hero-image-wrapper">
                 <img
                   className="hero-static-image"
-                  src={mainContent.thumbnailUrl}
+                  src={mainContent.mainImageUrl}
                 />
                 <div className="trailer-vignette vignette-layer"></div>
                 <div className="hero-vignette vignette-layer"></div>
@@ -420,24 +420,11 @@ export default function MainView(props) {
                   <div className="logo-and-text meta-layer">
                     <div className="title-wrapper">
                       <div className="billboard-title">
-                        <img
-                          className={
-                            props.main[0].message == "2022년 아카데미 후보작"
-                              ? "title-logo awards"
-                              : "title-logo"
-                          }
-                          src={mainContent.logoImageUrl}
-                        />
+                        <img src={mainContent.logoImageUrl} />
                       </div>
                     </div>
                     <div className="info-wrapper">
                       <div className="info-wrapper-fade">
-                        {/* {mainContent.message && (
-                          <div className="supplemental-message">
-                            {mainContent.supplement}
-                            {mainContent.message}
-                          </div>
-                        )} */}
                         <div className="episode-title-container"></div>
                         <div className="synopsis">{mainContent.summary}</div>
                       </div>
@@ -460,7 +447,8 @@ export default function MainView(props) {
                       <button
                         className="color-secondary hasLabel hasIcon hero-button"
                         type="button"
-                        onClick={() => props.setModal("detail")}
+                        name={mainContent.contentIdx}
+                        onClick={setModalAndIdx}
                       >
                         <div className="button-svg-container">
                           <div>
@@ -476,22 +464,6 @@ export default function MainView(props) {
               </div>
             </div>
           </div>
-          {/* {props.wishlist && (
-            <TitleCard
-              items={props.wishlist}
-              url="my-list"
-              headerTitle="내가 찜한 콘텐츠"
-            />
-          )}
-          {props.waiting && (
-            <TitleCard
-              items={props.waiting}
-              headerTitle="기다림이 아깝지 않은 콘텐츠"
-            />
-          )}
-          {props.foreignMovie && (
-            <TitleCard items={props.foreignMovie} headerTitle="해외 영화" />
-          )} */}
         </>
       )}
     </MainContainerStyle>

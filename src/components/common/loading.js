@@ -115,7 +115,6 @@ export default function Loading() {
           "X-ACCESS-TOKEN": token,
         },
       });
-      console.log(profile.data.result);
       setImage(profile.data.result.profileImageUrl);
     } catch (e) {
       console.log(e);

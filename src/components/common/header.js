@@ -9,6 +9,15 @@ const FixedHeader = styled.div`
   height: 70px;
   line-height: 1.4;
 
+  a {
+    color: white;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
   .fixed-header-container {
     top: 0;
     left: 0;
@@ -352,7 +361,7 @@ const FixedHeader = styled.div`
           .title {
             font-size: 2.1875rem;
             display: inline-block;
-            margin-right: 20px;
+            /* margin-right: 20px; */
             line-height: 1.0285714286;
           }
 
@@ -420,6 +429,97 @@ const FixedHeader = styled.div`
       }
     }
   }
+
+  .sub-menu.theme-lakira {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    line-height: 21px;
+    border: solid 1px rgba(255, 255, 255, 0.15);
+    cursor: default;
+
+    .sub-menu-list {
+      height: auto;
+      cursor: default;
+    }
+
+    .sub-menu-list.multi-column {
+      display: table-cell;
+    }
+
+    .sub-menu-item {
+      cursor: default;
+      line-height: 24px;
+      display: block;
+    }
+
+    .sub-menu-link {
+      text-transform: none;
+      display: inline-block;
+      width: 100%;
+      color: white;
+    }
+  }
+
+  .nfDropDown.theme-lakira {
+    .sub-menu {
+      overflow-x: hidden;
+      z-index: 2;
+      padding: 0;
+      margin: 0;
+      top: 2.1875rem;
+      left: 0;
+      font-size: 0.875rem;
+
+      .sub-menu-list {
+        padding: 5px 0;
+        margin: 0;
+      }
+
+      .sub-menu-item {
+        a {
+          padding: 1px 20px 1px 10px;
+        }
+      }
+
+      .sub-menu-link {
+        display: inline-block;
+        width: 100%;
+        padding: 1px 0;
+      }
+    }
+  }
+
+  .gallery-header .sub-genres .sub-menu .sub-menu-link {
+    white-space: nowrap;
+  }
+
+  .bread-crumbs {
+    font-size: 18px;
+    color: grey;
+
+    ul {
+      padding: 0;
+      margin: 0;
+
+      li {
+        list-style: none;
+        display: inline;
+        padding-right: 10px;
+        z-index: 3;
+        position: relative;
+
+        &::after {
+          padding-left: 10px;
+          content: ">";
+        }
+
+        a {
+          color: grey;
+        }
+      }
+    }
+  }
 `;
 
 export default function Header(props) {
@@ -427,11 +527,25 @@ export default function Header(props) {
   const [fixed, setFixed] = useState(false);
   const [scrollY, setScrollY] = useState(window.scrollY);
   const [menu, setMenu] = useState(false);
+  const [subMenu, setSubMenu] = useState(false);
   const [profiles, setProfiles] = useState();
   const [image, setImage] = useState();
   const [position, setPosition] = useState();
   const [height, setHeight] = useState();
   const [isLoading, setIsLoading] = useState(true);
+
+  const series = {
+    first: [
+      "세계 여성의 달",
+      "한국 드라마",
+      "미국 시리즈",
+      "영국 드라마",
+      "아시아 드라마",
+      "버라이어티 / 예능",
+    ],
+    second: ["애니", "코미디", "로맨스", "드라마 장르", "액션", "스릴러"],
+    third: ["SF & 판타지", "호러", "키즈", "청소년", "다큐시리즈"],
+  };
 
   function handleScroll() {
     setScrollY(window.scrollY);
@@ -486,26 +600,29 @@ export default function Header(props) {
   };
 
   const getProfilesInfo = async () => {
-    const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
-    const token = JSON.parse(sessionStorage.getItem("user")).jwt;
-    const profileIdx = sessionStorage.getItem("selectedProfile");
-    try {
-      const allProfiles = await axios({
-        method: "GET",
-        url: `/profile?userIdx=${userIdx}`,
-        baseURL: "https://rtflix.site",
-        headers: {
-          "X-ACCESS-TOKEN": token,
-        },
-      });
-      const array = allProfiles.data.result;
-      sessionStorage.setItem("profiles", JSON.stringify(array));
-      const filteredArray = array.filter((p) => p.profileIdx == profileIdx);
-      setImage(filteredArray[0].profileImageUrl);
-      setProfiles(array.filter((p) => p.profileIdx != profileIdx));
-      setIsLoading(false);
-    } catch (e) {
-      console.log(e);
+    if (sessionStorage.getItem("selectedProfile")) {
+      const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+      const token = JSON.parse(sessionStorage.getItem("user")).jwt;
+      const profileIdx = sessionStorage.getItem("selectedProfile");
+      try {
+        const allProfiles = await axios({
+          method: "GET",
+          url: `/profile?userIdx=${userIdx}`,
+          baseURL: "https://rtflix.site",
+          headers: {
+            "X-ACCESS-TOKEN": token,
+          },
+        });
+        const array = allProfiles.data.result;
+        sessionStorage.setItem("profiles", JSON.stringify(array));
+        const filteredArray = array.filter((p) => p.profileIdx == profileIdx);
+        console.log(filteredArray);
+        setImage(filteredArray[0].profileImageUrl);
+        setProfiles(array.filter((p) => p.profileIdx != profileIdx));
+        setIsLoading(false);
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
@@ -541,10 +658,10 @@ export default function Header(props) {
                   <Link to="/browse">홈</Link>
                 </li>
                 <li className="nav-tab">
-                  <Link to="/browse/genre/83">시리즈</Link>
+                  <Link to="/browse/series">시리즈</Link>
                 </li>
                 <li className="nav-tab">
-                  <Link to="/browse/genre/34399">영화</Link>
+                  <Link to="/browse/movies">영화</Link>
                 </li>
                 <li className="nav-tab">
                   <Link to="/latest">NEW! 요즘 대세 콘텐츠</Link>
@@ -577,7 +694,7 @@ export default function Header(props) {
                     <div className="account-dropdown-button">
                       <Link to="/YourAccount" className="profile">
                         <span className="profile-link">
-                          <img className="profile-icon" src={image} />
+                          <img className="profile-icon" src={image && image} />
                           {menu && <div className="callout-arrow"></div>}
                         </span>
                       </Link>
@@ -596,7 +713,7 @@ export default function Header(props) {
                                     className="submenu-item profile"
                                   >
                                     <div>
-                                      <a className="profile-link">
+                                      <div className="profile-link">
                                         <div className="avatar-wrapper">
                                           <img
                                             className="profile-icon"
@@ -606,7 +723,7 @@ export default function Header(props) {
                                         <span className="profile-name">
                                           {p.profileName}
                                         </span>
-                                      </a>
+                                      </div>
                                     </div>
                                   </li>
                                 );
@@ -713,23 +830,111 @@ export default function Header(props) {
                   {props.mylist && (
                     <div className="title">내가 찜한 콘텐츠</div>
                   )}
-                  {props.genre && (
+                  {(props.series || props.movies) && (
                     <>
-                      {/* <div className="title"></div> */}
+                      {props.genre && (
+                        <div className="title">
+                          <div className="bread-crumbs">
+                            <ul>
+                              <li>
+                                <Link
+                                  to={`/browse/${
+                                    props.series ? "series" : "movies"
+                                  }`}
+                                >
+                                  {props.series ? "시리즈" : "영화"}
+                                </Link>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      )}
                       <div className="arrow-genre-details">
-                        <span className="genre-title">{props.genre}</span>
-                        <div className="sub-genres">
-                          <div className="ptrack-container">
-                            <div className="ptrack-content">
-                              <div className="nfDropDown theme-lakira">
-                                <div className="label">
-                                  장르
-                                  <span className="arrow"></span>
+                        <span className="genre-title">
+                          {props.genre ? props.genre : "시리즈"}
+                        </span>
+                        {!props.genre && (
+                          <div className="sub-genres">
+                            <div className="ptrack-container">
+                              <div className="ptrack-content">
+                                <div
+                                  className={`nfDropDown theme-lakira ${
+                                    subMenu ? "open" : ""
+                                  }`}
+                                >
+                                  <div
+                                    className="label"
+                                    onClick={() => setSubMenu((prev) => !prev)}
+                                  >
+                                    장르
+                                    <span className="arrow"></span>
+                                  </div>
+                                  {subMenu && (
+                                    <div
+                                      className="sub-menu theme-lakira"
+                                      style={{
+                                        opacity: "1",
+                                        transitionDuration: "150ms",
+                                      }}
+                                    >
+                                      <ul className="sub-menu-list multi-column">
+                                        {series.first.map((genre) => {
+                                          return (
+                                            <li className="sub-menu-item">
+                                              <Link
+                                                to={`/browse/series/${genre}`}
+                                                className="sub-menu-link"
+                                                onClick={() =>
+                                                  setSubMenu(false)
+                                                }
+                                              >
+                                                {genre}
+                                              </Link>
+                                            </li>
+                                          );
+                                        })}
+                                      </ul>
+                                      <ul className="sub-menu-list multi-column">
+                                        {series.second.map((genre) => {
+                                          return (
+                                            <li className="sub-menu-item">
+                                              <Link
+                                                to={`/browse/series/${genre}`}
+                                                className="sub-menu-link"
+                                                onClick={() =>
+                                                  setSubMenu(false)
+                                                }
+                                              >
+                                                {genre}
+                                              </Link>
+                                            </li>
+                                          );
+                                        })}
+                                      </ul>
+                                      <ul className="sub-menu-list multi-column">
+                                        {series.third.map((genre) => {
+                                          return (
+                                            <li className="sub-menu-item">
+                                              <Link
+                                                to={`/browse/series/${genre}`}
+                                                className="sub-menu-link"
+                                                onClick={() =>
+                                                  setSubMenu(false)
+                                                }
+                                              >
+                                                {genre}
+                                              </Link>
+                                            </li>
+                                          );
+                                        })}
+                                      </ul>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </div>
+                        )}
                       </div>
                     </>
                   )}

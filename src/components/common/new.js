@@ -3,6 +3,7 @@ import axios from "axios";
 import { ContainerStyle, TitleCardsStyle } from "./styled";
 import { store } from "index";
 import Card from "./card";
+import Indicator from "./indicator";
 
 export default function New(props) {
   const profileIdx = parseInt(sessionStorage.getItem("selectedProfile"));
@@ -10,6 +11,7 @@ export default function New(props) {
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const [newContents, setNewContents] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [indicator, setIndicator] = useState();
 
   const getNewContents = async () => {
     setIsLoading(true);
@@ -23,6 +25,8 @@ export default function New(props) {
         },
       });
       setNewContents(contents.data.result);
+      props.setModalInfo(contents.data.result);
+      setIndicator(Math.ceil(contents.data.result.length / 6));
       setIsLoading(false);
     } catch (e) {
       console.log(e);
@@ -41,7 +45,7 @@ export default function New(props) {
 
   return (
     <TitleCardsStyle>
-      <h2 className="row-header">
+      <h2 className="row-header" onMouseOver={() => props.setRow(props.row)}>
         <div className="row-title">
           <div className="row-header-title">신규 콘텐츠</div>
           <div className="arrow-header"></div>
@@ -55,10 +59,7 @@ export default function New(props) {
                     <b className="indicator-icon icon-left-caret"></b>
                   </span>
                   <ul className="pagination-indicator">
-                    <li className="active"></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
+                    {indicator > 1 && <Indicator indicator={indicator} />}
                   </ul>
                   <div className="slider-mask show-peek">
                     <div className="slider-content row-with-x-columns">

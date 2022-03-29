@@ -23,6 +23,7 @@ export default function ThisWeek(props) {
         },
       });
       setThisWeek(contents.data.result);
+      props.setModalInfo(contents.data.result);
       setIsLoading(false);
     } catch (e) {
       console.log(e);
@@ -41,7 +42,7 @@ export default function ThisWeek(props) {
 
   return (
     <TitleCardsStyle>
-      <h2 className="row-header">
+      <h2 className="row-header" onMouseOver={() => props.setRow(props.row)}>
         <div className="row-title">
           <div className="row-header-title">이번 주 공개 콘텐츠</div>
           <div className="arrow-header"></div>

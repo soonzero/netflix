@@ -148,7 +148,7 @@ export default function Logout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // setTimeout(() => navigate(`/`), 30000);
+    setTimeout(() => navigate(`/`), 10000);
   }, []);
 
   return (
@@ -169,7 +169,7 @@ export default function Logout() {
             참고로 알려드리면, 매번 Netflix에서 로그아웃하실 필요는 없습니다.
             공용 컴퓨터에서 이용한 경우에만 로그아웃하시면 됩니다.
           </p>
-          <p className="logout-body">30초 후 Netflix.com으로 이동합니다.</p>
+          <p className="logout-body">10초 후 Netflix.com으로 이동합니다.</p>
           <Link to="/" className="btn btn-logout btn-blue btn-large">
             지금 이동
           </Link>

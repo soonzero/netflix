@@ -9,7 +9,6 @@ import { ReactComponent as Rank7 } from "images/rank-7.svg";
 import { ReactComponent as Rank8 } from "images/rank-8.svg";
 import { ReactComponent as Rank9 } from "images/rank-9.svg";
 import { ReactComponent as Rank10 } from "images/rank-10.svg";
-import { useDispatch } from "react-redux";
 
 export default function Card(props) {
   const svgRank = (index) => {

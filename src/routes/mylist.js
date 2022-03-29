@@ -104,6 +104,7 @@ export default function MyList() {
   ];
 
   const getMyList = async () => {
+    setIsLoading(true);
     try {
       const list = await axios({
         method: "GET",
@@ -114,7 +115,6 @@ export default function MyList() {
         },
       });
       setMyList(list.data.result);
-      console.log(myList);
       setIsLoading(false);
     } catch (e) {
       console.log(e);
@@ -139,7 +139,7 @@ export default function MyList() {
               <div className="gallery-content">
                 <div>
                   <div className="gallery-lockups">
-                    <RowContainer items={myList} mylist />
+                    {myList && <RowContainer items={myList} mylist />}
                   </div>
                 </div>
               </div>

@@ -1,29 +1,31 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ContainerStyle, TitleCardsStyle } from "./styled";
+import { store } from "index";
 import Card from "./card";
 import Indicator from "./indicator";
 
-export default function NewSeason(props) {
+export default function List(props) {
   const profileIdx = parseInt(sessionStorage.getItem("selectedProfile"));
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
-  const [newSeason, setNewSeason] = useState();
+  const [list, setList] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [indicator, setIndicator] = useState();
 
-  const getNewSeasonContents = async () => {
+  const getList = async () => {
+    setIsLoading(true);
     try {
       const contents = await axios({
         method: "GET",
-        url: `/browse/soon/new-season?userIdx=${userIdx}&profileIdx=${profileIdx}`,
+        url: `/my-list?userIdx=${userIdx}&profileIdx=${profileIdx}`,
         baseURL: "https://rtflix.site/",
         headers: {
           "X-ACCESS-TOKEN": token,
         },
       });
-      setNewSeason(contents.data.result);
       setIndicator(Math.ceil(contents.data.result.length / 6));
+      setList(contents.data.result);
       setIsLoading(false);
     } catch (e) {
       console.log(e);
@@ -32,17 +34,19 @@ export default function NewSeason(props) {
 
   useEffect(() => {
     if (isLoading) {
-      getNewSeasonContents();
+      getList();
     } else {
       return;
     }
   }, []);
 
+  store.subscribe(getList);
+
   return (
     <TitleCardsStyle>
-      <h2 className="row-header">
+      <h2 className="row-header" onMouseOver={() => props.setRow(props.row)}>
         <div className="row-title">
-          <div className="row-header-title">새로운 시즌 공개 예정</div>
+          <div className="row-header-title">내가 찜한 콘텐츠</div>
           <div className="arrow-header"></div>
         </div>
         <ContainerStyle>
@@ -59,17 +63,18 @@ export default function NewSeason(props) {
                   <div className="slider-mask show-peek">
                     <div className="slider-content row-with-x-columns">
                       {!isLoading &&
-                        newSeason.map((content, index) => {
+                        list.map((content, index) => {
                           return (
                             <Card
                               key={index}
                               name={content.contentIdx}
-                              content={newSeason}
+                              content={content}
                               row={props.row}
                               index={index}
                               modal={props.modal}
                               setModal={props.setModal}
                               setIndex={props.setIndex}
+                              setContent={props.setContent}
                             />
                           );
                         })}

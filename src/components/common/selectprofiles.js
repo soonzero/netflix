@@ -374,18 +374,10 @@ export default function SelectProfiles(props) {
   const [isLoading, setIsLoading] = useState(true);
 
   const selectProfile = (event) => {
-    if (!props.manage) {
-      const selectedProfileIdx = event.currentTarget.getAttribute("profileidx");
-      sessionStorage.setItem(
-        "selectedProfile",
-        event.currentTarget.getAttribute("profileidx")
-      );
-      dispatch({ type: "SELECT_PROFILE", data: selectedProfileIdx });
-      setDisplay(false);
-      props.setIsLoading(false);
-    } else {
-      console.log("selected");
-    }
+    const profile = event.currentTarget.getAttribute("profileidx");
+    sessionStorage.setItem("selectedProfile", profile);
+    setDisplay(false);
+    props.setProfile(profile);
   };
 
   const onChangeHandler = (event) => {
@@ -414,10 +406,6 @@ export default function SelectProfiles(props) {
           },
         });
         if (newProfile.data.code == 1000) {
-          sessionStorage.setItem(
-            "profile",
-            JSON.stringify(newProfile.data.result)
-          );
           setAddProfile(false);
         }
       } catch (e) {
@@ -467,104 +455,105 @@ export default function SelectProfiles(props) {
         <MainStyle edit>
           {!addProfile && (
             <>
-              {getAllProfiles != null && (
-                <div className="centered-div list-profiles-container">
-                  <div className="list-profiles">
-                    <h1 className="profile-gate-label">
-                      {props.manage
-                        ? "프로필 관리"
-                        : "넷플릭스를 시청할 프로필을 선택하세요."}
-                    </h1>
-                    <ul className="choose-profile">
-                      {!isLoading &&
-                        profiles.map((p) => {
-                          return (
-                            <li
-                              className="profile"
-                              profileidx={p.profileIdx}
-                              onClick={selectProfile}
-                            >
-                              <a className="profile-link">
-                                <div className="avatar-wrapper">
-                                  <div
-                                    className="profile-icon"
-                                    style={{
-                                      backgroundImage: `url(${p.profileImageUrl})`,
-                                    }}
-                                  ></div>
-                                  {props.manage && (
-                                    <div className="svg-edit">
-                                      <svg
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="svg-icon svg-icon-edit"
-                                      >
-                                        <path
-                                          fillRule="evenodd"
-                                          clipRule="evenodd"
-                                          d="M22.2071 7.79285L15.2071 0.792847L13.7929 2.20706L20.7929 9.20706L22.2071 7.79285ZM13.2071 3.79285C12.8166 3.40232 12.1834 3.40232 11.7929 3.79285L2.29289 13.2928C2.10536 13.4804 2 13.7347 2 14V20C2 20.5522 2.44772 21 3 21H9C9.26522 21 9.51957 20.8946 9.70711 20.7071L19.2071 11.2071C19.5976 10.8165 19.5976 10.1834 19.2071 9.79285L13.2071 3.79285ZM17.0858 10.5L8.58579 19H4V14.4142L12.5 5.91417L17.0858 10.5Z"
-                                          fill="currentColor"
-                                        ></path>
-                                      </svg>
-                                    </div>
-                                  )}
-                                </div>
-                                <span className="profile-name">
-                                  {p.profileName}
-                                </span>
-                              </a>
-                              {p.lockPin != "N" && (
-                                <>
-                                  <svg
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="svg-icon svg-icon-profile-lock"
-                                  >
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M7 8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V9H19C20.1046 9 21 9.89543 21 11V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V11C3 9.89543 3.89543 9 5 9H7V8ZM15 8V9H9V8C9 6.34315 10.3431 5 12 5C13.6569 5 15 6.34315 15 8ZM5 11V19H19V11H5ZM11 13V17H13V13H11Z"
-                                      fill="currentColor"
-                                    ></path>
-                                  </svg>
-                                </>
-                              )}
-                            </li>
-                          );
-                        })}
-                      {profiles && profiles.length < 5 && (
-                        <li
-                          className="profile"
-                          onClick={() => setAddProfile(true)}
-                        >
-                          <a>
-                            <div className="add-profile-icon icon-tvui-add"></div>
-                            <span className="profile-name">프로필 추가</span>
-                          </a>
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                  <span>
-                    <a
-                      className={`profile-button ${
-                        props.manage && "preferred-action"
-                      }`}
-                      onClick={
-                        props.manage ? reselectProfile : goToManageProfiles
-                      }
-                    >
-                      {props.manage ? "완료" : "프로필 관리"}
-                    </a>
-                  </span>
+              {/* {getAllProfiles != null && ( */}
+              <div className="centered-div list-profiles-container">
+                <div className="list-profiles">
+                  <h1 className="profile-gate-label">
+                    {props.manage
+                      ? "프로필 관리"
+                      : "넷플릭스를 시청할 프로필을 선택하세요."}
+                  </h1>
+                  <ul className="choose-profile">
+                    {!isLoading &&
+                      profiles.map((p) => {
+                        return (
+                          <li
+                            key={p.profileIdx}
+                            className="profile"
+                            profileidx={p.profileIdx}
+                            onClick={selectProfile}
+                          >
+                            <a className="profile-link">
+                              <div className="avatar-wrapper">
+                                <div
+                                  className="profile-icon"
+                                  style={{
+                                    backgroundImage: `url(${p.profileImageUrl})`,
+                                  }}
+                                ></div>
+                                {props.manage && (
+                                  <div className="svg-edit">
+                                    <svg
+                                      width="24"
+                                      height="24"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      className="svg-icon svg-icon-edit"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        clipRule="evenodd"
+                                        d="M22.2071 7.79285L15.2071 0.792847L13.7929 2.20706L20.7929 9.20706L22.2071 7.79285ZM13.2071 3.79285C12.8166 3.40232 12.1834 3.40232 11.7929 3.79285L2.29289 13.2928C2.10536 13.4804 2 13.7347 2 14V20C2 20.5522 2.44772 21 3 21H9C9.26522 21 9.51957 20.8946 9.70711 20.7071L19.2071 11.2071C19.5976 10.8165 19.5976 10.1834 19.2071 9.79285L13.2071 3.79285ZM17.0858 10.5L8.58579 19H4V14.4142L12.5 5.91417L17.0858 10.5Z"
+                                        fill="currentColor"
+                                      ></path>
+                                    </svg>
+                                  </div>
+                                )}
+                              </div>
+                              <span className="profile-name">
+                                {p.profileName}
+                              </span>
+                            </a>
+                            {p.lockPin != "N" && (
+                              <>
+                                <svg
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="svg-icon svg-icon-profile-lock"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M7 8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V9H19C20.1046 9 21 9.89543 21 11V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V11C3 9.89543 3.89543 9 5 9H7V8ZM15 8V9H9V8C9 6.34315 10.3431 5 12 5C13.6569 5 15 6.34315 15 8ZM5 11V19H19V11H5ZM11 13V17H13V13H11Z"
+                                    fill="currentColor"
+                                  ></path>
+                                </svg>
+                              </>
+                            )}
+                          </li>
+                        );
+                      })}
+                    {profiles && profiles.length < 5 && (
+                      <li
+                        className="profile"
+                        onClick={() => setAddProfile(true)}
+                      >
+                        <a>
+                          <div className="add-profile-icon icon-tvui-add"></div>
+                          <span className="profile-name">프로필 추가</span>
+                        </a>
+                      </li>
+                    )}
+                  </ul>
                 </div>
-              )}
+                <span>
+                  <a
+                    className={`profile-button ${
+                      props.manage && "preferred-action"
+                    }`}
+                    onClick={
+                      props.manage ? reselectProfile : goToManageProfiles
+                    }
+                  >
+                    {props.manage ? "완료" : "프로필 관리"}
+                  </a>
+                </span>
+              </div>
+              {/* )} */}
             </>
           )}
           {addProfile && (
