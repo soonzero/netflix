@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import RowContainer from "components/common/rowcontainer";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const MyListStyle = styled.div`
   background-color: #141414;
@@ -30,6 +31,7 @@ const MyListStyle = styled.div`
 `;
 
 export default function MyList() {
+  const navigate = useNavigate();
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const selectedProfile = JSON.parse(sessionStorage.getItem("selectedProfile"));
@@ -123,6 +125,12 @@ export default function MyList() {
 
   useEffect(() => {
     getMyList();
+  }, []);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("user") == null) {
+      navigate(`/login`);
+    }
   }, []);
 
   return (

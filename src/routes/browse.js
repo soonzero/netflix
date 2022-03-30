@@ -93,15 +93,15 @@ export default function Browse() {
   }, [profile]);
 
   useEffect(() => {
+    if (sessionStorage.getItem("selectedProfile")) {
+      setIsLoading(false);
+    }
+
     if (sessionStorage.getItem("user") == null) {
       navigate(`/login`);
     } else {
       getMyList();
       setDisplay(false);
-    }
-
-    if (sessionStorage.getItem("selectedProfile")) {
-      setIsLoading(false);
     }
   }, []);
 
@@ -122,7 +122,7 @@ export default function Browse() {
 
   return (
     <HomeStyle>
-      {!display && (
+      {!display ? (
         <>
           {!isLoading && myList && (
             <div
@@ -237,6 +237,8 @@ export default function Browse() {
             />
           )}
         </>
+      ) : (
+        <Loading />
       )}
       {(modal == "mini" || modal == "detail") && (
         <Modal

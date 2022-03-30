@@ -1,13 +1,18 @@
 import React from "react";
 import axios from "axios";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AccountHeaderStyle } from "./styled";
 import { Link } from "react-router-dom";
 import { ReactComponent as Logo } from "images/nflogo.svg";
 
 export default function AccountHeader(props) {
+  const [menu, setMenu] = useState(false);
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
+  const profileIdx = sessionStorage.getItem("selectedProfile");
+  const profilesInfo = JSON.parse(sessionStorage.getItem("profiles"));
+  const myImage = profilesInfo.filter((p) => p.profileIdx == profileIdx);
+  const exceptMe = profilesInfo.filter((p) => p.profileIdx != profileIdx);
 
   const getUserInfo = async () => {
     try {
@@ -48,30 +53,25 @@ export default function AccountHeader(props) {
               <div id="profile-selector">
                 <div
                   className="current-profile"
-                  onMouseOver={() => props.setMenu((prev) => !prev)}
-                  onClick={() => props.setMenu((prev) => !prev)}
+                  onMouseOver={() => setMenu((prev) => !prev)}
+                  onClick={() => setMenu((prev) => !prev)}
                 >
-                  <img
-                    className="avatar"
-                    src={props.myImage[0].profileImageUrl}
-                  />
+                  <img className="avatar" src={myImage[0].profileImageUrl} />
                   <span className="profile-arrow"></span>
                   <span
-                    className={
-                      props.menu ? "trigger trigger-active" : "trigger"
-                    }
+                    className={menu ? "trigger trigger-active" : "trigger"}
                   ></span>
                 </div>
                 <div
                   className={
-                    props.menu
+                    menu
                       ? "profiles-container profiles-container-active"
                       : "profiles-container"
                   }
                 >
                   <div className="profile-selector">
                     <ul className="profiles structural">
-                      {props.exceptMe.map((p) => {
+                      {exceptMe.map((p) => {
                         return (
                           <li key={p.profileIdx} className="profile">
                             <a>

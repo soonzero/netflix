@@ -3,20 +3,18 @@ import Footer from "components/common/footer";
 import React, { useEffect, useState } from "react";
 import { AccountBodyStyle } from "components/common/styled";
 import AccountHeader from "components/common/accountheader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function YourAccount() {
-  const [menu, setMenu] = useState(false);
+  const navigate = useNavigate();
   const [info, setInfo] = useState();
   const [membershipInfo, setMembershipInfo] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
-  const profileIdx = sessionStorage.getItem("selectedProfile");
-  const profilesInfo = JSON.parse(sessionStorage.getItem("profiles"));
-  const myImage = profilesInfo.filter((p) => p.profileIdx == profileIdx);
-  const exceptMe = profilesInfo.filter((p) => p.profileIdx != profileIdx);
-  const profiles = JSON.parse(sessionStorage.getItem("profiles"));
+  const [profiles, setProfiles] = useState(
+    JSON.parse(sessionStorage.getItem("profiles"))
+  );
   const [expand, setExpand] = useState();
 
   const getMembershipInfo = async (index) => {
@@ -34,6 +32,11 @@ export default function YourAccount() {
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const setProfileIndex = (event) => {
+    sessionStorage.setItem("lock", event.currentTarget.getAttribute("name"));
+    navigate("/lock");
   };
 
   const membershipText = (type) => {
@@ -54,13 +57,15 @@ export default function YourAccount() {
     }
   }
 
+  useEffect(() => {
+    if (sessionStorage.getItem("user") == null) {
+      navigate(`/login`);
+    }
+  }, []);
+
   return (
     <div style={{ backgroundColor: "#f3f3f3" }}>
       <AccountHeader
-        setMenu={setMenu}
-        menu={menu}
-        exceptMe={exceptMe}
-        myImage={myImage}
         setInfo={setInfo}
         getMembershipInfo={getMembershipInfo}
         isLoading={isLoading}
@@ -297,6 +302,23 @@ export default function YourAccount() {
                                     <div>모든 관람등급</div>
                                   </div>
                                   <button className="profile-action-icons">
+                                    {p.lockPin != "N" && (
+                                      <svg
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="svg-icon svg-icon-profile-lock"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          clipRule="evenodd"
+                                          d="M7 8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V9H19C20.1046 9 21 9.89543 21 11V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V11C3 9.89543 3.89543 9 5 9H7V8ZM15 8V9H9V8C9 6.34315 10.3431 5 12 5C13.6569 5 15 6.34315 15 8ZM5 11V19H19V11H5ZM11 13V17H13V13H11Z"
+                                          fill="currentColor"
+                                        ></path>
+                                      </svg>
+                                    )}
                                     <svg
                                       width="24"
                                       height="24"
@@ -334,17 +356,17 @@ export default function YourAccount() {
                                     </a>
                                   </li>
                                   <li className="account-section-item">
-                                    <Link
-                                      to="/lock"
+                                    <a
                                       className="profile-link"
                                       name={p.profileIdx}
+                                      onClick={setProfileIndex}
                                     >
                                       <div className="profile-main">
                                         <h4>프로필 잠금</h4>
-                                        꺼짐
+                                        {p.lockPin != "N" ? "켜짐" : "꺼짐"}
                                       </div>
                                       <div className="profile-change">변경</div>
-                                    </Link>
+                                    </a>
                                   </li>
                                   <li className="account-section-item">
                                     <a className="profile-link">

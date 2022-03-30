@@ -3,16 +3,17 @@ import { useState, useEffect } from "react";
 import { ReactComponent as ModalClose } from "images/close-modal.svg";
 import { ReactComponent as ModalPlay } from "images/play-modal.svg";
 import { ReactComponent as ModalAddToMyList } from "images/addToMyList-modal.svg";
-import { ReactComponent as ModalAdded } from "images/added-modal.svg";
 import { ReactComponent as ModalDetail } from "images/detail-modal.svg";
 import { ReactComponent as ModalThumbsDownFilled } from "images/thumbsdownfilled-modal.svg";
 import { ReactComponent as ModalThumbsUpFilled } from "images/thumbsupfilled-modal.svg";
-import { ReactComponent as Red18 } from "images/red-18.svg";
 import styled from "styled-components";
 import axios from "axios";
 import { ModalStyle } from "./styled";
 import LikeContents from "./likecontents";
 import AddList from "./addlist";
+import Episodes from "./episodes";
+import Similar from "./similar";
+import Trailer from "./trailer";
 
 const BackDropStyle = styled.div`
   opacity: 0.7;
@@ -38,6 +39,13 @@ export default function Modal(props) {
   const [info, setInfo] = useState();
   const [like, setLike] = useState();
   const [hate, setHate] = useState();
+  const [season, setSeason] = useState();
+  const [creators, setCreators] = useState();
+  const [features, setFeatures] = useState();
+  const [trailers, setTrailers] = useState();
+  const [similar, setSimilar] = useState();
+  const [seasonNum, setSeasonNum] = useState(1);
+  const [episodes, setEpisodes] = useState();
 
   const positionX = (index) => {
     if (index == 0) {
@@ -49,7 +57,7 @@ export default function Modal(props) {
     }
   };
 
-  const selectAdded = async (index) => {
+  const getAllInfo = async (index) => {
     try {
       const check = await axios({
         method: "GET",
@@ -74,6 +82,85 @@ export default function Modal(props) {
         },
       });
       setInfo(contents.data.result);
+
+      const seasons = await axios({
+        method: "GET",
+        url: `detail/seasons-count?userIdx=${userIdx}&profileIdx=${profileIdx}&contentIdx=${index}`,
+        baseURL: "https://rtflix.site",
+        headers: {
+          "X-ACCESS-TOKEN": token,
+        },
+      });
+      setSeason(seasons.data.result);
+
+      const makers = await axios({
+        method: "GET",
+        url: `detail/directors-actors?userIdx=${userIdx}&profileIdx=${profileIdx}&contentIdx=${index}`,
+        baseURL: "https://rtflix.site",
+        headers: {
+          "X-ACCESS-TOKEN": token,
+        },
+      });
+      setCreators(makers.data.result);
+
+      const feature = await axios({
+        method: "GET",
+        url: `detail/genres-features?userIdx=${userIdx}&profileIdx=${profileIdx}&contentIdx=${index}`,
+        baseURL: "https://rtflix.site",
+        headers: {
+          "X-ACCESS-TOKEN": token,
+        },
+      });
+      setFeatures(feature.data.result);
+
+      const extraInfo = await axios({
+        method: "GET",
+        url: `detail/trailers?userIdx=${userIdx}&profileIdx=${profileIdx}&contentIdx=${index}`,
+        baseURL: "https://rtflix.site",
+        headers: {
+          "X-ACCESS-TOKEN": token,
+        },
+      });
+      if (extraInfo.data.code == 1000) {
+        setTrailers(extraInfo.data.result);
+      }
+
+      if (contents.data.result.type == "S") {
+        const similarContents = await axios({
+          method: "GET",
+          url: `detail/similar/series?userIdx=${userIdx}&profileIdx=${profileIdx}&contentIdx=${index}`,
+          baseURL: "https://rtflix.site",
+          headers: {
+            "X-ACCESS-TOKEN": token,
+          },
+        });
+
+        setSimilar(similarContents.data.result);
+      } else if (contents.data.result.type == "M") {
+        const similarContents = await axios({
+          method: "GET",
+          url: `detail/similar/movies?userIdx=${userIdx}&profileIdx=${profileIdx}&contentIdx=${index}`,
+          baseURL: "https://rtflix.site",
+          headers: {
+            "X-ACCESS-TOKEN": token,
+          },
+        });
+
+        setSimilar(similarContents.data.result);
+      }
+
+      if (contents.data.result.type == "S") {
+        const seriesEpisodes = await axios({
+          method: "GET",
+          url: `detail/episodes?userIdx=${userIdx}&profileIdx=${profileIdx}&contentIdx=${index}&seasonNumber=${seasonNum}`,
+          baseURL: "https://rtflix.site",
+          headers: {
+            "X-ACCESS-TOKEN": token,
+          },
+        });
+        setEpisodes(seriesEpisodes.data.result);
+      }
+
       setIsReady(true);
     } catch (e) {
       console.log(e);
@@ -121,7 +208,7 @@ export default function Modal(props) {
   };
 
   useEffect(() => {
-    selectAdded(props.content);
+    getAllInfo(props.content);
     getLike(props.content);
     getHate(props.content);
   }, [myList, like]);
@@ -135,11 +222,17 @@ export default function Modal(props) {
           >
             <div
               className={`preview-modal-container has-smaller-buttons ${modalStyle}`}
-              onMouseLeave={props.modal == "mini" && (() => props.setModal())}
+              onMouseLeave={
+                props.modal == "mini" ? () => props.setModal() : null
+              }
               style={{
                 width: props.modal == "mini" ? "595px" : "850px",
                 top:
-                  props.modal == "mini" ? `${1028 + 375 * props.row}px` : `2em`,
+                  props.modal == "detail"
+                    ? "2em"
+                    : props.noMain
+                    ? `${90 + 386.5 * props.row}px`
+                    : `${1028 + 375 * props.row}px`,
                 left:
                   props.modal == "mini"
                     ? `${-40 + 407 * props.index}px`
@@ -337,7 +430,7 @@ export default function Modal(props) {
                                     <span className="duration">
                                       {info.type == "M"
                                         ? info.runningTime
-                                        : "시즌 1개"}
+                                        : `시즌 ${season}개`}
                                     </span>
                                     <span className="player-feature-badge">
                                       HD
@@ -413,7 +506,7 @@ export default function Modal(props) {
                                     <span className="duration">
                                       {info.type == "M"
                                         ? info.runningTime
-                                        : "시즌 1개"}
+                                        : `시즌 ${season}개`}
                                     </span>
                                     <span className="player-feature-badge">
                                       HD
@@ -434,146 +527,61 @@ export default function Modal(props) {
                               <span className="preview-modal-tags-label">
                                 출연:&nbsp;
                               </span>
-                              <span className="tag-item">공유,&nbsp;</span>
-                              <span className="tag-item">김고은,&nbsp;</span>
-                              <span className="tag-item">이동욱,&nbsp;</span>
-                              <span className="tag-more">더 보기</span>
+                              <span className="tag-item">
+                                {creators.actorList}
+                              </span>
                             </div>
                             <div className="preview-modal-tags">
                               <span className="preview-modal-tags-label">
                                 장르:&nbsp;
                               </span>
                               <span className="tag-item">
-                                판타지 시리즈,&nbsp;
+                                {features.genreList}
                               </span>
-                              <span className="tag-item">
-                                로맨틱한 드라마,&nbsp;
-                              </span>
-                              <span className="tag-item">한국 드라마</span>
                             </div>
                             <div className="preview-modal-tags">
                               <span className="preview-modal-tags-label">
                                 시리즈 특징:&nbsp;
                               </span>
-                              <span className="tag-item">설렘주의,&nbsp;</span>
-                              <span className="tag-item">로맨틱</span>
+                              <span className="tag-item">
+                                {features.featureList}
+                              </span>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className="ptrack-container">
-                      <div className="ptrack-content">
-                        <div className="episode-selector">
-                          <div className="episode-selector-header">
-                            <h3 className="preview-modal-section-header episode-selector-label">
-                              회차
-                            </h3>
-                            <div className="episode-selector-dropdown"></div>
-                            <div className="episode-selector-season-name">
-                              시즌1
-                            </div>
-                          </div>
-                          <div className="episode-selector-container">
-                            <div className="title-card-list-container episode-item current">
-                              <div className="title-card-title-index">1</div>
-                              <div className="title-card-image-wrapper">
-                                <div className="ptrack-content">
-                                  <img src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/9pS1daC2n6UGc3dUogvWIPMR_OU/AAAABTYCEwNlJMLAc1HtN5Dstbnr2cifs41lCl3AGmel3JyzFml34KwvmFv0TditkjdK3zRs5g_d91dhZbl0HBC9xI47zYFm8ZH8jyjSK1TSZyPzcmBO.webp?r=d7f" />
-                                </div>
-                                <div className="title-card-play-icon">
-                                  <svg
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="title-card-playSVG"
-                                  >
-                                    <path
-                                      d="M4 2.69127C4 1.93067 4.81547 1.44851 5.48192 1.81506L22.4069 11.1238C23.0977 11.5037 23.0977 12.4963 22.4069 12.8762L5.48192 22.1849C4.81546 22.5515 4 22.0693 4 21.3087V2.69127Z"
-                                      fill="currentColor"
-                                    ></path>
-                                  </svg>
-                                </div>
-                              </div>
-                              <div className="title-card-list-metadata-wrapper">
-                                <div className="title-card-list-title">
-                                  <span className="title-card-title-text">
-                                    제1회
-                                  </span>
-                                  <span>
-                                    <span className="duration ellipsized">
-                                      88분
-                                    </span>
-                                  </span>
-                                </div>
-                                <p className="title-card-synopsis preview-modal-small-text">
-                                  <div className="ptrack-content">
-                                    거듭된 승전보로 백성의 영웅이었던 장군 김신.
-                                    간신배의 모함에 처형됐다가 신의 개입으로
-                                    환생한다. 그 이후 지긋하게 이어지는 생.
-                                    불멸을 끝내려면, 신부를 찾아야 한다.
-                                  </div>
-                                </p>
+                    {info.type == "S" ? (
+                      <div className="ptrack-container">
+                        <div className="ptrack-content">
+                          <div className="episode-selector">
+                            <div className="episode-selector-header">
+                              <h3 className="preview-modal-section-header episode-selector-label">
+                                회차
+                              </h3>
+                              <div className="episode-selector-dropdown"></div>
+                              <div className="episode-selector-season-name">
+                                시즌1
                               </div>
                             </div>
-                            <div className="title-card-list-container episode-item">
-                              <div className="title-card-title-index">1</div>
-                              <div className="title-card-image-wrapper">
-                                <div className="ptrack-content">
-                                  <img src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/9pS1daC2n6UGc3dUogvWIPMR_OU/AAAABTYCEwNlJMLAc1HtN5Dstbnr2cifs41lCl3AGmel3JyzFml34KwvmFv0TditkjdK3zRs5g_d91dhZbl0HBC9xI47zYFm8ZH8jyjSK1TSZyPzcmBO.webp?r=d7f" />
-                                </div>
-                                <div className="title-card-play-icon">
-                                  <svg
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="title-card-playSVG"
-                                  >
-                                    <path
-                                      d="M4 2.69127C4 1.93067 4.81547 1.44851 5.48192 1.81506L22.4069 11.1238C23.0977 11.5037 23.0977 12.4963 22.4069 12.8762L5.48192 22.1849C4.81546 22.5515 4 22.0693 4 21.3087V2.69127Z"
-                                      fill="currentColor"
-                                    ></path>
-                                  </svg>
-                                </div>
-                              </div>
-                              <div className="title-card-list-metadata-wrapper">
-                                <div className="title-card-list-title">
-                                  <span className="title-card-title-text">
-                                    제1회
-                                  </span>
-                                  <span>
-                                    <span className="duration ellipsized">
-                                      88분
-                                    </span>
-                                  </span>
-                                </div>
-                                <p className="title-card-synopsis preview-modal-small-text">
-                                  <div className="ptrack-content">
-                                    거듭된 승전보로 백성의 영웅이었던 장군 김신.
-                                    간신배의 모함에 처형됐다가 신의 개입으로
-                                    환생한다. 그 이후 지긋하게 이어지는 생.
-                                    불멸을 끝내려면, 신부를 찾아야 한다.
+                            <div className="episode-selector-container">
+                              {episodes.map((e) => {
+                                return <Episodes contents={e} />;
+                              })}
+                              <div className="section-divider collapsed">
+                                <button className="color-supplementary section-expand-button has-icon round circle-button">
+                                  <div className="circle-button-container">
+                                    <div className="small circle-button-svg-container">
+                                      <ModalDetail />
+                                    </div>
                                   </div>
-                                </p>
+                                </button>
                               </div>
-                            </div>
-                            <div className="section-divider collapsed">
-                              <button className="color-supplementary section-expand-button has-icon round circle-button">
-                                <div className="circle-button-container">
-                                  <div className="small circle-button-svg-container">
-                                    <ModalDetail />
-                                  </div>
-                                </div>
-                              </button>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    ) : null}
                     <div className="ptrack-container">
                       <div className="ptrack-content">
                         <div className="ptrack-container">
@@ -586,162 +594,9 @@ export default function Modal(props) {
                               style={{ maxHeight: "65em" }}
                             >
                               <div className="more-like-this-container">
-                                <div className="title-card-container more-like-this-item">
-                                  <div className="title-card-image-wrapper has-duration">
-                                    <div className="ptrack-content">
-                                      <img src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABS4YHLe-H-44Kt1_HqnWSGeW8cAhFk6aVGJkiwJ_NlfShBobFt0_PVw4fwjtjBK79eOywuaYCwq5U02UQOcpPmh4HtA.webp?r=3ad" />
-                                    </div>
-                                    <div className="title-card-play-icon">
-                                      <svg
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="title-card-playSVG"
-                                      >
-                                        <path
-                                          d="M4 2.69127C4 1.93067 4.81547 1.44851 5.48192 1.81506L22.4069 11.1238C23.0977 11.5037 23.0977 12.4963 22.4069 12.8762L5.48192 22.1849C4.81546 22.5515 4 22.0693 4 21.3087V2.69127Z"
-                                          fill="currentColor"
-                                        ></path>
-                                      </svg>
-                                    </div>
-                                    <span className="duration ellipsized">
-                                      <span className="test-dur-string">
-                                        시즌 1개
-                                      </span>
-                                    </span>
-                                  </div>
-                                  <div className="title-card-metadata-wrapper">
-                                    <div className="video-metadata-container-container">
-                                      <div className="video-metadata-container title-card-video-metadata video-metadata-two-lines">
-                                        <div className="video-metadata-first-line">
-                                          <span className="match-score-wrapper">
-                                            <div className="show-match-score rating-inner">
-                                              <div className="meta-thumb-container thumb-down">
-                                                <ModalThumbsDownFilled />
-                                              </div>
-                                              <div className="meta-thumb-container thumb-up">
-                                                <ModalThumbsUpFilled />
-                                              </div>
-                                              <span className="match-score">
-                                                97% 일치
-                                              </span>
-                                            </div>
-                                          </span>
-                                        </div>
-                                        <div className="video-metadata-second-line">
-                                          <div className="year">2019</div>
-                                          <span className="maturity-rating">
-                                            <span>15+</span>
-                                          </span>
-                                        </div>
-                                      </div>
-                                      <div>
-                                        <div className="my-list-button">
-                                          <div className="ptrack-content">
-                                            <button className="color-supplementary has-icon round circle-button">
-                                              <div className="circle-button-container">
-                                                <div className="small circle-button-svg-container">
-                                                  <ModalAddToMyList />
-                                                </div>
-                                              </div>
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <p className="title-card-synopsis preview-modal-small-text">
-                                      <div className="ptrack-container">
-                                        <div className="ptrack-content">
-                                          저승에 가기 전에 꼭 들른다는 망자들의
-                                          핫스팟. 성격 괴팍한 사장이 천 년 넘게
-                                          영업을 이어가고 있는 호텔 델루나에 새
-                                          지배인이 온다. 근데 저기, 산
-                                          사람이시라고요?
-                                        </div>
-                                      </div>
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="title-card-container more-like-this-item">
-                                  <div className="title-card-image-wrapper has-duration">
-                                    <div className="ptrack-content">
-                                      <img src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABS4YHLe-H-44Kt1_HqnWSGeW8cAhFk6aVGJkiwJ_NlfShBobFt0_PVw4fwjtjBK79eOywuaYCwq5U02UQOcpPmh4HtA.webp?r=3ad" />
-                                    </div>
-                                    <div className="title-card-play-icon">
-                                      <svg
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="title-card-playSVG"
-                                      >
-                                        <path
-                                          d="M4 2.69127C4 1.93067 4.81547 1.44851 5.48192 1.81506L22.4069 11.1238C23.0977 11.5037 23.0977 12.4963 22.4069 12.8762L5.48192 22.1849C4.81546 22.5515 4 22.0693 4 21.3087V2.69127Z"
-                                          fill="currentColor"
-                                        ></path>
-                                      </svg>
-                                    </div>
-                                    <span className="duration ellipsized">
-                                      <span className="test-dur-string">
-                                        시즌 1개
-                                      </span>
-                                    </span>
-                                  </div>
-                                  <div className="title-card-metadata-wrapper">
-                                    <div className="video-metadata-container-container">
-                                      <div className="video-metadata-container title-card-video-metadata video-metadata-two-lines">
-                                        <div className="video-metadata-first-line">
-                                          <span className="match-score-wrapper">
-                                            <div className="show-match-score rating-inner">
-                                              <div className="meta-thumb-container thumb-down">
-                                                <ModalThumbsDownFilled />
-                                              </div>
-                                              <div className="meta-thumb-container thumb-up">
-                                                <ModalThumbsUpFilled />
-                                              </div>
-                                              <span className="match-score">
-                                                97% 일치
-                                              </span>
-                                            </div>
-                                          </span>
-                                        </div>
-                                        <div className="video-metadata-second-line">
-                                          <div className="year">2019</div>
-                                          <span className="maturity-rating">
-                                            <span>15+</span>
-                                          </span>
-                                        </div>
-                                      </div>
-                                      <div>
-                                        <div className="my-list-button">
-                                          <div className="ptrack-content">
-                                            <button className="color-supplementary has-icon round circle-button">
-                                              <div className="circle-button-container">
-                                                <div className="small circle-button-svg-container">
-                                                  <ModalAddToMyList />
-                                                </div>
-                                              </div>
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <p className="title-card-synopsis preview-modal-small-text">
-                                      <div className="ptrack-container">
-                                        <div className="ptrack-content">
-                                          저승에 가기 전에 꼭 들른다는 망자들의
-                                          핫스팟. 성격 괴팍한 사장이 천 년 넘게
-                                          영업을 이어가고 있는 호텔 델루나에 새
-                                          지배인이 온다. 근데 저기, 산
-                                          사람이시라고요?
-                                        </div>
-                                      </div>
-                                    </p>
-                                  </div>
-                                </div>
+                                {similar.map((c) => {
+                                  return <Similar contents={c} />;
+                                })}
                               </div>
                             </div>
                             <div className="section-divider collapsed">
@@ -757,6 +612,24 @@ export default function Modal(props) {
                         </div>
                       </div>
                     </div>
+                    {trailers != undefined ? (
+                      <div className="ptrack-container">
+                        <div className="ptrack-content">
+                          <div className="trailers-and-more-wrapper">
+                            <div className="trailers-and-more-header">
+                              <h3 className="preview-modal-section-header">
+                                예고편 및 다른 영상
+                              </h3>
+                            </div>
+                            <div className="trailers-and-more-container">
+                              {trailers.map((t) => {
+                                return <Trailer content={t} />;
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
                     <div className="ptrack-container">
                       <div className="ptrack-content">
                         <div className="about-wrapper">
@@ -771,10 +644,7 @@ export default function Modal(props) {
                                 크리에이터:&nbsp;
                               </span>
                               <span className="tag-item">
-                                <a>김은숙,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>이응복</a>
+                                <a>{creators.directorList}</a>
                               </span>
                             </div>
                             <div className="preview-modal-tags">
@@ -782,31 +652,7 @@ export default function Modal(props) {
                                 출연:&nbsp;
                               </span>
                               <span className="tag-item">
-                                <a>공유,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>김고은,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>이동욱,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>유인나,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>육성재,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>이엘,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>조우진,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>정해인,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>황석정</a>
+                                <a>{creators.actorList}</a>
                               </span>
                             </div>
                             <div className="preview-modal-tags">
@@ -814,16 +660,7 @@ export default function Modal(props) {
                                 장르:&nbsp;
                               </span>
                               <span className="tag-item">
-                                <a>판타지 시리즈,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>로맨틱한 드라마,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>한국 드라마,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>드라마</a>
+                                <a>{features.genreList}</a>
                               </span>
                             </div>
                             <div className="preview-modal-tags">
@@ -831,10 +668,7 @@ export default function Modal(props) {
                                 시리즈 특징:&nbsp;
                               </span>
                               <span className="tag-item">
-                                <a>설렘주의,&nbsp;</a>
-                              </span>
-                              <span className="tag-item">
-                                <a>로맨틱 </a>
+                                <a>{features.featureList}</a>
                               </span>
                             </div>
                             <div className="maturity-rating-wrapper">
@@ -849,7 +683,6 @@ export default function Modal(props) {
                               </span>
                             </div>
                             <div className="broadcaster">
-                              <div>tvN</div>
                               <div>{info.productionYear}</div>
                             </div>
                           </div>

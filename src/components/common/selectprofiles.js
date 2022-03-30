@@ -43,6 +43,22 @@ const MainStyle = styled.div`
     }
   }
 
+  a {
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+
+    &:hover {
+      .profile-name {
+        color: #e5e5e5;
+      }
+
+      .profile-icon::after {
+        border-color: #e5e5e5;
+      }
+    }
+  }
+
   .centered-div {
     z-index: 100;
     position: absolute;
@@ -54,6 +70,7 @@ const MainStyle = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    box-pack: center;
 
     .list-profiles {
       max-width: 80%;
@@ -75,6 +92,128 @@ const MainStyle = styled.div`
         position: relative;
       }
     }
+  }
+
+  .profile-pin-prompt {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    transition: opacity 300ms ease-out;
+
+    .pin-input-container {
+      border: none;
+      box-flex: 0;
+      flex: 0 1 auto;
+      display: flex;
+      color: #000;
+      margin: 0.5em;
+      direction: ltr;
+    }
+
+    .pin-number-input {
+      width: 3.5em;
+      height: 3.5em;
+      font-size: 49px;
+      padding: 0.2em;
+      margin: 0.2em;
+      text-align: center;
+      border: 0.05em solid white;
+      box-sizing: border-box;
+      box-shadow: none;
+      background: 0 0;
+      color: white;
+      transition: transform 0.1s ease-out, -webkit-transform 0.1s ease-out,
+        -moz-transform 0.1s ease-out, -o-transform 0.1s ease-out;
+      line-height: 3;
+
+      &:focus {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .pin-input-error {
+    min-height: 30px;
+    color: #b9090b;
+    font-size: 1.3vw;
+    margin: 1em 0;
+  }
+
+  .profile-pin-prompt-forgot {
+    position: absolute;
+    bottom: 5vw;
+    font-size: 1.3vw;
+
+    .nf-flat-button {
+      color: #ccc;
+    }
+  }
+
+  .nf-flat-button {
+    padding: 0.57em 1.35em;
+
+    .nf-flat-button-text {
+      vertical-align: middle;
+      padding: 0;
+      margin: 0;
+      top: auto;
+      white-space: nowrap;
+    }
+  }
+
+  .nf-icon-button {
+    display: inline-block;
+    position: relative;
+  }
+
+  .nf-flat-button-type-borderless {
+    font-size: inherit;
+    margin: 0;
+    background: 0 0;
+    box-shadow: none;
+    text-transform: none;
+    font-weight: 400;
+    border: 0.1em solid transparent;
+  }
+
+  .profile-pin-dismiss {
+    position: absolute;
+    top: 100px;
+    right: 30px;
+
+    a {
+      display: block;
+    }
+
+    svg {
+      width: 2vw;
+      height: 2vw;
+      color: #ccc;
+    }
+  }
+
+  .profile-pin-prompt-status {
+    color: #aaa;
+    font-size: 1.3vw;
+  }
+
+  .profile-pin-prompt-label {
+    width: 100%;
+    color: white;
+    font-size: 2.5vw;
+    opacity: 1;
+    font-weight: 700;
+    transition: opacity 400ms ease-out;
+    margin: 0.5em 0 1em 0;
+  }
+
+  .profile-pin-prompt-pad-wrapper {
+    display: flex;
+    box-align: center;
+    align-items: center;
+    box-orient: vertical;
+    box-direction: normal;
+    flex-direction: column;
   }
 
   li.profile {
@@ -372,21 +511,85 @@ export default function SelectProfiles(props) {
   const [addProfile, setAddProfile] = useState(false);
   const [name, setName] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [unlock, setUnlock] = useState(false);
+  const [one, setOne] = useState();
+  const [two, setTwo] = useState();
+  const [three, setThree] = useState();
+  const [four, setFour] = useState();
 
-  const selectProfile = (event) => {
+  const selectProfile = async (event) => {
     const profile = event.currentTarget.getAttribute("profileidx");
-    sessionStorage.setItem("selectedProfile", profile);
-    setDisplay(false);
-    props.setProfile(profile);
+    const pinNumber = event.currentTarget.getAttribute("unlock");
+    if (pinNumber != "N") {
+      sessionStorage.setItem("unlock", profile);
+      setUnlock(true);
+    } else {
+      sessionStorage.setItem("selectedProfile", profile);
+      setDisplay(false);
+      props.setProfile(profile);
+    }
+  };
+
+  const checkPIN = async () => {
+    const profile = sessionStorage.getItem("unlock");
+    const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+    const token = JSON.parse(sessionStorage.getItem("user")).jwt;
+    if (
+      one.length == 1 &&
+      two.length == 1 &&
+      three.length == 1 &&
+      four.length == 1
+    ) {
+      try {
+        console.log("시작");
+        const unlock = await axios({
+          method: "POST",
+          url: "/profile",
+          baseURL: "https://rtflix.site",
+          headers: {
+            "X-ACCESS-TOKEN": token,
+          },
+          data: {
+            userIdx: userIdx,
+            profileIdx: profile,
+            profileLockPin: one + two + three + four,
+          },
+        });
+        if (unlock.data.code == "3019") {
+          alert("비밀번호가 틀렸습니다.");
+          setOne();
+          setTwo();
+          setThree();
+          setFour();
+        } else if (unlock.data.code == 1000) {
+          sessionStorage.setItem("selectedProfile", profile);
+          setUnlock(false);
+          setDisplay(false);
+          props.setProfile(profile);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      return;
+    }
   };
 
   const onChangeHandler = (event) => {
     setName(event.target.value);
   };
 
-  useEffect(() => {
-    setName(name);
-  }, [name]);
+  const inputHandler = (event) => {
+    if (event.target.name == "one") {
+      setOne(event.target.value);
+    } else if (event.target.name == "two") {
+      setTwo(event.target.value);
+    } else if (event.target.name == "three") {
+      setThree(event.target.value);
+    } else {
+      setFour(event.target.value);
+    }
+  };
 
   const addNewProfile = async () => {
     const token = JSON.parse(sessionStorage.getItem("user")).jwt;
@@ -435,10 +638,6 @@ export default function SelectProfiles(props) {
     }
   };
 
-  useEffect(() => {
-    getAllProfiles();
-  }, [addProfile]);
-
   const reselectProfile = () => {
     sessionStorage.removeItem("selectedProfile");
     dispatch({ type: "UNSELECT_PROFILE" });
@@ -449,6 +648,26 @@ export default function SelectProfiles(props) {
     navigate(`/ManageProfiles`);
   };
 
+  useEffect(() => {
+    setName(name);
+  }, [name]);
+
+  useEffect(() => {
+    getAllProfiles();
+  }, [addProfile]);
+
+  useEffect(() => {
+    if (unlock) {
+      setOne(one);
+      setTwo(two);
+      setThree(three);
+      setFour(four);
+      checkPIN();
+    } else {
+      return;
+    }
+  }, [one, two, three, four]);
+
   return (
     <>
       {display && (
@@ -456,103 +675,191 @@ export default function SelectProfiles(props) {
           {!addProfile && (
             <>
               {/* {getAllProfiles != null && ( */}
-              <div className="centered-div list-profiles-container">
-                <div className="list-profiles">
-                  <h1 className="profile-gate-label">
-                    {props.manage
-                      ? "프로필 관리"
-                      : "넷플릭스를 시청할 프로필을 선택하세요."}
-                  </h1>
-                  <ul className="choose-profile">
-                    {!isLoading &&
-                      profiles.map((p) => {
-                        return (
-                          <li
-                            key={p.profileIdx}
-                            className="profile"
-                            profileidx={p.profileIdx}
-                            onClick={selectProfile}
-                          >
-                            <a className="profile-link">
-                              <div className="avatar-wrapper">
-                                <div
-                                  className="profile-icon"
-                                  style={{
-                                    backgroundImage: `url(${p.profileImageUrl})`,
-                                  }}
-                                ></div>
-                                {props.manage && (
-                                  <div className="svg-edit">
-                                    <svg
-                                      width="24"
-                                      height="24"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      className="svg-icon svg-icon-edit"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M22.2071 7.79285L15.2071 0.792847L13.7929 2.20706L20.7929 9.20706L22.2071 7.79285ZM13.2071 3.79285C12.8166 3.40232 12.1834 3.40232 11.7929 3.79285L2.29289 13.2928C2.10536 13.4804 2 13.7347 2 14V20C2 20.5522 2.44772 21 3 21H9C9.26522 21 9.51957 20.8946 9.70711 20.7071L19.2071 11.2071C19.5976 10.8165 19.5976 10.1834 19.2071 9.79285L13.2071 3.79285ZM17.0858 10.5L8.58579 19H4V14.4142L12.5 5.91417L17.0858 10.5Z"
-                                        fill="currentColor"
-                                      ></path>
-                                    </svg>
-                                  </div>
-                                )}
-                              </div>
-                              <span className="profile-name">
-                                {p.profileName}
-                              </span>
-                            </a>
-                            {p.lockPin != "N" && (
-                              <>
-                                <svg
-                                  width="24"
-                                  height="24"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="svg-icon svg-icon-profile-lock"
-                                >
-                                  <path
-                                    fill-rule="evenodd"
-                                    clip-rule="evenodd"
-                                    d="M7 8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V9H19C20.1046 9 21 9.89543 21 11V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V11C3 9.89543 3.89543 9 5 9H7V8ZM15 8V9H9V8C9 6.34315 10.3431 5 12 5C13.6569 5 15 6.34315 15 8ZM5 11V19H19V11H5ZM11 13V17H13V13H11Z"
-                                    fill="currentColor"
-                                  ></path>
-                                </svg>
-                              </>
-                            )}
-                          </li>
-                        );
-                      })}
-                    {profiles && profiles.length < 5 && (
-                      <li
-                        className="profile"
-                        onClick={() => setAddProfile(true)}
+              {unlock ? (
+                <div className="centered-div profile-pin-prompt">
+                  <div className="profile-pin-dismiss">
+                    <Link to="/">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="svg-icon svg-icon-close"
                       >
-                        <a>
-                          <div className="add-profile-icon icon-tvui-add"></div>
-                          <span className="profile-name">프로필 추가</span>
-                        </a>
-                      </li>
-                    )}
-                  </ul>
+                        <path
+                          fillRule="evenodd"
+                          clipRule="evenodd"
+                          d="M2.29297 3.70706L10.5859 12L2.29297 20.2928L3.70718 21.7071L12.0001 13.4142L20.293 21.7071L21.7072 20.2928L13.4143 12L21.7072 3.70706L20.293 2.29285L12.0001 10.5857L3.70718 2.29285L2.29297 3.70706Z"
+                          fill="currentColor"
+                        ></path>
+                      </svg>
+                    </Link>
+                  </div>
+                  <div className="profile-pin-prompt-status">
+                    프로필 잠금 기능이 현재 켜져 있습니다.
+                  </div>
+                  <h1 className="profile-pin-prompt-label">
+                    이 프로필을 이용하려면 PIN 번호를 입력하세요.
+                  </h1>
+                  <div className="profile-pin-prompt-pad-wrapper">
+                    <div className="pin-input-container">
+                      <input
+                        type="tel"
+                        pattern="[0-9]"
+                        name="one"
+                        maxLength={1}
+                        className="pin-number-input"
+                        tabIndex={0}
+                        value={one}
+                        onChange={inputHandler}
+                      />
+                      <input
+                        type="tel"
+                        pattern="[0-9]"
+                        name="two"
+                        maxLength={1}
+                        className="pin-number-input"
+                        tabIndex={0}
+                        value={two}
+                        onChange={inputHandler}
+                      />
+                      <input
+                        type="tel"
+                        pattern="[0-9]"
+                        name="three"
+                        maxLength={1}
+                        className="pin-number-input"
+                        tabIndex={0}
+                        value={three}
+                        onChange={inputHandler}
+                      />
+                      <input
+                        type="tel"
+                        pattern="[0-9]"
+                        name="four"
+                        maxLength={1}
+                        className="pin-number-input"
+                        tabIndex={0}
+                        value={four}
+                        onChange={inputHandler}
+                      />
+                    </div>
+                    <p className="pin-input-error">
+                      PIN 번호는 4자리여야 합니다.
+                    </p>
+                  </div>
+                  <div className="profile-pin-prompt-forgot">
+                    <a
+                      className="nf-icon-button nf-flat-button nf-flat-button-type-borderless nf-flat-button-uppercase no-icon"
+                      tabIndex={0}
+                    >
+                      <span className="nf-flat-button-text">
+                        PIN 번호를 잊으셨나요?
+                      </span>
+                    </a>
+                  </div>
                 </div>
-                <span>
-                  <a
-                    className={`profile-button ${
-                      props.manage && "preferred-action"
-                    }`}
-                    onClick={
-                      props.manage ? reselectProfile : goToManageProfiles
-                    }
-                  >
-                    {props.manage ? "완료" : "프로필 관리"}
-                  </a>
-                </span>
-              </div>
+              ) : (
+                <div className="centered-div list-profiles-container">
+                  <div className="list-profiles">
+                    <h1 className="profile-gate-label">
+                      {props.manage
+                        ? "프로필 관리"
+                        : "넷플릭스를 시청할 프로필을 선택하세요."}
+                    </h1>
+                    <ul className="choose-profile">
+                      {!isLoading &&
+                        profiles.map((p) => {
+                          return (
+                            <li
+                              key={p.profileIdx}
+                              unlock={p.lockPin}
+                              className="profile"
+                              profileidx={p.profileIdx}
+                              onClick={selectProfile}
+                            >
+                              <a className="profile-link">
+                                <div className="avatar-wrapper">
+                                  <div
+                                    className="profile-icon"
+                                    style={{
+                                      backgroundImage: `url(${p.profileImageUrl})`,
+                                    }}
+                                  ></div>
+                                  {props.manage && (
+                                    <div className="svg-edit">
+                                      <svg
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="svg-icon svg-icon-edit"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          clipRule="evenodd"
+                                          d="M22.2071 7.79285L15.2071 0.792847L13.7929 2.20706L20.7929 9.20706L22.2071 7.79285ZM13.2071 3.79285C12.8166 3.40232 12.1834 3.40232 11.7929 3.79285L2.29289 13.2928C2.10536 13.4804 2 13.7347 2 14V20C2 20.5522 2.44772 21 3 21H9C9.26522 21 9.51957 20.8946 9.70711 20.7071L19.2071 11.2071C19.5976 10.8165 19.5976 10.1834 19.2071 9.79285L13.2071 3.79285ZM17.0858 10.5L8.58579 19H4V14.4142L12.5 5.91417L17.0858 10.5Z"
+                                          fill="currentColor"
+                                        ></path>
+                                      </svg>
+                                    </div>
+                                  )}
+                                </div>
+                                <span className="profile-name">
+                                  {p.profileName}
+                                </span>
+                              </a>
+                              {p.lockPin != "N" && (
+                                <>
+                                  <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="svg-icon svg-icon-profile-lock"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      clipRule="evenodd"
+                                      d="M7 8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V9H19C20.1046 9 21 9.89543 21 11V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V11C3 9.89543 3.89543 9 5 9H7V8ZM15 8V9H9V8C9 6.34315 10.3431 5 12 5C13.6569 5 15 6.34315 15 8ZM5 11V19H19V11H5ZM11 13V17H13V13H11Z"
+                                      fill="currentColor"
+                                    ></path>
+                                  </svg>
+                                </>
+                              )}
+                            </li>
+                          );
+                        })}
+                      {profiles && profiles.length < 5 && (
+                        <li
+                          className="profile"
+                          onClick={() => setAddProfile(true)}
+                        >
+                          <a>
+                            <div className="add-profile-icon icon-tvui-add"></div>
+                            <span className="profile-name">프로필 추가</span>
+                          </a>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                  <span>
+                    <a
+                      className={`profile-button ${
+                        props.manage && "preferred-action"
+                      }`}
+                      onClick={
+                        props.manage ? reselectProfile : goToManageProfiles
+                      }
+                    >
+                      {props.manage ? "완료" : "프로필 관리"}
+                    </a>
+                  </span>
+                </div>
+              )}
               {/* )} */}
             </>
           )}

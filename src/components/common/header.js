@@ -616,7 +616,6 @@ export default function Header(props) {
         const array = allProfiles.data.result;
         sessionStorage.setItem("profiles", JSON.stringify(array));
         const filteredArray = array.filter((p) => p.profileIdx == profileIdx);
-        console.log(filteredArray);
         setImage(filteredArray[0].profileImageUrl);
         setProfiles(array.filter((p) => p.profileIdx != profileIdx));
         setIsLoading(false);

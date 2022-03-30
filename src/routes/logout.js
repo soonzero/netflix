@@ -148,7 +148,11 @@ export default function Logout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setTimeout(() => navigate(`/`), 10000);
+    const timer = setTimeout(() => navigate(`/`), 10000);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, []);
 
   return (

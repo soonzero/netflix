@@ -3,7 +3,6 @@ import Footer from "components/common/footer";
 import styled from "styled-components";
 import Header from "components/signup/Header";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
 const ScreenStyle = styled.div`

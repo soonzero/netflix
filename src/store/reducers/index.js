@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import membership from "./membership";
 import email from "./email";
-import profiles from "./profiles";
+import lock from "./lock";
 import selected from "./selected";
 import user from "./user";
 import content from "./content";
@@ -9,7 +9,7 @@ import content from "./content";
 const rootReducer = combineReducers({
   membership,
   email,
-  profiles,
+  lock,
   selected,
   user,
   content,

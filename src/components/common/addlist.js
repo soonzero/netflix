@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
+import { useState } from "react";
 import { ReactComponent as ModalAddToMyList } from "images/addToMyList-modal.svg";
 import { ReactComponent as ModalAdded } from "images/added-modal.svg";
 
@@ -7,11 +8,14 @@ export default function AddList(props) {
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const profileIdx = JSON.parse(sessionStorage.getItem("selectedProfile"));
+  const [myList, setMyList] = useState(props.myList);
 
   const addOrDelete = async (index) => {
     if (props.myList == 1) {
+      setMyList(0);
       deleteMyList(index);
     } else {
+      setMyList(1);
       addToMyList(index);
     }
   };
@@ -55,6 +59,8 @@ export default function AddList(props) {
       console.log(e);
     }
   };
+
+  useEffect(() => {}, [myList]);
 
   return (
     <div className="my-list-button">

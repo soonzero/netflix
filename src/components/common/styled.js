@@ -127,7 +127,8 @@ mark,
 audio,
 video,
 select,
-button {
+button,
+input {
   font-family: "Netflix Sans";
   margin: 0;
   padding: 0;
@@ -135,6 +136,7 @@ button {
   font-size: 100%;
   vertical-align: baseline;
   word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
 }
 
 [class*="icon-"] {
@@ -1764,6 +1766,63 @@ export const ModalStyle = styled.div`
       line-height: 20px;
     }
   }
+
+  .trailers-and-more-wrapper {
+    background-color: #181818;
+
+    .trailers-and-more-container {
+      display: grid;
+      grid-gap: 1rem;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: stretch;
+      justify-items: stretch;
+      box-align: stretch;
+
+      .title-card-image-wrapper {
+        max-height: 70%;
+      }
+
+      .title-card-container {
+        min-height: unset;
+      }
+
+      .trailers-and-more-item {
+        .title-card-play-icon {
+          background-image: none;
+        }
+
+        .title-card-metadata-wrapper {
+          background-color: inherit;
+        }
+      }
+    }
+  }
+
+  .title-card-container {
+    .title-card-metadata-wrapper {
+      .title-card-title {
+        padding: 1rem;
+
+        .title-card-title-text {
+          color: white;
+          font-size: 1rem;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+
+  .trailers-and-container {
+    .title-card-image-wrapper {
+      position: relative;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        display: block;
+      }
+    }
+  }
 `;
 
 export const AccountHeaderStyle = styled.div`
@@ -2355,6 +2414,274 @@ export const AccountBodyStyle = styled.div`
       margin: 4px 0;
       font-size: 1.2em;
       color: #333;
+    }
+  }
+`;
+
+export const LockBodyStyle = styled.div`
+  margin: 20px 30px 0;
+  padding: 0;
+
+  a {
+    color: #0080ff;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+
+  .responsive-account-container {
+    display: block;
+    min-width: 300px;
+    min-height: 400px;
+    position: relative;
+    color: #333;
+    -webkit-tap-highlight-color: transparent;
+    margin: 0 auto;
+    overflow-wrap: anywhere;
+    width: 95%;
+    max-width: 1024px;
+    font-size: 1rem;
+  }
+
+  .profile-hub-header {
+    display: flex;
+    box-align: center;
+    align-items: center;
+    margin-bottom: 30px;
+
+    h1 {
+      flex-grow: 1;
+      margin: 0;
+      font-size: 2rem;
+      line-height: 1.3125;
+      color: #333;
+      font-weight: 400;
+    }
+
+    img {
+      width: 50px;
+      height: 50px;
+      align-self: center;
+      border-radius: 4px;
+    }
+  }
+
+  .password-check-subheader {
+    font-size: 1.1rem;
+    font-weight: 400;
+    margin: 0.75em 0 0.25em;
+    line-height: 1.3352272727;
+  }
+
+  .password-check-input-wrapper {
+    display: flex;
+    align-items: center;
+    margin: 15px 0 0;
+    box-align: center;
+
+    .password-input {
+      margin: 0 15px 0 0;
+      padding: 0;
+      min-height: 90px;
+
+      & > .ui-text-input {
+        width: 300px;
+      }
+    }
+
+    .password-check-forgot {
+      margin-top: -45px;
+    }
+  }
+
+  .profile-lock-container {
+    .profile-lock-subheader {
+      margin-top: 18px;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      line-height: 31.5px;
+    }
+
+    .ui-binary-input {
+      margin-bottom: 20px;
+    }
+
+    .tooltip {
+      padding-top: 2px;
+      margin-left: 10px;
+      position: relative;
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+        color: #077af5;
+      }
+    }
+
+    .pin-input-container {
+      margin-bottom: 10px;
+    }
+
+    .pin-input-error {
+      margin-bottom: 20px;
+    }
+  }
+
+  .pin-input-error {
+    color: red;
+    margin: 0;
+  }
+
+  .pin-input-container {
+    display: inline-block;
+    border: 1px solid #b1b4b7;
+    direction: ltr;
+    vertical-align: middle;
+  }
+
+  .pin-number-input {
+    font-size: 1.7rem;
+    padding: 0.2em;
+    margin: 0;
+    width: 1.2em;
+    text-align: center;
+    min-height: 38px;
+    min-width: 38px;
+    border: none;
+    line-height: 1.2681985294;
+
+    & + .pin-number-input {
+      border-left: 1px solid #ccc; /*rtl:ignore*/
+    }
+  }
+
+  .ui-input-label {
+    position: relative;
+  }
+
+  .ui-label {
+    font-size: 1rem;
+    font-weight: 400;
+    margin-right: 15px;
+    color: grey;
+    display: block;
+  }
+
+  .ui-text-input {
+    display: inline-block;
+    font-size: 1rem;
+    padding: 10px 11px;
+    border: 1px solid #b3b3b3;
+    border-radius: 2px;
+    appearance: none;
+    max-width: 500px;
+    color: black;
+    height: 44px;
+    outline: none;
+  }
+
+  .ui-text-input.error {
+    border-color: #b00500;
+  }
+
+  .btn {
+    position: relative;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    font-weight: 400;
+    letter-spacing: 0.1px;
+    border-radius: 2px;
+    text-align: center;
+    border: 0;
+  }
+
+  .btn.btn-small {
+    display: inline-block;
+    font-size: 13px;
+    padding: 12px 13px;
+    margin: 6.5px;
+    margin-left: 0;
+    line-height: 1;
+    width: auto;
+    min-width: 98px;
+    min-height: 37px;
+  }
+
+  .btn-bar {
+    padding: 0 0 1rem;
+    clear: both;
+  }
+
+  .btn-blue {
+    background-color: #0080ff;
+    color: white;
+    background-image: linear-gradient(to bottom, #0080ff, #0277ec);
+    box-shadow: 0 1px 0 rgb(0 0 0 / 55%);
+  }
+
+  .btn-gray {
+    color: black;
+    background-color: #e6e6e6;
+    background-image: linear-gradient(to bottom, #e6e6e6, #ddd);
+    box-shadow: 0 1px 0 rgb(0 0 0 / 20%);
+  }
+
+  .ui-binary-input {
+    position: relative;
+    padding-left: 36px;
+    user-select: none;
+    font-size: 1rem;
+
+    input[type="checkbox"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+
+      &:checked + label::after {
+        position: absolute;
+        color: #0080ff;
+        font-family: "Netflix Icon";
+        content: "\\e804";
+        font-size: 28px;
+        top: -2px;
+        left: -36px;
+        line-height: 1.1997857143;
+      }
+
+      &:checked + label::before {
+        box-shadow: 0 0 5px 2px rgb(150 200 255 / 60%);
+        border-color: grey;
+      }
+
+      & + label {
+        color: #333;
+        position: relative;
+        display: block;
+        line-height: 19.2px;
+        padding: 6px 0;
+
+        &::before {
+          width: 25px;
+          height: 25px;
+          content: "";
+          position: absolute;
+          display: block;
+          top: 2px;
+          left: -36px;
+          padding: 0;
+          border: 1px solid #b3b3b3;
+          background-color: white;
+          box-sizing: content-box;
+        }
+      }
     }
   }
 `;
