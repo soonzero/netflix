@@ -9,9 +9,9 @@ import { ReactComponent as Rank7 } from "images/rank-7.svg";
 import { ReactComponent as Rank8 } from "images/rank-8.svg";
 import { ReactComponent as Rank9 } from "images/rank-9.svg";
 import { ReactComponent as Rank10 } from "images/rank-10.svg";
-import { ServerStyleSheet } from "styled-components";
 
 export default function Card(props) {
+  // Local Variable
   const svgRank = (index) => {
     if (index == 0) {
       return <Rank1 />;
@@ -36,6 +36,7 @@ export default function Card(props) {
     }
   };
 
+  // Functions
   const setModalAndIdx = (event) => {
     const contentIdx = event.currentTarget.getAttribute("name");
     if (props.notYet) {

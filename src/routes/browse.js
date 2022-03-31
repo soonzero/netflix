@@ -12,10 +12,14 @@ import Modal from "components/common/modal";
 import List from "components/common/list";
 import Theme from "components/common/theme";
 import axios from "axios";
-import Loading from "components/common/loading";
 
 export default function Browse() {
+  // Module
   const navigate = useNavigate();
+
+  // Local Variables
+
+  // Local States
   const [display, setDisplay] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [scrollY, setScrollY] = useState(window.scrollY);
@@ -31,6 +35,44 @@ export default function Browse() {
   const [modalInfo, setModalInfo] = useState();
   const [yet, setYet] = useState();
   const [releaseDate, setReleaseDate] = useState();
+
+  // Life Cycle
+  useEffect(() => {
+    getMyList();
+  }, [profile]);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("user") == null) {
+      navigate(`/login`);
+    } else {
+      if (sessionStorage.getItem("selectedProfile")) {
+        setIsLoading(false);
+      }
+      getMyList();
+      setDisplay(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    setScrollY(scrollY);
+    function scrollListener() {
+      window.addEventListener("scroll", handleScroll);
+    }
+    if (modal == "detail" || modal == "mini") {
+      window.removeEventListener("scroll", handleScroll);
+    } else {
+      scrollListener();
+    }
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [scrollY]);
+
+  // Functions
+  function handleScroll() {
+    setScrollY(window.scrollY);
+  }
 
   const getMyList = async () => {
     const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
@@ -54,42 +96,6 @@ export default function Browse() {
       return;
     }
   };
-
-  useEffect(() => {
-    getMyList();
-  }, [profile]);
-
-  useEffect(() => {
-    if (sessionStorage.getItem("user") == null) {
-      navigate(`/login`);
-    } else {
-      if (sessionStorage.getItem("selectedProfile")) {
-        setIsLoading(false);
-      }
-      getMyList();
-      setDisplay(false);
-    }
-  }, []);
-
-  function handleScroll() {
-    setScrollY(window.scrollY);
-  }
-
-  useEffect(() => {
-    setScrollY(scrollY);
-    function scrollListener() {
-      window.addEventListener("scroll", handleScroll);
-    }
-    if (modal == "detail" || modal == "mini") {
-      window.removeEventListener("scroll", handleScroll);
-    } else {
-      scrollListener();
-    }
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [scrollY]);
 
   return (
     <>

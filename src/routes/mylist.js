@@ -2,43 +2,36 @@ import Header from "components/common/header";
 import Loading from "components/common/loading";
 import Footer from "components/common/footer";
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import RowContainer from "components/common/rowcontainer";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-const MyListStyle = styled.div`
-  background-color: #141414;
-  color: white;
-
-  .main-view {
-    position: relative;
-    min-height: 1000px;
-    z-index: 0;
-
-    .gallery {
-      margin: 0;
-      margin-top: 3.5%;
-      padding-top: 4.375rem;
-      overflow: hidden;
-      min-height: 1000px;
-
-      .gallery-content {
-        position: relative;
-        z-index: 0;
-      }
-    }
-  }
-`;
+import { MyListStyle } from "components/common/styled";
 
 export default function MyList() {
+  // Module
   const navigate = useNavigate();
+
+  // Local Variables
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const selectedProfile = JSON.parse(sessionStorage.getItem("selectedProfile"));
+
+  // Local States
   const [isLoading, setIsLoading] = useState(true);
   const [myList, setMyList] = useState();
 
+  // Life Cycle
+  useEffect(() => {
+    getMyList();
+  }, []);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("user") == null) {
+      navigate(`/login`);
+    }
+  }, []);
+
+  // Functions
   const getMyList = async () => {
     setIsLoading(true);
     try {
@@ -56,16 +49,6 @@ export default function MyList() {
       console.log(e);
     }
   };
-
-  useEffect(() => {
-    getMyList();
-  }, []);
-
-  useEffect(() => {
-    if (sessionStorage.getItem("user") == null) {
-      navigate(`/login`);
-    }
-  }, []);
 
   return (
     <MyListStyle>

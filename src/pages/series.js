@@ -13,19 +13,29 @@ import Theme from "components/common/theme";
 import Loading from "components/common/loading";
 
 export default function Series() {
+  // Local Variables
+  const profileIdx = sessionStorage.getItem("selectedProfile");
+  const token = JSON.parse(sessionStorage.getItem("user")).jwt;
+  const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+
+  // Local States
   const { genre } = useParams();
   const [modal, setModal] = useState(false);
   const [index, setIndex] = useState();
   const [content, setContent] = useState();
   const [row, setRow] = useState();
   const [modalInfo, setModalInfo] = useState();
-  const profileIdx = sessionStorage.getItem("selectedProfile");
-  const token = JSON.parse(sessionStorage.getItem("user")).jwt;
-  const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const [isLoading, setIsLoading] = useState(true);
   const [yet, setYet] = useState();
   const [releaseDate, setReleaseDate] = useState();
 
+  // Life Cycle
+  useEffect(() => {
+    setIsLoading(true);
+    getContents();
+  }, [genre]);
+
+  // Function
   const getContents = async () => {
     setIsLoading(true);
     if (genre) {
@@ -40,6 +50,7 @@ export default function Series() {
             },
           });
           setContent(contents.data.result);
+          console.log(contents.data);
           setIsLoading(false);
         } catch (e) {
           console.log(e);
@@ -77,11 +88,6 @@ export default function Series() {
       }
     }
   };
-
-  useEffect(() => {
-    setIsLoading(true);
-    getContents();
-  }, [genre]);
 
   return (
     <HomeStyle>

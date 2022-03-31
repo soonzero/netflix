@@ -1,31 +1,39 @@
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import { HomeStyle } from "components/common/styled";
 import Footer from "components/common/footer";
 import Header from "components/common/header";
 import MainView from "components/common/mainview";
-import React from "react";
-import { useState, useEffect } from "react";
 import Top10 from "components/common/top10";
-import { HomeStyle } from "components/common/styled";
-import List from "components/common/list";
 import Modal from "components/common/modal";
-import { useParams } from "react-router-dom";
-import axios from "axios";
 import Theme from "components/common/theme";
 import Loading from "components/common/loading";
 
 export default function Movies() {
+  // Local Variables
+  const profileIdx = sessionStorage.getItem("selectedProfile");
+  const token = JSON.parse(sessionStorage.getItem("user")).jwt;
+  const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+
+  // Local States
   const [modal, setModal] = useState(false);
   const [index, setIndex] = useState();
   const [content, setContent] = useState();
   const [row, setRow] = useState();
   const [modalInfo, setModalInfo] = useState();
-  const { genre } = useParams();
-  const profileIdx = sessionStorage.getItem("selectedProfile");
-  const token = JSON.parse(sessionStorage.getItem("user")).jwt;
-  const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const [isLoading, setIsLoading] = useState(true);
   const [yet, setYet] = useState();
   const [releaseDate, setReleaseDate] = useState();
+  const { genre } = useParams();
 
+  // Life Cycle
+  useEffect(() => {
+    setIsLoading(true);
+    getContents();
+  }, [genre]);
+
+  // Function
   const getContents = async () => {
     setIsLoading(true);
     if (genre) {
@@ -77,11 +85,6 @@ export default function Movies() {
       }
     }
   };
-
-  useEffect(() => {
-    setIsLoading(true);
-    getContents();
-  }, [genre]);
 
   return (
     <HomeStyle>

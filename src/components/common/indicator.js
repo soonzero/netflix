@@ -1,6 +1,7 @@
 import React from "react";
 
 export default function Indicator(props) {
+  //Function
   const indicator = (num) => {
     const elements = [];
     for (let i = 0; i < num - 1; i++) {

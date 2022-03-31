@@ -2,11 +2,14 @@ import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { AccountHeaderStyle } from "./styled";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ReactComponent as Logo } from "images/nflogo.svg";
 
 export default function AccountHeader(props) {
-  const [menu, setMenu] = useState(false);
+  // Module
+  const navigate = useNavigate();
+
+  // Local variables
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const profileIdx = sessionStorage.getItem("selectedProfile");
@@ -14,6 +17,17 @@ export default function AccountHeader(props) {
   const myImage = profilesInfo.filter((p) => p.profileIdx == profileIdx);
   const exceptMe = profilesInfo.filter((p) => p.profileIdx != profileIdx);
 
+  // Local State
+  const [menu, setMenu] = useState(false);
+
+  // Life Cycle
+  useEffect(() => {
+    if (props.isLoading) {
+      getUserInfo();
+    }
+  }, []);
+
+  // Functions
   const getUserInfo = async () => {
     try {
       const info = await axios({
@@ -33,11 +47,10 @@ export default function AccountHeader(props) {
     }
   };
 
-  useEffect(() => {
-    if (props.isLoading) {
-      getUserInfo();
-    }
-  }, []);
+  const signOut = () => {
+    sessionStorage.clear();
+    navigate(`/logout`);
+  };
 
   return (
     <AccountHeaderStyle>
@@ -95,7 +108,7 @@ export default function AccountHeader(props) {
                     <li>
                       <a>고객 센터</a>
                     </li>
-                    <li className="sign-out-link">
+                    <li className="sign-out-link" onClick={signOut}>
                       <a>넷플릭스에서 로그아웃</a>
                     </li>
                   </ul>

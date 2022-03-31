@@ -1,17 +1,20 @@
 import React from "react";
-import { ReactComponent as ModalThumb } from "images/thumb-modal.svg";
-import { ReactComponent as ModalThumbsDown } from "images/thumbsdown-modal.svg";
-import { ReactComponent as ModalThumbsUp } from "images/thumbsup-modal.svg";
-import { ReactComponent as ModalThumbsWayUp } from "images/thumbswayup-modal.svg";
-import { ReactComponent as ModalThumbsDownFilled } from "images/thumbsdownfilled-modal.svg";
-import { ReactComponent as ModalThumbsUpFilled } from "images/thumbsupfilled-modal.svg";
 import axios from "axios";
+import { ReactComponent as ThumbSVG } from "images/thumb.svg";
+import { ReactComponent as ThumbsDownSVG } from "images/thumbsdown.svg";
+import { ReactComponent as ThumbsUpSVG } from "images/thumbsup.svg";
+import { ReactComponent as ThumbsWayUpSVG } from "images/thumbswayup.svg";
+import { ReactComponent as ThumbsDownFilledSVG } from "images/thumbsdownfilled.svg";
+import { ReactComponent as ThumbsUpFilledSVG } from "images/thumbsupfilled.svg";
+import { ReactComponent as ThumbsCloseSVG } from "images/thumbclose.svg";
 
 export default function LikeContents(props) {
+  // Local Variables
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const profileIdx = sessionStorage.getItem("selectedProfile");
 
+  // Functions
   const controlLike = (index) => {
     if (props.like == 0) {
       likeContent(index);
@@ -124,11 +127,11 @@ export default function LikeContents(props) {
         <div className="circle-button-container">
           <div className="small circle-button-svg-container">
             {props.like == 1 ? (
-              <ModalThumbsUpFilled />
+              <ThumbsUpFilledSVG />
             ) : props.hate == 1 ? (
-              <ModalThumbsDownFilled />
+              <ThumbsDownFilledSVG />
             ) : (
-              <ModalThumb />
+              <ThumbSVG />
             )}
           </div>
         </div>
@@ -142,12 +145,12 @@ export default function LikeContents(props) {
                   className="color-supplemental small round thumbs-down-button"
                   onClick={() => controlHate(props.content)}
                 >
-                  <ModalThumbsDown />
+                  <ThumbsDownSVG />
                 </button>
               </div>
               <div className="thumb-in-thumb">
                 <button className="color-supplemental small round thumbs-up-button">
-                  <ModalThumbsUp />
+                  <ThumbsUpSVG />
                 </button>
               </div>
               <div className="thumb-in-thumb">
@@ -155,7 +158,7 @@ export default function LikeContents(props) {
                   className="color-supplemental small round thumbs-way-up-button"
                   onClick={() => controlLike(props.content)}
                 >
-                  <ModalThumbsWayUp />
+                  <ThumbsWayUpSVG />
                 </button>
               </div>
             </div>
@@ -163,21 +166,7 @@ export default function LikeContents(props) {
               <button className="color-supplemental small has-icon round thumbs-close-button-container">
                 <div className="circle-button-container">
                   <div className="small circle-button-svg-container">
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="Hawkins-Icon Hawkins-Icon-Standard"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M2.29297 3.70706L10.5859 12L2.29297 20.2928L3.70718 21.7071L12.0001 13.4142L20.293 21.7071L21.7072 20.2928L13.4143 12L21.7072 3.70706L20.293 2.29285L12.0001 10.5857L3.70718 2.29285L2.29297 3.70706Z"
-                        fill="currentColor"
-                      ></path>
-                    </svg>
+                    <ThumbsCloseSVG />
                   </div>
                 </div>
               </button>

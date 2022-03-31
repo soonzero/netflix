@@ -6,13 +6,26 @@ import Card from "./card";
 import Indicator from "./indicator";
 
 export default function Theme(props) {
+  // Local Variables
   const profileIdx = sessionStorage.getItem("selectedProfile");
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+
+  // Local States
   const [contents, setContents] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [indicator, setIndicator] = useState();
 
+  // Life Cycle
+  useEffect(() => {
+    if (isLoading) {
+      getContents(props.theme);
+    } else {
+      return;
+    }
+  }, []);
+
+  // Function
   const getContents = async (theme) => {
     setIsLoading(true);
     if (props.category == "series") {
@@ -27,6 +40,7 @@ export default function Theme(props) {
             },
           });
           setContents(contents.data.result);
+          console.log(contents.data.result);
           props.setModalInfo(contents.data.result);
           setIsLoading(false);
         } catch (e) {
@@ -86,22 +100,22 @@ export default function Theme(props) {
     }
   };
 
-  useEffect(() => {
-    if (isLoading) {
-      getContents(props.theme);
-    } else {
-      return;
-    }
-  }, []);
-
   return (
     <TitleCardsStyle>
       {!isLoading && (
-        <h2 className="row-header" onMouseOver={() => props.setRow(props.row)}>
-          <div className="row-title">
-            <div className="row-header-title">{props.theme}</div>
-            <div className="arrow-header"></div>
-          </div>
+        <>
+          <h2
+            className="row-header"
+            onMouseOver={() => props.setRow(props.row)}
+          >
+            <a className="row-title">
+              <div className="row-header-title">넷플릭스의 새로운 콘텐츠</div>
+              <div className="arrow-header">
+                <div className="see-all">모두 보기</div>
+                <div className="arrow-chevron icon-right"></div>
+              </div>
+            </a>
+          </h2>
           <ContainerStyle>
             <div className="row-container">
               <div className="ptrack-container">
@@ -142,9 +156,8 @@ export default function Theme(props) {
                 </div>
               </div>
             </div>
-            {/* {props.mylist && sliderItems(props.items)} */}
           </ContainerStyle>
-        </h2>
+        </>
       )}
     </TitleCardsStyle>
   );

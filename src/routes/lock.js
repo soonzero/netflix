@@ -4,12 +4,17 @@ import { LockBodyStyle } from "components/common/styled";
 import Footer from "components/common/footer";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ReactComponent as CheckSVG } from "images/check-pin.svg";
 
 export default function Lock(props) {
+  // Module
   const navigate = useNavigate();
+
+  // Local Variables
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
-  const profileIdx = sessionStorage.getItem("selectedProfile");
+
+  // Local States
   const [selected, setSelected] = useState();
   const [password, setPassword] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -22,6 +27,29 @@ export default function Lock(props) {
   const [three, setThree] = useState();
   const [four, setFour] = useState();
 
+  // Life Cycle
+  useEffect(() => {
+    getProfile();
+  }, []);
+
+  useEffect(() => {
+    setPassword(password);
+  }, [password]);
+
+  useEffect(() => {
+    setOne(one);
+    setTwo(two);
+    setThree(three);
+    setFour(four);
+  }, [one, two, three, four]);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("user") == null) {
+      navigate(`/login`);
+    }
+  }, []);
+
+  // Functions
   const getProfile = async () => {
     if (isLoading) {
       try {
@@ -144,27 +172,6 @@ export default function Lock(props) {
     navigate("/YourAccount");
   };
 
-  useEffect(() => {
-    getProfile();
-  }, []);
-
-  useEffect(() => {
-    setPassword(password);
-  }, [password]);
-
-  useEffect(() => {
-    setOne(one);
-    setTwo(two);
-    setThree(three);
-    setFour(four);
-  }, [one, two, three, four]);
-
-  useEffect(() => {
-    if (sessionStorage.getItem("user") == null) {
-      navigate(`/login`);
-    }
-  }, []);
-
   return (
     <div style={{ backgroundColor: "#f3f3f3" }}>
       <AccountHeader />
@@ -228,21 +235,7 @@ export default function Lock(props) {
                           {info.profileName} 프로필을 이용하려면 PIN 번호를
                           입력하도록 합니다.
                           <span className="tooltip">
-                            <svg
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="svg-icon svg-icon-info"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3ZM1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12ZM13 10V18H11V10H13ZM12 8.5C12.8284 8.5 13.5 7.82843 13.5 7C13.5 6.17157 12.8284 5.5 12 5.5C11.1716 5.5 10.5 6.17157 10.5 7C10.5 7.82843 11.1716 8.5 12 8.5Z"
-                                fill="currentColor"
-                              ></path>
-                            </svg>
+                            <CheckSVG />
                           </span>
                         </label>
                       </div>

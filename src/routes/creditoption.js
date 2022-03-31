@@ -1,379 +1,56 @@
 import React, { useEffect, useState } from "react";
 import Footer from "components/common/footer";
-import Header from "components/signup/Header";
-import styled from "styled-components";
+import Header from "components/signup/header";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-
-const ScreenStyle = styled.div`
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  word-break: keep-all;
-
-  b {
-    font-weight: 700;
-  }
-
-  .main-container {
-    padding-bottom: 95px;
-    flex-grow: 1;
-    background-color: white;
-    width: 100%;
-    overflow: hidden;
-    word-break: keep-all;
-
-    .center-container {
-      padding: 20px 32px 60px;
-      margin: 0 auto 15px;
-      max-width: 978px;
-
-      .payment-form {
-        .payment-form-container {
-          text-align: center;
-          max-width: 440px;
-          margin: 0 auto;
-
-          & > div:first-child {
-            text-align: left;
-            .step-header-container {
-              display: block;
-
-              .step-header {
-                display: inline-block;
-
-                .step-indicator {
-                  display: block;
-                  font-size: 0.8125rem;
-                  line-height: 1.4615384615;
-                }
-
-                .step-title {
-                  font-size: 2rem;
-                  display: inline-block;
-                  font-weight: 700;
-                  margin: 0 0 0.4em;
-                  line-height: 1.3125;
-                }
-              }
-            }
-          }
-
-          .field-container {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 30px;
-            text-align: left;
-
-            .logos {
-              display: inline-block;
-              white-space: nowrap;
-              margin-top: -4px;
-              overflow: auto;
-              vertical-align: middle;
-              height: 30px;
-
-              .logo-icon {
-                margin-top: 4px;
-                margin-right: 6px;
-                margin-bottom: 1px;
-                width: auto;
-                background-image: none;
-                height: 25px;
-              }
-            }
-
-            .form {
-              & > ul {
-                text-align: left;
-                margin-top: 10px;
-
-                .form-list {
-                  list-style: none;
-                  margin-bottom: 10px;
-
-                  .form-input {
-                    position: relative;
-                    max-width: 500px;
-
-                    .input-placement {
-                      position: relative;
-
-                      .input {
-                        input {
-                          height: 60px;
-                          padding: 10px 10px 0;
-                          width: 100%;
-                          outline: none;
-                          font-size: 1rem;
-                          border: 1px solid #8c8c8c;
-                          border-radius: 2px;
-
-                          &#username {
-                            border-color: ${(props) =>
-                              props.username ? "#5fa53f" : "#b92d2b"};
-                          }
-
-                          &#card-number {
-                            border-color: ${(props) =>
-                              props.card ? "#5fa53f" : "#b92d2b"};
-                          }
-                        }
-
-                        label {
-                          position: absolute;
-                          color: #8c8c8c;
-                          top: 6px;
-                          left: 10px;
-                          font-weight: 600;
-                          font-size: 0.8125rem;
-                          line-height: 1.3076923077;
-                        }
-                      }
-                    }
-
-                    .input-error {
-                      font-size: 0.8125rem;
-                      line-height: 1.3076923077;
-                      color: #b92d2b;
-                    }
-                  }
-                }
-              }
-            }
-
-            .order-info {
-              background-color: #f4f4f4;
-              border-radius: 5px;
-              list-style-type: none;
-              margin: 0;
-              padding: 0;
-              text-align: left;
-
-              .order-info-item {
-                .item-container {
-                  display: flex;
-
-                  .item-content {
-                    flex: 1 1 auto;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    min-height: 72px;
-                    padding: 7px 14px;
-                    overflow: hidden;
-
-                    .item-title {
-                      font-size: 1rem;
-                      font-weight: 600;
-                      color: #333;
-                      line-height: 1;
-                    }
-
-                    .item-desc {
-                      padding-top: 5px;
-                      font-size: 1rem;
-                      font-weight: 400;
-                      color: #737373;
-                    }
-                  }
-
-                  .order-info-item-button {
-                    font-size: 1rem;
-                    appearance: none;
-                    background: 0 0;
-                    border: none;
-                    margin: 0;
-                    padding: 14px;
-                    flex: 0 0 auto;
-                    font-weight: 600;
-                    color: #0071eb;
-                    cursor: pointer;
-
-                    &:hover {
-                      text-decoration: underline;
-                    }
-                  }
-                }
-              }
-            }
-
-            .tou-container {
-              margin-top: 20px;
-              box-sizing: content-box;
-              color: #333333;
-
-              .terms-of-use {
-                box-sizing: content-box;
-
-                .consent-input {
-                  box-sizing: border-box;
-                  position: relative;
-                  padding-left: 36px;
-                  min-height: 32px;
-                  font-size: 1rem;
-                  max-width: 500px;
-
-                  input {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    opacity: 0;
-                    box-sizing: border-box;
-                    padding: 0;
-                    margin: 0;
-                  }
-
-                  .checkbox-label {
-                    margin: 8px 0;
-                    position: relative;
-                    display: block;
-                    line-height: 1.2;
-                    padding: 6px 0;
-                    box-sizing: content-box;
-                    font-weight: 400;
-
-                    &.bold {
-                      font-weight: 600;
-                    }
-
-                    &::before {
-                      content: "";
-                      position: absolute;
-                      display: block;
-                      top: 2px;
-                      left: -36px;
-                      padding: 0;
-                      border: 1px solid #333333;
-                      width: 25px;
-                      height: 25px;
-                      box-sizing: content-box;
-                    }
-
-                    &::after {
-                      display: block;
-                      position: absolute;
-                      top: 7px;
-                      left: -32px;
-                      width: 14px;
-                      height: 6px;
-                      color: #0071eb;
-                      border-bottom: 4px solid;
-                      border-left: 4px solid;
-                      transform: rotate(-45deg);
-                      box-sizing: content-box;
-                    }
-
-                    &.all::after {
-                      ${(props) => props.all && `content: "";`}
-                    }
-                    &.tou::after {
-                      ${(props) => props.tou && `content: "";`}
-                    }
-                    &.third-party::after {
-                      ${(props) => props.tp && `content: "";`}
-                    }
-                    &.abroad::after {
-                      ${(props) => props.abroad && `content: "";`}
-                    }
-                    &.gateway::after {
-                      ${(props) => props.gateway && `content: "";`}
-                    }
-                    &.anytime::after {
-                      ${(props) => props.anytime && `content: "";`}
-                    }
-
-                    span {
-                      line-height: 1.2;
-                      text-align: center;
-                      vertical-align: middle;
-                    }
-                  }
-                }
-
-                .checkboxes {
-                  box-sizing: border-box;
-
-                  .checkboxes-heading {
-                    box-sizing: content-box;
-                    border-bottom: 1px solid #ccc;
-                    padding-bottom: 0.75em;
-                    margin-bottom: 1.5rem;
-                  }
-
-                  & > ul {
-                    padding: 0;
-                    margin: 0;
-
-                    & > li {
-                      list-style: none;
-                      margin-left: 0;
-                      margin-bottom: 5px;
-                    }
-                  }
-
-                  .error-summary {
-                    color: #e50914;
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        .submit-button-container {
-          display: block;
-          max-width: 440px;
-          margin: 0 auto;
-          margin-top: 24px;
-          text-align: center;
-
-          .submit-button {
-            color: white;
-            min-height: 64px;
-            font-weight: 500;
-            font-size: 1.5rem;
-            line-height: 1;
-            border: none;
-            border-radius: 4px;
-            background-color: #e50914;
-            width: 100%;
-            cursor: pointer;
-
-            &:hover {
-              background-color: #f6121d;
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+import { RegistrationStyle } from "components/common/styled";
 
 export default function CreditOption() {
+  // Module
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // Global Variable
+  const membership = useSelector((state) => state.membership.membership);
+
+  // Local Variables
+  const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+
+  // Local States
   const [cardNumber, setCardNumber] = useState("");
   const [validCard, setValidCard] = useState(false);
   const [username, setUsername] = useState("");
   const [validUsername, setValidUsername] = useState(false);
-
   const [all, setAll] = useState(false);
   const [tou, setTOU] = useState(false);
   const [tp, setTP] = useState(false);
   const [abroad, setAbroad] = useState(false);
   const [gateway, setGateway] = useState(false);
   const [anytime, setAnytime] = useState(false);
-
   const [isPossible, setIsPossible] = useState(false);
 
-  const membership = useSelector((state) => state.membership.membership);
-  const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
-  const hasMembership = JSON.parse(
-    sessionStorage.getItem("user")
-  ).hasMembership;
+  // Life Cycle
+  useEffect(() => {
+    setCardNumber(cardNumber);
+    setUsername(username);
+    checkCard();
+    checkName();
+  }, [username, cardNumber]);
 
+  useEffect(() => {
+    checkAll();
+  }, [all]);
+
+  useEffect(() => {
+    if (all && tou && tp && abroad && gateway && anytime) {
+      setIsPossible(true);
+    } else {
+      setIsPossible(false);
+    }
+  }, [all, tou, tp, abroad, gateway, anytime]);
+
+  // Functions
   const plan = () => {
     if (membership == "B") {
       return "베이식";
@@ -409,18 +86,6 @@ export default function CreditOption() {
       setAnytime(false);
     }
   };
-
-  useEffect(() => {
-    checkAll();
-  }, [all]);
-
-  useEffect(() => {
-    if (all && tou && tp && abroad && gateway && anytime) {
-      setIsPossible(true);
-    } else {
-      setIsPossible(false);
-    }
-  }, [all, tou, tp, abroad, gateway, anytime]);
 
   const onChangeHandler = (event) => {
     if (event.target.name == "card-number") {
@@ -477,15 +142,8 @@ export default function CreditOption() {
     }
   };
 
-  useEffect(() => {
-    setCardNumber(cardNumber);
-    setUsername(username);
-    checkCard();
-    checkName();
-  }, [username, cardNumber]);
-
   return (
-    <ScreenStyle
+    <RegistrationStyle
       card={validCard}
       username={validUsername}
       all={all}
@@ -763,6 +421,6 @@ export default function CreditOption() {
         </div>
       </div>
       <Footer registration />
-    </ScreenStyle>
+    </RegistrationStyle>
   );
 }

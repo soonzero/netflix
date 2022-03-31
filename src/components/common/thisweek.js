@@ -5,12 +5,25 @@ import { store } from "index";
 import Card from "./card";
 
 export default function ThisWeek(props) {
+  // Local Variables
   const profileIdx = parseInt(sessionStorage.getItem("selectedProfile"));
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+
+  // Local States
   const [thisWeek, setThisWeek] = useState();
   const [isLoading, setIsLoading] = useState(true);
 
+  // Life Cycle
+  useEffect(() => {
+    if (isLoading) {
+      getThisWeek();
+    } else {
+      return;
+    }
+  }, []);
+
+  // Function
   const getThisWeek = async () => {
     setIsLoading(true);
     try {
@@ -30,14 +43,6 @@ export default function ThisWeek(props) {
     }
   };
 
-  useEffect(() => {
-    if (isLoading) {
-      getThisWeek();
-    } else {
-      return;
-    }
-  }, []);
-
   return (
     <TitleCardsStyle>
       <h2 className="row-header" onMouseOver={() => props.setRow(props.row)}>
@@ -50,13 +55,6 @@ export default function ThisWeek(props) {
             <div className="ptrack-container">
               <div className="row-content slider-hover-trigger-layer">
                 <div className="slider">
-                  <span className="handle handle-prev active">
-                    <b className="indicator-icon icon-left-caret"></b>
-                  </span>
-                  <ul className="pagination-indicator">
-                    {/* <li className="active"></li>
-                    <li></li> */}
-                  </ul>
                   <div className="slider-mask show-peek">
                     <div className="slider-content row-with-x-columns">
                       {!isLoading &&
@@ -80,9 +78,6 @@ export default function ThisWeek(props) {
                         })}
                     </div>
                   </div>
-                  <span className="handle handle-next active">
-                    <b className="indicator-icon icon-right-caret"></b>
-                  </span>
                 </div>
               </div>
             </div>

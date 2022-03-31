@@ -5,13 +5,26 @@ import Card from "./card";
 import Indicator from "./indicator";
 
 export default function NewSeason(props) {
+  // Local Variables
   const profileIdx = parseInt(sessionStorage.getItem("selectedProfile"));
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+
+  // Local States
   const [newSeason, setNewSeason] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [indicator, setIndicator] = useState();
 
+  // Life Cycle
+  useEffect(() => {
+    if (isLoading) {
+      getNewSeasonContents();
+    } else {
+      return;
+    }
+  }, []);
+
+  // Function
   const getNewSeasonContents = async () => {
     try {
       const contents = await axios({
@@ -29,14 +42,6 @@ export default function NewSeason(props) {
       console.log(e);
     }
   };
-
-  useEffect(() => {
-    if (isLoading) {
-      getNewSeasonContents();
-    } else {
-      return;
-    }
-  }, []);
 
   return (
     <TitleCardsStyle>

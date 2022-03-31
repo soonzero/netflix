@@ -1,40 +1,27 @@
-import React, { useRef } from "react";
+import React from "react";
 import { useState, useEffect } from "react";
-import { ReactComponent as ModalClose } from "images/close-modal.svg";
-import { ReactComponent as ModalPlay } from "images/play-modal.svg";
-import { ReactComponent as ModalNotification } from "images/notification-modal.svg";
-import { ReactComponent as ModalAddToMyList } from "images/addToMyList-modal.svg";
-import { ReactComponent as ModalDetail } from "images/detail-modal.svg";
-import { ReactComponent as ModalThumbsDownFilled } from "images/thumbsdownfilled-modal.svg";
-import { ReactComponent as ModalThumbsUpFilled } from "images/thumbsupfilled-modal.svg";
-import styled from "styled-components";
+import { ReactComponent as CloseSVG } from "images/close.svg";
+import { ReactComponent as PlaySVG } from "images/play.svg";
+import { ReactComponent as NotificationSVG } from "images/notification.svg";
+import { ReactComponent as DetailSVG } from "images/detail.svg";
+import { ReactComponent as ThumbsDownFilledSVG } from "images/thumbsdownfilled.svg";
+import { ReactComponent as ThumbsUpFilledSVG } from "images/thumbsupfilled.svg";
 import axios from "axios";
-import { ModalStyle } from "./styled";
+import { ModalStyle, BackDropStyle } from "./styled";
 import LikeContents from "./likecontents";
 import AddList from "./addlist";
 import Episodes from "./episodes";
 import Similar from "./similar";
 import Trailer from "./trailer";
 
-const BackDropStyle = styled.div`
-  opacity: 0.7;
-  display: block;
-
-  .preview-modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: black;
-  }
-`;
-
 export default function Modal(props) {
+  // Local Variables
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const profileIdx = JSON.parse(sessionStorage.getItem("selectedProfile"));
   const modalStyle = props.modal == "mini" ? "mini-modal" : "detail-modal";
+
+  // Local States
   const [isReady, setIsReady] = useState(false);
   const [myList, setMyList] = useState();
   const [info, setInfo] = useState();
@@ -47,8 +34,15 @@ export default function Modal(props) {
   const [similar, setSimilar] = useState();
   const [seasonNum, setSeasonNum] = useState(1);
   const [episodes, setEpisodes] = useState();
-  const [featuresList, setFeaturesList] = useState();
 
+  // Life Cycle
+  useEffect(() => {
+    getAllInfo(props.content);
+    getLike(props.content);
+    getHate(props.content);
+  }, [myList, like]);
+
+  // Functions
   const positionX = (index) => {
     if (index == 0) {
       return "100px";
@@ -229,12 +223,6 @@ export default function Modal(props) {
     }
   };
 
-  useEffect(() => {
-    getAllInfo(props.content);
-    getLike(props.content);
-    getHate(props.content);
-  }, [myList, like]);
-
   return (
     <>
       <ModalStyle>
@@ -292,10 +280,10 @@ export default function Modal(props) {
                       src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABaoks6pw8ZOxUOaxLhB2FPbtfuwDgBMKR_vuaAJRzl3UBLGwan61y9-KfS8CliS6q_-rYdCCyrXQAXL0LgmwOWZPPRX0voh7c0Cx4BJsIdG7gd3GdGOcEj5biIwh4GkIlmNPH_UCtBTajPDGvgSHn08vVYXrsnbGApss1wyTuSZUSvRk-z44ni4Z8fCr.webp?r=296"
                     />
                   )}
-                  <img
+                  {/* <img
                     style={{ display: "none" }}
                     src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABaoks6pw8ZOxUOaxLhB2FPbtfuwDgBMKR_vuaAJRzl3UBLGwan61y9-KfS8CliS6q_-rYdCCyrXQAXL0LgmwOWZPPRX0voh7c0Cx4BJsIdG7gd3GdGOcEj5biIwh4GkIlmNPH_UCtBTajPDGvgSHn08vVYXrsnbGApss1wyTuSZUSvRk-z44ni4Z8fCr.webp?r=296"
-                  />
+                  /> */}
                   {props.modal == "mini" && (
                     <img
                       className="preview-modal-boxart"
@@ -311,10 +299,10 @@ export default function Modal(props) {
                       src={info.mainImageUrl}
                       style={{ opacity: "1" }}
                     />
-                    <img
+                    {/* <img
                       src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/E8vDc_W8CLv7-yMQu8KMEC7Rrr8/AAAABdY5i3vL3kouiyFbiGstbEtWDXNUvQDbQ-KcWQfYHxil_SnklbRB1jyR-uHuqljzA-0SE4-9CIwMxVp_AqiIiXe5VFaw.webp?r=720"
                       style={{ display: "none" }}
-                    />
+                    /> */}
                   </div>
                 )}
                 <div style={{ opacity: "1" }}>
@@ -327,10 +315,10 @@ export default function Modal(props) {
                     >
                       {props.modal == "detail" && (
                         <>
-                          <img
+                          {/* <img
                             src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/tx1O544a9T7n8Z_G12qaboulQQE/AAAABYuN1YheNqzVhunPxUtjnU7THv9OczxX5zpVfrLhe8XxbvcQ2XpA0iF4fNjqAGGIrvCg-fiLrvVJayK3xCwq4yX97IK8Wl9doCA.webp?r=8bd"
                             style={{ display: "none" }}
-                          />
+                          /> */}
                           <img
                             className="preview-modal-player-title-treatment-logo"
                             src={info.logoImageUrl}
@@ -345,9 +333,9 @@ export default function Modal(props) {
                                 <div className="circle-button-container">
                                   <div className="medium circle-button-svg-container">
                                     {props.yet ? (
-                                      <ModalNotification />
+                                      <NotificationSVG />
                                     ) : (
-                                      <ModalPlay />
+                                      <PlaySVG />
                                     )}
                                   </div>
                                 </div>
@@ -385,7 +373,7 @@ export default function Modal(props) {
                 className="preview-modal-close"
                 onClick={() => props.setModal()}
               >
-                <ModalClose />
+                <CloseSVG />
               </div>
               {props.modal == "mini" ? (
                 <div
@@ -406,9 +394,9 @@ export default function Modal(props) {
                                   <div className="circle-button-container">
                                     <div className="small circle-button-svg-container">
                                       {props.yet ? (
-                                        <ModalNotification />
+                                        <NotificationSVG />
                                       ) : (
-                                        <ModalPlay />
+                                        <PlaySVG />
                                       )}
                                     </div>
                                   </div>
@@ -435,7 +423,7 @@ export default function Modal(props) {
                                 >
                                   <div className="circle-button-container">
                                     <div className="small circle-button-svg-container">
-                                      <ModalDetail />
+                                      <DetailSVG />
                                     </div>
                                   </div>
                                 </button>
@@ -460,10 +448,10 @@ export default function Modal(props) {
                                       <span className="match-score-wrapper">
                                         <div className="show-match-score rating-inner">
                                           <div className="meta-thumb-container thumb-down">
-                                            <ModalThumbsDownFilled />
+                                            <ThumbsDownFilledSVG />
                                           </div>
                                           <div className="meta-thumb-container thumb-up">
-                                            <ModalThumbsUpFilled />
+                                            <ThumbsUpFilledSVG />
                                           </div>
                                           <span className="match-score">
                                             {info.percentage !== "New"
@@ -537,10 +525,10 @@ export default function Modal(props) {
                                         <span className="match-score-wrapper">
                                           <div className="show-match-score rating-inner">
                                             <div className="meta-thumb-container thumb-down">
-                                              <ModalThumbsDownFilled />
+                                              <ThumbsDownFilledSVG />
                                             </div>
                                             <div className="meta-thumb-container thumb-up">
-                                              <ModalThumbsUpFilled />
+                                              <ThumbsUpFilledSVG />
                                             </div>
                                             <span className="match-score">
                                               {info.percentage !== "New"
@@ -631,7 +619,7 @@ export default function Modal(props) {
                                 <button className="color-supplementary section-expand-button has-icon round circle-button">
                                   <div className="circle-button-container">
                                     <div className="small circle-button-svg-container">
-                                      <ModalDetail />
+                                      <DetailSVG />
                                     </div>
                                   </div>
                                 </button>
@@ -662,7 +650,7 @@ export default function Modal(props) {
                               <button className="color-supplementary section-expand-button has-icon round circle-button">
                                 <div className="circle-button-container">
                                   <div className="small circle-button-svg-container">
-                                    <ModalDetail />
+                                    <DetailSVG />
                                   </div>
                                 </div>
                               </button>

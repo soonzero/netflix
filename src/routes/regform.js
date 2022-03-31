@@ -1,246 +1,25 @@
 import React from "react";
-import Header from "components/signup/Header";
+import Header from "components/signup/header";
 import Footer from "components/common/footer";
-import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-
-const ScreenStyle = styled.div`
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  word-break: keep-all;
-
-  b {
-    font-weight: 700;
-  }
-
-  .main-container {
-    padding-bottom: 95px;
-    flex-grow: 1;
-    background-color: white;
-    width: 100%;
-    overflow: hidden;
-    word-break: keep-all;
-
-    .center-container {
-      padding: 20px 32px 60px;
-      margin: 0 auto 15px;
-      max-width: 978px;
-
-      .reg-form-container {
-        text-align: left;
-        max-width: 440px;
-        margin: 0 auto;
-
-        & > div:first-child {
-          .step-header {
-            margin-top: 20px;
-
-            .step-indicator {
-              font-size: 0.8125rem;
-              line-height: 1.4615384615;
-              display: block;
-            }
-
-            .step-title {
-              font-size: 2rem;
-              line-height: 1.3125;
-              margin: 0 0 0.4em;
-              font-weight: 600;
-            }
-          }
-
-          & > div:last-child {
-            & > div {
-              font-size: 1.125rem;
-              line-height: 1.3333333333;
-            }
-
-            & > div:nth-child(2) {
-              margin-top: 10px;
-            }
-          }
-
-          .simple-form {
-            margin: 10px 0 20px;
-
-            .form-list {
-              margin-bottom: 10px;
-
-              .form-input {
-                max-width: 500px;
-                position: relative;
-                display: block;
-
-                .input-placement {
-                  position: relative;
-
-                  input {
-                    height: 60px;
-                    padding: 10px 10px 0;
-                    width: 100%;
-                    appearance: none;
-                    font-size: 1rem;
-                    border-radius: 2px;
-                    border: 1px solid #8c8c8c;
-                    display: block;
-                    color: black;
-                    outline: none;
-
-                    &#email {
-                      border-color: ${(props) =>
-                        props.email ? "#5fa53f" : "#b92d2b"};
-                    }
-
-                    &#password {
-                      border-color: ${(props) =>
-                        props.password ? "#5fa53f" : "#b92d2b"};
-                    }
-                  }
-
-                  .place-label {
-                    position: absolute;
-                    top: 6px;
-                    left: 10px;
-                    font-weight: 700;
-                    font-size: 0.8125rem;
-                    color: #8c8c8c;
-                  }
-                }
-
-                .input-error {
-                  font-size: 0.8125rem;
-                  line-height: 1.3076923077;
-                  color: #b92d2b;
-                }
-              }
-
-              .checkbox-wrapper {
-                position: relative;
-                padding-left: 36px;
-                min-height: 32px;
-                font-size: 1rem;
-                max-width: 500px;
-                user-select: none;
-
-                input[type="checkbox"] {
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  opacity: 0;
-                  margin: 0;
-                }
-
-                label {
-                  margin: 8px 0;
-                  padding: 6px 0;
-                  display: block;
-                  position: relative;
-                  line-height: 1.2;
-
-                  &::before {
-                    content: "";
-                    border: 1px solid black;
-                    width: 25px;
-                    height: 25px;
-                    display: block;
-                    position: absolute;
-                    top: 2px;
-                    left: -36px;
-                    box-sizing: content-box;
-                  }
-
-                  &.privacy-consent::before {
-                    border-color: ${(props) => !props.mandatory && "#b92d2b"};
-                  }
-
-                  &.email-consent::before {
-                    border-color: ${(props) => !props.optional && "#b92d2b"};
-                  }
-
-                  ${(props) =>
-                    props.mandatory &&
-                    `
-                  &.privacy-consent::after {
-                    display: block;
-                    position: absolute;
-                    top: 7px;
-                    left: -32px;
-                    height: 6px;
-                    width: 14px;
-                    content: "";
-                    border-left: 4px solid #0071eb;
-                    border-bottom: 4px solid #0071eb;
-                    transform: rotate(-45deg);
-                    box-sizing: content-box;
-                  }
-                  `}
-
-                  ${(props) =>
-                    props.optional &&
-                    `&.email-consent::after {
-                    display: block;
-                    position: absolute;
-                    top: 7px;
-                    left: -32px;
-                    height: 6px;
-                    width: 14px;
-                    content: "";
-                    border-left: 4px solid #0071eb;
-                    border-bottom: 4px solid #0071eb;
-                    transform: rotate(-45deg);
-                    box-sizing: content-box;
-                  }`}
-                }
-
-                .helper {
-                  color: #b92d2b;
-                  font-size: 0.8125rem;
-                  line-height: 1em;
-                }
-              }
-            }
-          }
-        }
-
-        .submit-button-container {
-          display: block;
-          max-width: 440px;
-          margin: 0 auto;
-          margin-top: 24px;
-          text-align: center;
-
-          .submit-button {
-            color: white;
-            min-height: 64px;
-            font-weight: 500;
-            font-size: 1.5rem;
-            line-height: 1;
-            border: none;
-            border-radius: 4px;
-            background-color: #e50914;
-            width: 100%;
-            cursor: pointer;
-
-            &:hover {
-              background-color: #f6121d;
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+import { RegistrationStyle } from "components/common/styled";
 
 export default function RegForm() {
+  // Module
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // Global Variables
+  const [email, setEmail] = useState(useSelector((state) => state.email.email));
+
+  // Local Variables
   const emailReg =
     /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{1,3}$/i;
-  const [email, setEmail] = useState(useSelector((state) => state.email.email));
+
+  // Local States
   const [validEmail, setValidEmail] = useState(false);
   const [emailText, setEmailText] = useState("");
   const [password, setPassword] = useState("");
@@ -248,6 +27,19 @@ export default function RegForm() {
   const [checkedMandatory, setCheckedMandatory] = useState(false);
   const [checkedOptional, setCheckedOptional] = useState(false);
 
+  // Life Cycle
+  useEffect(() => {
+    setEmail(email);
+    setPassword(password);
+    if (email) {
+      checkEmail();
+    }
+    if (password) {
+      checkPassword();
+    }
+  }, [email, password]);
+
+  // Functions
   const onChangeHandler = (event) => {
     if (event.target.name == "email") {
       setEmail(event.target.value);
@@ -278,17 +70,6 @@ export default function RegForm() {
       setValidPassword(false);
     }
   };
-
-  useEffect(() => {
-    setEmail(email);
-    setPassword(password);
-    if (email) {
-      checkEmail();
-    }
-    if (password) {
-      checkPassword();
-    }
-  }, [email, password]);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
@@ -345,7 +126,7 @@ export default function RegForm() {
   };
 
   return (
-    <ScreenStyle
+    <RegistrationStyle
       email={validEmail}
       password={validPassword}
       mandatory={checkedMandatory}
@@ -476,6 +257,6 @@ export default function RegForm() {
         </div>
       </div>
       <Footer registration />
-    </ScreenStyle>
+    </RegistrationStyle>
   );
 }

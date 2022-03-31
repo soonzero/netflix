@@ -1,5 +1,5 @@
 import React from "react";
-import { ReactComponent as ModalPlay } from "images/play-modal.svg";
+import { ReactComponent as PlaySVG } from "images/play.svg";
 
 export default function Trailer(props) {
   return (
@@ -9,7 +9,7 @@ export default function Trailer(props) {
           <img src={props.content.thumbnailUrl} />
         </div>
         <div className="title-card-play-icon">
-          <ModalPlay />
+          <PlaySVG />
         </div>
       </div>
       <div className="title-card-metadata-wrapper">

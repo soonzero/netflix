@@ -6,13 +6,26 @@ import Card from "./card";
 import Indicator from "./indicator";
 
 export default function List(props) {
+  // Local Variables
   const profileIdx = parseInt(sessionStorage.getItem("selectedProfile"));
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+
+  // Local States
   const [list, setList] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [indicator, setIndicator] = useState();
 
+  // Life Cycle
+  useEffect(() => {
+    if (isLoading) {
+      getList();
+    } else {
+      return;
+    }
+  }, []);
+
+  // Function
   const getList = async () => {
     setIsLoading(true);
     try {
@@ -32,14 +45,7 @@ export default function List(props) {
     }
   };
 
-  useEffect(() => {
-    if (isLoading) {
-      getList();
-    } else {
-      return;
-    }
-  }, []);
-
+  // Redux
   store.subscribe(getList);
 
   return (

@@ -10,13 +10,11 @@ import ThisWeek from "components/common/thisweek";
 import { useNavigate } from "react-router-dom";
 import Loading from "components/common/loading";
 
-const LatestStyle = styled.div`
-  background-color: #141414;
-  color: white;
-`;
-
 export default function Latest() {
+  // Module
   const navigate = useNavigate();
+
+  // Local States
   const [modalInfo, setModalInfo] = useState();
   const [modal, setModal] = useState();
   const [index, setIndex] = useState();
@@ -26,6 +24,7 @@ export default function Latest() {
   const [yet, setYet] = useState();
   const [releaseDate, setReleaseDate] = useState();
 
+  // Life Cycle
   useEffect(() => {
     if (sessionStorage.getItem("user") == null) {
       navigate(`/login`);
@@ -34,7 +33,7 @@ export default function Latest() {
   }, []);
 
   return (
-    <LatestStyle>
+    <div style={{ backgroundColor: "#141414", color: "white" }}>
       {isLoading ? (
         <Loading />
       ) : (
@@ -95,6 +94,6 @@ export default function Latest() {
           )}
         </>
       )}
-    </LatestStyle>
+    </div>
   );
 }

@@ -1,599 +1,17 @@
-import axios from "axios";
-import { store } from "index";
 import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import styled from "styled-components";
-
-const FixedHeader = styled.div`
-  color: white;
-  height: 70px;
-  line-height: 1.4;
-
-  a {
-    color: white;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  .fixed-header-container {
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1;
-
-    .main-header {
-      background-color: transparent;
-      background-image: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.7) 10%,
-        rgba(0, 0, 0, 0)
-      );
-      height: 68px;
-      z-index: 2;
-      padding: 0 60px;
-      font-size: 0.875rem;
-      position: relative;
-      display: flex;
-      align-items: center;
-      transition: background-color 400ms ease;
-      background-color: ${(props) =>
-        props.fixed && !props.mylist ? "rgb(20, 20, 20)" : "transparent"};
-
-      .main-header-logo {
-        text-decoration: none;
-
-        &::before {
-          font-size: 1.5625rem;
-          font-family: "Netflix Icon";
-          content: "\\e5d0";
-          color: #e50914;
-          margin-right: 25px;
-        }
-      }
-
-      .first-nav {
-        margin: 0;
-        padding: 0;
-        display: flex;
-        align-items: center;
-
-        .nav-menu {
-          display: none;
-        }
-
-        .nav-tab {
-          margin-left: 20px;
-          list-style-type: none;
-          color: #e5e5e5;
-
-          a {
-            color: #e5e5e5;
-            text-decoration: none;
-            position: relative;
-            transition: color 400ms;
-            display: flex;
-            align-items: center;
-            height: 100%;
-            cursor: pointer;
-          }
-
-          a:hover {
-            color: #b3b3b3;
-          }
-        }
-      }
-
-      .secondary-nav {
-        position: absolute;
-        top: 0;
-        right: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        flex-grow: 1;
-        height: 100%;
-
-        .nav-element {
-          margin-right: 20px;
-
-          .search-box {
-            display: inline-block;
-            vertical-align: middle;
-
-            .search-tab {
-              display: inline-block;
-              cursor: pointer;
-              border: none;
-              background: 0 0;
-              padding: 1px 6px;
-
-              .search-icon {
-                font-size: 1.3em;
-                margin-right: 0;
-                vertical-align: middle;
-                line-height: 1;
-                color: white;
-                text-shadow: 0 1px 1px rgb(0 0 0 / 30%);
-                font-family: "Netflix Icon";
-
-                &::before {
-                  content: "\\e636";
-                }
-              }
-            }
-          }
-
-          .notifications {
-            position: relative;
-            white-space: normal;
-
-            .notifications-menu {
-              background-color: transparent;
-              border: none;
-              font-size: 1.5em;
-              line-height: 1;
-              margin-top: 0.2em;
-              padding: 2px 6px 3px;
-              position: relative;
-              cursor: pointer;
-
-              .notifications-icon {
-                font-family: "Netflix Icon";
-
-                &::before {
-                  content: "\\e663";
-                  color: white;
-                }
-              }
-            }
-          }
-
-          .account-menu-item {
-            position: relative;
-            font-size: 0.75rem;
-            z-index: 0;
-
-            .account-dropdown-button {
-              display: flex;
-              align-items: center;
-              width: 100%;
-              cursor: pointer;
-
-              .callout-arrow {
-                position: absolute;
-                bottom: -19px;
-                left: 50%;
-                border-width: 7px;
-                margin-left: -7px;
-                border-color: transparent transparent #e5e5e5;
-                border-style: solid;
-                height: 0;
-                width: 0;
-                transition: opacity 150ms;
-              }
-
-              .profile {
-                z-index: -1;
-                position: relative;
-
-                .profile-link {
-                  display: flex;
-                  align-items: center;
-                  cursor: pointer;
-                  color: white;
-
-                  .profile-icon {
-                    vertical-align: middle;
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 4px;
-                  }
-                }
-              }
-
-              .caret {
-                margin-left: 10px;
-                width: 0;
-                height: 0;
-                border-style: solid;
-                border-width: 5px 5px 0 5px;
-                border-color: white transparent transparent transparent;
-                transition: transform 367ms cubic-bezier(0.21, 0, 0.07, 1),
-                  -webkit-transform 367ms cubic-bezier(0.21, 0, 0.07, 1),
-                  -moz-transform 367ms cubic-bezier(0.21, 0, 0.07, 1),
-                  -o-transform 367ms cubic-bezier(0.21, 0, 0.07, 1);
-              }
-
-              .caret.open {
-                transform: rotate(180deg);
-              }
-            }
-
-            .account-dropdown {
-              position: absolute;
-              right: 0;
-              top: 52px;
-              width: 181px;
-              margin-left: 0;
-              padding: 0;
-
-              a {
-                color: white;
-                text-decoration: none;
-
-                &:hover {
-                  text-decoration: underline;
-                }
-              }
-
-              .submenu-list {
-                display: block;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-                height: auto;
-              }
-
-              .account-links {
-                padding: 10px 0;
-                border-top: 1px solid rgba(255, 255, 255, 0.25);
-              }
-
-              .profiles {
-                height: auto;
-                padding: 10px 0 5px 0;
-                overflow: hidden;
-
-                .submenu-item {
-                  line-height: 32px;
-
-                  & > div {
-                    display: flex;
-                    align-items: center;
-
-                    .avatar-wrapper {
-                      display: inline;
-
-                      .profile-icon {
-                        margin-right: 10px;
-                        vertical-align: middle;
-                        height: 32px;
-                        width: 32px;
-                        border-radius: 4px;
-                      }
-                    }
-                  }
-                }
-
-                .profile-link {
-                  span {
-                    line-height: 32px;
-                  }
-                }
-
-                .profile-name {
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  width: 100px;
-                  font-size: 0.8125rem;
-                  line-height: 1.3846153846;
-                  vertical-align: middle;
-                  display: inline-block;
-                  white-space: pre;
-                  color: white;
-
-                  &:hover {
-                    text-decoration: underline;
-                  }
-                }
-              }
-
-              .submenu-item {
-                padding: 5px 10px;
-                display: block;
-                font-size: 0.8125rem;
-                line-height: 1.2307692308;
-
-                .submenu-link-icon {
-                  display: flex;
-                  align-items: center;
-
-                  svg {
-                    color: #b3b3b3;
-                    padding: 0 13px 0 5px;
-                    box-sizing: content-box;
-                  }
-                }
-              }
-
-              .sign-out-links {
-                .submenu-link {
-                  text-align: center;
-                  width: 100%;
-                  display: block;
-                }
-              }
-            }
-
-            .submenu.theme-lakira {
-              background-color: rgba(0, 0, 0, 0.9);
-              color: white;
-              font-size: 0.8125rem;
-              line-height: 1.3125;
-              border: 1px solid rgba(255, 255, 255, 0.15);
-            }
-          }
-        }
-
-        .nav-element:last-child {
-          margin-right: 0;
-        }
-
-        &.search-focused {
-          .search-box {
-            margin-left: 100px;
-          }
-        }
-
-        .icon-search {
-          font-size: 1.1375rem;
-          margin-right: 0;
-          vertical-align: middle;
-          padding: 0 6px;
-          cursor: pointer;
-
-          &::before {
-            content: "\\e636";
-          }
-        }
-      }
-    }
-
-    .search-input {
-      display: flex;
-      box-align: center;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.85);
-
-      input {
-        color: white;
-        display: inline-block;
-        background: 0 0;
-        border: none;
-        padding: 7px 14px 7px 7px;
-        font-size: 14px;
-        width: 212px;
-        outline: none;
-
-        &:focus {
-          outline: none;
-        }
-      }
-
-      .icon-close {
-        cursor: pointer;
-        margin: 0 6px;
-        font-size: 13px;
-
-        &::before {
-          content: "\\e762";
-        }
-      }
-    }
-
-    .sub-header {
-      position: relative;
-      height: 68px;
-      z-index: 1;
-
-      .sub-header-wrapper {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        align-items: center;
-        padding: 0 60px;
-        height: 68px;
-
-        .gallery-header {
-          display: flex;
-          align-items: center;
-          flex-wrap: wrap;
-          margin: 0;
-          min-height: 0;
-          padding: 0;
-          flex-grow: 1;
-
-          .title {
-            font-size: 2.1875rem;
-            display: inline-block;
-            /* margin-right: 20px; */
-            line-height: 1.0285714286;
-          }
-
-          .genre-title {
-            font-size: 2.375rem;
-            line-height: 1;
-            font-weight: 600;
-            margin-right: 15px;
-          }
-
-          .sub-genres {
-            display: inline-block;
-            vertical-align: top;
-            margin: 0 30px;
-          }
-        }
-      }
-    }
-
-    .arrow-genre-details {
-      display: flex;
-      flex-grow: 1;
-      flex-direction: row;
-      align-items: center;
-      justify-content: flex-start;
-    }
-
-    .nfDropDown.theme-lakira {
-      position: relative;
-      text-align: left;
-
-      .label {
-        height: 2.1875rem;
-        padding-left: 10px;
-        line-height: 2.1875rem;
-        letter-spacing: 1px;
-        font-size: 1.09375rem;
-        font-weight: 600;
-        border: 1px solid rgba(255, 255, 255, 0.9);
-        display: inline-block;
-        color: white;
-        background-color: black;
-        appearance: none;
-        border-radius: 0;
-        position: relative;
-        padding-right: 50px;
-        cursor: pointer;
-
-        &:hover {
-          background-color: rgba(255, 255, 255, 0.1);
-          cursor: pointer;
-          outline: 0;
-        }
-
-        .arrow {
-          border-color: white transparent transparent;
-          border-style: solid;
-          border-width: 5px 5px 0;
-          height: 0;
-          position: absolute;
-          right: 10px;
-          top: 44%;
-          width: 0;
-        }
-      }
-    }
-  }
-
-  .sub-menu.theme-lakira {
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.9);
-    color: white;
-    line-height: 21px;
-    border: solid 1px rgba(255, 255, 255, 0.15);
-    cursor: default;
-
-    .sub-menu-list {
-      height: auto;
-      cursor: default;
-    }
-
-    .sub-menu-list.multi-column {
-      display: table-cell;
-    }
-
-    .sub-menu-item {
-      cursor: default;
-      line-height: 24px;
-      display: block;
-    }
-
-    .sub-menu-link {
-      text-transform: none;
-      display: inline-block;
-      width: 100%;
-      color: white;
-    }
-  }
-
-  .nfDropDown.theme-lakira {
-    .sub-menu {
-      overflow-x: hidden;
-      z-index: 2;
-      padding: 0;
-      margin: 0;
-      top: 2.1875rem;
-      left: 0;
-      font-size: 0.875rem;
-
-      .sub-menu-list {
-        padding: 5px 0;
-        margin: 0;
-      }
-
-      .sub-menu-item {
-        a {
-          padding: 1px 20px 1px 10px;
-        }
-      }
-
-      .sub-menu-link {
-        display: inline-block;
-        width: 100%;
-        padding: 1px 0;
-      }
-    }
-  }
-
-  .gallery-header .sub-genres .sub-menu .sub-menu-link {
-    white-space: nowrap;
-  }
-
-  .bread-crumbs {
-    font-size: 18px;
-    color: grey;
-
-    ul {
-      padding: 0;
-      margin: 0;
-
-      li {
-        list-style: none;
-        display: inline;
-        padding-right: 10px;
-        z-index: 3;
-        position: relative;
-
-        &::after {
-          padding-left: 10px;
-          content: ">";
-        }
-
-        a {
-          color: grey;
-        }
-      }
-    }
-  }
-`;
+import { ReactComponent as EditSVG } from "images/pencil.svg";
+import { FixedHeaderStyle } from "./styled";
 
 export default function Header(props) {
+  // Module
   const navigate = useNavigate();
+
+  // Local Variables
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
-  const profileIdx = sessionStorage.getItem("selectedProfile");
-  const [fixed, setFixed] = useState(false);
-  const [scrollY, setScrollY] = useState(window.scrollY);
-  const [menu, setMenu] = useState(false);
-  const [subMenu, setSubMenu] = useState(false);
-  const [profiles, setProfiles] = useState();
-  const [profileLoading, setProfileLoading] = useState(true);
-  const [image, setImage] = useState();
-  const [position, setPosition] = useState();
-  const [height, setHeight] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  const searchInputRef = useRef(null);
-  const dropDownRef = useRef(null);
-  const [search, setSearch] = useState(false);
-  const [keyword, setKeyword] = useState();
-
-  const series = {
+  const seriesGenres = {
     first: [
       "세계 여성의 달",
       "한국 드라마",
@@ -605,8 +23,7 @@ export default function Header(props) {
     second: ["애니", "코미디", "로맨스", "드라마 장르", "액션", "스릴러"],
     third: ["SF & 판타지", "호러", "키즈", "청소년", "다큐시리즈"],
   };
-
-  const movies = {
+  const moviesGenres = {
     first: [
       "세계 여성의 달",
       "한국",
@@ -625,6 +42,86 @@ export default function Header(props) {
       "음악 / 뮤지컬",
       "고전",
     ],
+  };
+
+  // Local States
+  const [fixed, setFixed] = useState(false);
+  const [scrollY, setScrollY] = useState(window.scrollY);
+  const [menu, setMenu] = useState(false);
+  const [subMenu, setSubMenu] = useState(false);
+  const [profiles, setProfiles] = useState();
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [image, setImage] = useState();
+  const [position, setPosition] = useState();
+  const [height, setHeight] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [search, setSearch] = useState(false);
+  const [keyword, setKeyword] = useState();
+  const searchInputRef = useRef(null);
+  const dropDownRef = useRef(null);
+
+  // Life Cycle
+  useEffect(() => {
+    if (sessionStorage.getItem("selectedProfile") != null) {
+      getProfilesInfo();
+    } else {
+      return;
+    }
+  }, []);
+
+  useEffect(() => {
+    setScrollY(scrollY);
+    function scrollListener() {
+      window.addEventListener("scroll", handleScroll);
+    }
+    scrollListener();
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [scrollY]);
+
+  useEffect(() => {
+    setKeyword(keyword);
+  }, [keyword]);
+
+  useEffect(() => {
+    const pageClickEvent = (event) => {
+      if (
+        searchInputRef.current !== null &&
+        !searchInputRef.current.contains(event.target)
+      ) {
+        setSearch(!search);
+      }
+    };
+    if (search) {
+      window.addEventListener("click", pageClickEvent);
+    }
+    return () => {
+      window.removeEventListener("click", pageClickEvent);
+    };
+  }, [search]);
+
+  useEffect(() => {
+    const pageClickEvent = (event) => {
+      if (
+        dropDownRef.current !== null &&
+        !dropDownRef.current.contains(event.target)
+      ) {
+        setSubMenu(!subMenu);
+      }
+    };
+    if (subMenu) {
+      window.addEventListener("click", pageClickEvent);
+    }
+    return () => {
+      window.removeEventListener("click", pageClickEvent);
+    };
+  }, [subMenu]);
+
+  // Functions
+  const logout = () => {
+    sessionStorage.clear();
+    navigate(`/logout`);
   };
 
   function handleScroll() {
@@ -655,56 +152,6 @@ export default function Header(props) {
     }
   }
 
-  useEffect(() => {
-    setScrollY(scrollY);
-    function scrollListener() {
-      window.addEventListener("scroll", handleScroll);
-    }
-    scrollListener();
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [scrollY]);
-
-  React.useEffect(() => {
-    const pageClickEvent = (event) => {
-      if (
-        searchInputRef.current !== null &&
-        !searchInputRef.current.contains(event.target)
-      ) {
-        setSearch(!search);
-      }
-    };
-    if (search) {
-      window.addEventListener("click", pageClickEvent);
-    }
-    return () => {
-      window.removeEventListener("click", pageClickEvent);
-    };
-  }, [search]);
-
-  React.useEffect(() => {
-    const pageClickEvent = (event) => {
-      if (
-        dropDownRef.current !== null &&
-        !dropDownRef.current.contains(event.target)
-      ) {
-        setSubMenu(!subMenu);
-      }
-    };
-    if (subMenu) {
-      window.addEventListener("click", pageClickEvent);
-    }
-    return () => {
-      window.removeEventListener("click", pageClickEvent);
-    };
-  }, [subMenu]);
-
-  const logout = () => {
-    sessionStorage.clear();
-    navigate(`/logout`);
-  };
-
   const getProfilesInfo = async () => {
     if (sessionStorage.getItem("selectedProfile")) {
       setProfileLoading(true);
@@ -732,16 +179,6 @@ export default function Header(props) {
     }
   };
 
-  // store.subscribe(getProfilesInfo);
-
-  useEffect(() => {
-    if (sessionStorage.getItem("selectedProfile") != null) {
-      getProfilesInfo();
-    } else {
-      return;
-    }
-  }, []);
-
   const inputHandler = (event) => {
     setKeyword(event.target.value);
   };
@@ -760,12 +197,8 @@ export default function Header(props) {
     getProfilesInfo();
   };
 
-  useEffect(() => {
-    setKeyword(keyword);
-  }, [keyword]);
-
   return (
-    <FixedHeader fixed={fixed} menu={menu} mylist={props.mylist}>
+    <FixedHeaderStyle fixed={fixed} menu={menu} mylist={props.mylist}>
       <div
         className="fixed-header-container"
         style={{
@@ -890,21 +323,7 @@ export default function Header(props) {
                                 to="/ManageProfiles"
                                 className="submenu-link submenu-link-icon"
                               >
-                                <svg
-                                  width="24"
-                                  height="24"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="Hawkins-Icon Hawkins-Icon-Standard"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    clipRule="evenodd"
-                                    d="M22.2071 7.79285L15.2071 0.792847L13.7929 2.20706L20.7929 9.20706L22.2071 7.79285ZM13.2071 3.79285C12.8166 3.40232 12.1834 3.40232 11.7929 3.79285L2.29289 13.2928C2.10536 13.4804 2 13.7347 2 14V20C2 20.5522 2.44772 21 3 21H9C9.26522 21 9.51957 20.8946 9.70711 20.7071L19.2071 11.2071C19.5976 10.8165 19.5976 10.1834 19.2071 9.79285L13.2071 3.79285ZM17.0858 10.5L8.58579 19H4V14.4142L12.5 5.91417L17.0858 10.5Z"
-                                    fill="currentColor"
-                                  ></path>
-                                </svg>
+                                <EditSVG />
                                 <span className="profile-name">
                                   프로필 관리
                                 </span>
@@ -1045,7 +464,7 @@ export default function Header(props) {
                                     >
                                       <ul className="sub-menu-list multi-column">
                                         {props.category == "series"
-                                          ? series.first.map((genre) => {
+                                          ? seriesGenres.first.map((genre) => {
                                               return (
                                                 <li
                                                   key={genre}
@@ -1063,7 +482,7 @@ export default function Header(props) {
                                                 </li>
                                               );
                                             })
-                                          : movies.first.map((genre) => {
+                                          : moviesGenres.first.map((genre) => {
                                               return (
                                                 <li
                                                   key={genre}
@@ -1084,7 +503,7 @@ export default function Header(props) {
                                       </ul>
                                       <ul className="sub-menu-list multi-column">
                                         {props.category == "series"
-                                          ? series.second.map((genre) => {
+                                          ? seriesGenres.second.map((genre) => {
                                               return (
                                                 <li
                                                   key={genre}
@@ -1102,7 +521,7 @@ export default function Header(props) {
                                                 </li>
                                               );
                                             })
-                                          : movies.second.map((genre) => {
+                                          : moviesGenres.second.map((genre) => {
                                               return (
                                                 <li
                                                   key={genre}
@@ -1123,7 +542,7 @@ export default function Header(props) {
                                       </ul>
                                       <ul className="sub-menu-list multi-column">
                                         {props.category == "series"
-                                          ? series.third.map((genre) => {
+                                          ? seriesGenres.third.map((genre) => {
                                               return (
                                                 <li
                                                   key={genre}
@@ -1141,7 +560,7 @@ export default function Header(props) {
                                                 </li>
                                               );
                                             })
-                                          : movies.third.map((genre) => {
+                                          : moviesGenres.third.map((genre) => {
                                               return (
                                                 <li
                                                   key={genre}
@@ -1176,6 +595,6 @@ export default function Header(props) {
           </div>
         )}
       </div>
-    </FixedHeader>
+    </FixedHeaderStyle>
   );
 }

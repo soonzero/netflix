@@ -1,15 +1,19 @@
-import React, { useEffect } from "react";
+import React from "react";
 import axios from "axios";
 import { useState } from "react";
-import { ReactComponent as ModalAddToMyList } from "images/addToMyList-modal.svg";
-import { ReactComponent as ModalAdded } from "images/added-modal.svg";
+import { ReactComponent as AddToMyListSVG } from "images/addtomylist.svg";
+import { ReactComponent as AddedSVG } from "images/added.svg";
 
 export default function AddList(props) {
+  // Local Variables
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const profileIdx = JSON.parse(sessionStorage.getItem("selectedProfile"));
+
+  // Local State
   const [myList, setMyList] = useState(props.myList);
 
+  // Functions
   const addOrDelete = async (index) => {
     if (props.myList == 1) {
       setMyList(0);
@@ -60,8 +64,6 @@ export default function AddList(props) {
     }
   };
 
-  useEffect(() => {}, [myList]);
-
   return (
     <div className="my-list-button">
       <div className="ptrack-content">
@@ -72,7 +74,7 @@ export default function AddList(props) {
         >
           <div className="circle-button-container">
             <div className="circle-button-svg-container">
-              {props.myList == 1 ? <ModalAdded /> : <ModalAddToMyList />}
+              {props.myList == 1 ? <AddedSVG /> : <AddToMyListSVG />}
             </div>
           </div>
         </button>
