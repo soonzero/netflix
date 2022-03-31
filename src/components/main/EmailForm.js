@@ -72,6 +72,7 @@ const EmailFormStyle = styled.form`
 
             & > div {
               color: #ffa00a;
+              position: absolute;
               text-align: left;
               margin-bottom: -6px;
               padding: 6px 3px;
@@ -218,7 +219,7 @@ export default function EmailForm() {
                   ></input>
                   <label htmlFor="email">이메일 주소</label>
                 </label>
-                <div>{error}</div>
+                {error.length > 0 && <div>{error}</div>}
               </div>
             </div>
           </li>

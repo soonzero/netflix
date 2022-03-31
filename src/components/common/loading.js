@@ -104,29 +104,34 @@ export default function Loading() {
   const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
   const token = JSON.parse(sessionStorage.getItem("user")).jwt;
   const profileIdx = sessionStorage.getItem("selectedProfile");
+  const [isLoading, setIsLoading] = useState(true);
 
   const getProfileImage = async () => {
-    try {
-      const profile = await axios({
-        method: "GET",
-        url: `/profile/info?userIdx=${userIdx}&profileIdx=${profileIdx}`,
-        baseURL: "https://rtflix.site",
-        headers: {
-          "X-ACCESS-TOKEN": token,
-        },
-      });
-      setImage(profile.data.result.profileImageUrl);
-    } catch (e) {
-      console.log(e);
+    if (isLoading) {
+      try {
+        const profile = await axios({
+          method: "GET",
+          url: `/profile/info?userIdx=${userIdx}&profileIdx=${profileIdx}`,
+          baseURL: "https://rtflix.site",
+          headers: {
+            "X-ACCESS-TOKEN": token,
+          },
+        });
+        setImage(profile.data.result.profileImageUrl);
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
   useEffect(() => {
     if (profileIdx) {
       getProfileImage();
-    } else {
-      return;
     }
+    return () => {
+      setImage();
+      setIsLoading(true);
+    };
   }, []);
 
   function getImage() {
@@ -141,24 +146,28 @@ export default function Loading() {
 
   return (
     <LoadingStyle>
-      {image && (
-        <div className="centered-div loading-wrapper">
-          <div>
-            <div className="loading-profile-wrapper">
-              <ul>
-                <li className="profile-link">
-                  <div
-                    className="profile-icon"
-                    style={{
-                      backgroundImage: `url(${image})`,
-                    }}
-                  ></div>
-                  <span className="icon-spinner akira-spinner"></span>
-                </li>
-              </ul>
+      {!isLoading && (
+        <>
+          {image && (
+            <div className="centered-div loading-wrapper">
+              <div>
+                <div className="loading-profile-wrapper">
+                  <ul>
+                    <li className="profile-link">
+                      <div
+                        className="profile-icon"
+                        style={{
+                          backgroundImage: `url(${image})`,
+                        }}
+                      ></div>
+                      <span className="icon-spinner akira-spinner"></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
     </LoadingStyle>
   );

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useState, useEffect } from "react";
 import { ReactComponent as ModalClose } from "images/close-modal.svg";
 import { ReactComponent as ModalPlay } from "images/play-modal.svg";
+import { ReactComponent as ModalNotification } from "images/notification-modal.svg";
 import { ReactComponent as ModalAddToMyList } from "images/addToMyList-modal.svg";
 import { ReactComponent as ModalDetail } from "images/detail-modal.svg";
 import { ReactComponent as ModalThumbsDownFilled } from "images/thumbsdownfilled-modal.svg";
@@ -46,6 +47,7 @@ export default function Modal(props) {
   const [similar, setSimilar] = useState();
   const [seasonNum, setSeasonNum] = useState(1);
   const [episodes, setEpisodes] = useState();
+  const [featuresList, setFeaturesList] = useState();
 
   const positionX = (index) => {
     if (index == 0) {
@@ -54,6 +56,26 @@ export default function Modal(props) {
       return "-100px";
     } else {
       return "0";
+    }
+  };
+
+  const dateText = (date) => {
+    if (date == "Mon") {
+      return "월요일";
+    } else if (date == "Tue") {
+      return "화요일";
+    } else if (date == "Wed") {
+      return "수요일";
+    } else if (date == "Thu") {
+      return "목요일";
+    } else if (date == "Fri") {
+      return "금요일";
+    } else if (date == "Sat") {
+      return "토요일";
+    } else if (date == "Sun") {
+      return "일요일";
+    } else {
+      return date;
     }
   };
 
@@ -315,29 +337,42 @@ export default function Modal(props) {
                             style={{ width: "100%", opacity: "1" }}
                           />
                           <div className="button-controls-container">
-                            <a className="primary-button play-link is-toolkit">
+                            <div className="primary-button play-link is-toolkit">
                               <button
                                 type="button"
                                 className="color-primary has-label has-icon square-button"
                               >
                                 <div className="circle-button-container">
                                   <div className="medium circle-button-svg-container">
-                                    <ModalPlay />
+                                    {props.yet ? (
+                                      <ModalNotification />
+                                    ) : (
+                                      <ModalPlay />
+                                    )}
                                   </div>
                                 </div>
                                 <div
                                   className="space-between"
                                   style={{ width: "1rem" }}
                                 ></div>
-                                <span className="play-button-text">재생</span>
+                                <span className="play-button-text">
+                                  {props.yet ? "알림 받기" : "재생"}
+                                </span>
                               </button>
-                            </a>
-                            <AddList myList={myList} content={props.content} />
-                            <LikeContents
-                              like={like}
-                              hate={hate}
-                              content={props.content}
-                            />
+                            </div>
+                            {!props.yet && (
+                              <>
+                                <AddList
+                                  myList={myList}
+                                  content={props.content}
+                                />
+                                <LikeContents
+                                  like={like}
+                                  hate={hate}
+                                  content={props.content}
+                                />
+                              </>
+                            )}
                           </div>
                           <div className="button-controls-messaging"></div>
                         </>
@@ -357,7 +392,7 @@ export default function Modal(props) {
                   className="preview-modal-info"
                   style={{ opacity: "1", transform: "none" }}
                 >
-                  <a>
+                  <div>
                     <div className="mini-modal-container">
                       <div className="preview-modal-info-container">
                         <div className="preview-modal-metadata-and-controls mini-modal has-smaller-buttons">
@@ -370,20 +405,28 @@ export default function Modal(props) {
                                 >
                                   <div className="circle-button-container">
                                     <div className="small circle-button-svg-container">
-                                      <ModalPlay />
+                                      {props.yet ? (
+                                        <ModalNotification />
+                                      ) : (
+                                        <ModalPlay />
+                                      )}
                                     </div>
                                   </div>
                                 </button>
                               </a>
-                              <AddList
-                                myList={myList}
-                                content={props.content}
-                              />
-                              <LikeContents
-                                like={like}
-                                hate={hate}
-                                content={props.content}
-                              />
+                              {!props.yet && (
+                                <>
+                                  <AddList
+                                    myList={myList}
+                                    content={props.content}
+                                  />
+                                  <LikeContents
+                                    like={like}
+                                    hate={hate}
+                                    content={props.content}
+                                  />
+                                </>
+                              )}
                               <div className="button-controls-expand-button detail-button">
                                 <button
                                   className="color-supplementary has-icon round circle-button"
@@ -402,70 +445,75 @@ export default function Modal(props) {
                               className="preview-modal-metadata-and-controls-info"
                               style={{ opacity: "1" }}
                             >
-                              <div>
-                                <div className="video-metadata-container">
-                                  <div className="video-metadata-first-line">
-                                    <span className="match-score-wrapper">
-                                      <div className="show-match-score rating-inner">
-                                        <div className="meta-thumb-container thumb-down">
-                                          <ModalThumbsDownFilled />
+                              {props.yet ? (
+                                <div className="supplemental-message">
+                                  {info.type == "M"
+                                    ? `${dateText(props.releaseDate)} 공개`
+                                    : `${dateText(
+                                        props.releaseDate
+                                      )} 시즌1 공개`}
+                                </div>
+                              ) : (
+                                <div>
+                                  <div className="video-metadata-container">
+                                    <div className="video-metadata-first-line">
+                                      <span className="match-score-wrapper">
+                                        <div className="show-match-score rating-inner">
+                                          <div className="meta-thumb-container thumb-down">
+                                            <ModalThumbsDownFilled />
+                                          </div>
+                                          <div className="meta-thumb-container thumb-up">
+                                            <ModalThumbsUpFilled />
+                                          </div>
+                                          <span className="match-score">
+                                            {info.percentage !== "New"
+                                              ? `${info.percentage} 일치`
+                                              : info.percentage}
+                                          </span>
                                         </div>
-                                        <div className="meta-thumb-container thumb-up">
-                                          <ModalThumbsUpFilled />
-                                        </div>
-                                        <span className="match-score">
-                                          {info.percentage !== "New"
-                                            ? `${info.percentage} 일치`
-                                            : info.percentage}
-                                        </span>
-                                      </div>
-                                    </span>
-                                  </div>
-                                  <div className="video-metadata-second-line">
-                                    <span className="maturity-rating">
-                                      <span className="maturity-number">
-                                        {info.ageRate}+
                                       </span>
-                                    </span>
-                                    <span className="duration">
-                                      {info.type == "M"
-                                        ? info.runningTime
-                                        : `시즌 ${season}개`}
-                                    </span>
-                                    <span className="player-feature-badge">
-                                      HD
-                                    </span>
+                                    </div>
+                                    <div className="video-metadata-second-line">
+                                      <span className="maturity-rating">
+                                        <span className="maturity-number">
+                                          {info.ageRate}+
+                                        </span>
+                                      </span>
+                                      <span className="duration">
+                                        {info.type == "M"
+                                          ? info.runningTime
+                                          : `시즌 ${season}개`}
+                                      </span>
+                                      <span className="player-feature-badge">
+                                        HD
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
+                              )}
                             </div>
                             <div
                               className="preview-modal-metadata-and-controls-tags-container"
                               style={{ opacity: "1" }}
                             >
                               <div className="evidence-list">
-                                <div className="evidence-item">
-                                  <span className="evidence-text">
-                                    진심 어린
-                                  </span>
-                                </div>
-                                <div className="evidence-item">
-                                  <span className="evidence-separator"></span>
-                                  <span className="evidence-text">
-                                    감정을 파고드는
-                                  </span>
-                                </div>
-                                <div className="evidence-item">
-                                  <span className="evidence-separator"></span>
-                                  <span className="evidence-text">로맨틱</span>
-                                </div>
+                                {features.featureList.split(",").map((f, i) => {
+                                  return (
+                                    <div className="evidence-item">
+                                      {i != 0 && (
+                                        <span className="evidence-separator"></span>
+                                      )}
+                                      <span className="evidence-text">{f}</span>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </a>
+                  </div>
                 </div>
               ) : (
                 <div className="preview-modal-info" style={{ opacity: "1" }}>
@@ -474,53 +522,65 @@ export default function Modal(props) {
                       <div>
                         <div className="preview-modal-details-metadata detail-modal has-smaller-buttons">
                           <div className="preview-modal-details-metadata-left">
-                            <div className="preview-modal-details-metadata-info">
-                              <div>
-                                <div className="video-metadata-container">
-                                  <div className="video-metadata-first-line">
-                                    <span className="match-score-wrapper">
-                                      <div className="show-match-score rating-inner">
-                                        <div className="meta-thumb-container thumb-down">
-                                          <ModalThumbsDownFilled />
-                                        </div>
-                                        <div className="meta-thumb-container thumb-up">
-                                          <ModalThumbsUpFilled />
-                                        </div>
-                                        <span className="match-score">
-                                          {info.percentage !== "New"
-                                            ? `${info.percentage} 일치`
-                                            : info.percentage}
-                                        </span>
-                                      </div>
-                                    </span>
-                                  </div>
-                                  <div className="video-metadata-second-line">
-                                    <div className="year">
-                                      {info.productionYear}
-                                    </div>
-                                    <a>
-                                      <span className="maturity-rating">
-                                        <span>{info.ageRate}+</span>
-                                      </span>
-                                    </a>
-                                    <span className="duration">
-                                      {info.type == "M"
-                                        ? info.runningTime
-                                        : `시즌 ${season}개`}
-                                    </span>
-                                    <span className="player-feature-badge">
-                                      HD
-                                    </span>
-                                  </div>
+                            {props.yet ? (
+                              <div className="supplemental-text-wrapper">
+                                <div className="supplemental-text">
+                                  {dateText(props.releaseDate)} 공개
                                 </div>
                               </div>
-                            </div>
-                            <div className="css-space"></div>
-                            <p className="preview-modal-synopsis preview-modal-text">
-                              <div className="ptrack-content">
-                                {info.summary}
-                              </div>
-                            </p>
+                            ) : (
+                              <>
+                                <div className="preview-modal-details-metadata-info">
+                                  <div>
+                                    <div className="video-metadata-container">
+                                      <div className="video-metadata-first-line">
+                                        <span className="match-score-wrapper">
+                                          <div className="show-match-score rating-inner">
+                                            <div className="meta-thumb-container thumb-down">
+                                              <ModalThumbsDownFilled />
+                                            </div>
+                                            <div className="meta-thumb-container thumb-up">
+                                              <ModalThumbsUpFilled />
+                                            </div>
+                                            <span className="match-score">
+                                              {info.percentage !== "New"
+                                                ? `${info.percentage} 일치`
+                                                : info.percentage}
+                                            </span>
+                                          </div>
+                                        </span>
+                                      </div>
+                                      <div className="video-metadata-second-line">
+                                        <div className="year">
+                                          {info.productionYear}
+                                        </div>
+                                        <a>
+                                          <span className="maturity-rating">
+                                            <span>{info.ageRate}+</span>
+                                          </span>
+                                        </a>
+                                        <span className="duration">
+                                          {info.type == "M"
+                                            ? info.runningTime
+                                            : `시즌 ${season}개`}
+                                        </span>
+                                        <span className="player-feature-badge">
+                                          HD
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="css-space"></div>
+                                <p className="preview-modal-synopsis preview-modal-text">
+                                  <div className="ptrack-content">
+                                    {info.summary == "공개예정이라 줄거리X"
+                                      ? null
+                                      : info.summary}
+                                  </div>
+                                </p>
+                              </>
+                            )}
                           </div>
                           <div className="preview-modal-details-metadata-right">
                             <div className="preview-modal-tags">
@@ -559,7 +619,6 @@ export default function Modal(props) {
                               <h3 className="preview-modal-section-header episode-selector-label">
                                 회차
                               </h3>
-                              <div className="episode-selector-dropdown"></div>
                               <div className="episode-selector-season-name">
                                 시즌1
                               </div>

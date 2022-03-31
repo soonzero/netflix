@@ -1,6 +1,6 @@
 import axios from "axios";
 import { store } from "index";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -331,6 +331,57 @@ const FixedHeader = styled.div`
         .nav-element:last-child {
           margin-right: 0;
         }
+
+        &.search-focused {
+          .search-box {
+            margin-left: 100px;
+          }
+        }
+
+        .icon-search {
+          font-size: 1.1375rem;
+          margin-right: 0;
+          vertical-align: middle;
+          padding: 0 6px;
+          cursor: pointer;
+
+          &::before {
+            content: "\\e636";
+          }
+        }
+      }
+    }
+
+    .search-input {
+      display: flex;
+      box-align: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+
+      input {
+        color: white;
+        display: inline-block;
+        background: 0 0;
+        border: none;
+        padding: 7px 14px 7px 7px;
+        font-size: 14px;
+        width: 212px;
+        outline: none;
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      .icon-close {
+        cursor: pointer;
+        margin: 0 6px;
+        font-size: 13px;
+
+        &::before {
+          content: "\\e762";
+        }
       }
     }
 
@@ -524,15 +575,23 @@ const FixedHeader = styled.div`
 
 export default function Header(props) {
   const navigate = useNavigate();
+  const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+  const token = JSON.parse(sessionStorage.getItem("user")).jwt;
+  const profileIdx = sessionStorage.getItem("selectedProfile");
   const [fixed, setFixed] = useState(false);
   const [scrollY, setScrollY] = useState(window.scrollY);
   const [menu, setMenu] = useState(false);
   const [subMenu, setSubMenu] = useState(false);
   const [profiles, setProfiles] = useState();
+  const [profileLoading, setProfileLoading] = useState(true);
   const [image, setImage] = useState();
   const [position, setPosition] = useState();
   const [height, setHeight] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const searchInputRef = useRef(null);
+  const dropDownRef = useRef(null);
+  const [search, setSearch] = useState(false);
+  const [keyword, setKeyword] = useState();
 
   const series = {
     first: [
@@ -545,6 +604,27 @@ export default function Header(props) {
     ],
     second: ["애니", "코미디", "로맨스", "드라마 장르", "액션", "스릴러"],
     third: ["SF & 판타지", "호러", "키즈", "청소년", "다큐시리즈"],
+  };
+
+  const movies = {
+    first: [
+      "세계 여성의 달",
+      "한국",
+      "미국 영화",
+      "해외",
+      "어워드 수상",
+      "인디",
+      "어린이 & 가족",
+    ],
+    second: ["애니메이션", "액션", "코미디", "로맨스", "스릴러", "호러", "SF"],
+    third: [
+      "판타지",
+      "드라마 장르",
+      "범죄",
+      "다큐멘터리",
+      "음악 / 뮤지컬",
+      "고전",
+    ],
   };
 
   function handleScroll() {
@@ -586,13 +666,39 @@ export default function Header(props) {
     };
   }, [scrollY]);
 
-  function menuHandler() {
-    if (menu) {
-      setMenu(false);
-    } else {
-      setMenu(true);
+  React.useEffect(() => {
+    const pageClickEvent = (event) => {
+      if (
+        searchInputRef.current !== null &&
+        !searchInputRef.current.contains(event.target)
+      ) {
+        setSearch(!search);
+      }
+    };
+    if (search) {
+      window.addEventListener("click", pageClickEvent);
     }
-  }
+    return () => {
+      window.removeEventListener("click", pageClickEvent);
+    };
+  }, [search]);
+
+  React.useEffect(() => {
+    const pageClickEvent = (event) => {
+      if (
+        dropDownRef.current !== null &&
+        !dropDownRef.current.contains(event.target)
+      ) {
+        setSubMenu(!subMenu);
+      }
+    };
+    if (subMenu) {
+      window.addEventListener("click", pageClickEvent);
+    }
+    return () => {
+      window.removeEventListener("click", pageClickEvent);
+    };
+  }, [subMenu]);
 
   const logout = () => {
     sessionStorage.clear();
@@ -601,9 +707,9 @@ export default function Header(props) {
 
   const getProfilesInfo = async () => {
     if (sessionStorage.getItem("selectedProfile")) {
-      const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
-      const token = JSON.parse(sessionStorage.getItem("user")).jwt;
+      setProfileLoading(true);
       const profileIdx = sessionStorage.getItem("selectedProfile");
+      console.log(profileIdx);
       try {
         const allProfiles = await axios({
           method: "GET",
@@ -618,6 +724,7 @@ export default function Header(props) {
         const filteredArray = array.filter((p) => p.profileIdx == profileIdx);
         setImage(filteredArray[0].profileImageUrl);
         setProfiles(array.filter((p) => p.profileIdx != profileIdx));
+        setProfileLoading(false);
         setIsLoading(false);
       } catch (e) {
         console.log(e);
@@ -625,7 +732,7 @@ export default function Header(props) {
     }
   };
 
-  store.subscribe(getProfilesInfo);
+  // store.subscribe(getProfilesInfo);
 
   useEffect(() => {
     if (sessionStorage.getItem("selectedProfile") != null) {
@@ -634,6 +741,28 @@ export default function Header(props) {
       return;
     }
   }, []);
+
+  const inputHandler = (event) => {
+    setKeyword(event.target.value);
+  };
+
+  const goToSearch = async () => {
+    if (keyword.length > 0) {
+      navigate(`/search/${keyword}`);
+    }
+  };
+
+  const selectProfile = (event) => {
+    sessionStorage.setItem(
+      "selectedProfile",
+      event.currentTarget.getAttribute("name")
+    );
+    getProfilesInfo();
+  };
+
+  useEffect(() => {
+    setKeyword(keyword);
+  }, [keyword]);
 
   return (
     <FixedHeader fixed={fixed} menu={menu} mylist={props.mylist}>
@@ -671,10 +800,33 @@ export default function Header(props) {
               </ul>
               <div className="secondary-nav">
                 <div className="nav-element">
-                  <div className="search-box">
-                    <button className="search-tab">
-                      <span className="search-icon"></span>
-                    </button>
+                  <div className="search-box" onClick={() => setSearch(true)}>
+                    {search || props.keyword ? (
+                      <div className="search-input">
+                        <span
+                          className="icon-search"
+                          onClick={goToSearch}
+                        ></span>
+                        <input
+                          ref={searchInputRef}
+                          type="text"
+                          id="search-input"
+                          name="search-input"
+                          placeholder="제목, 사람, 장르"
+                          style={{ opacity: "1", transitionDuration: "300ms" }}
+                          value={keyword}
+                          onChange={inputHandler}
+                        />
+                        <span
+                          className="icon-close"
+                          onClick={() => setKeyword()}
+                        ></span>
+                      </div>
+                    ) : (
+                      <button className="search-tab">
+                        <span className="search-icon"></span>
+                      </button>
+                    )}
                   </div>
                 </div>
                 <div className="nav-element">
@@ -687,8 +839,7 @@ export default function Header(props) {
                 <div className="nav-element">
                   <div
                     className="account-menu-item"
-                    onMouseEnter={menuHandler}
-                    onClick={menuHandler}
+                    onClick={() => setMenu(true)}
                   >
                     <div className="account-dropdown-button">
                       <Link to="/YourAccount" className="profile">
@@ -697,19 +848,26 @@ export default function Header(props) {
                           {menu && <div className="callout-arrow"></div>}
                         </span>
                       </Link>
-                      <span className="caret"></span>
+                      <span className={`caret ${menu ? "open" : null}`}></span>
                     </div>
                     {menu && (
-                      <div className="account-dropdown submenu theme-lakira">
+                      <div
+                        className="account-dropdown submenu theme-lakira"
+                        onMouseOver={() => setMenu(true)}
+                        onMouseLeave={() => setMenu(false)}
+                      >
                         <div className="ptrack-content">
                           <div className="top-bar"></div>
                           <ul className="submenu-list profiles">
-                            {profiles.length > 0 &&
+                            {!profileLoading &&
+                              profiles.length > 0 &&
                               profiles.map((p) => {
                                 return (
                                   <li
                                     key={p.profileIdx}
+                                    name={p.profileIdx}
                                     className="submenu-item profile"
+                                    onClick={selectProfile}
                                   >
                                     <div>
                                       <div className="profile-link">
@@ -821,7 +979,7 @@ export default function Header(props) {
             </>
           )}
         </div>
-        {props.subheader && (
+        {!isLoading && props.subheader && (
           <div className="sub-header">
             <div>
               <div className="sub-header-wrapper">
@@ -829,7 +987,7 @@ export default function Header(props) {
                   {props.mylist && (
                     <div className="title">내가 찜한 콘텐츠</div>
                   )}
-                  {(props.series || props.movies) && (
+                  {props.category && (
                     <>
                       {props.genre && (
                         <div className="title">
@@ -838,10 +996,14 @@ export default function Header(props) {
                               <li>
                                 <Link
                                   to={`/browse/${
-                                    props.series ? "series" : "movies"
+                                    props.category == "series"
+                                      ? "series"
+                                      : "movies"
                                   }`}
                                 >
-                                  {props.series ? "시리즈" : "영화"}
+                                  {props.category == "series"
+                                    ? "시리즈"
+                                    : "영화"}
                                 </Link>
                               </li>
                             </ul>
@@ -850,7 +1012,11 @@ export default function Header(props) {
                       )}
                       <div className="arrow-genre-details">
                         <span className="genre-title">
-                          {props.genre ? props.genre : "시리즈"}
+                          {props.genre
+                            ? props.genre
+                            : props.category == "series"
+                            ? "시리즈"
+                            : "영화"}
                         </span>
                         {!props.genre && (
                           <div className="sub-genres">
@@ -875,57 +1041,124 @@ export default function Header(props) {
                                         opacity: "1",
                                         transitionDuration: "150ms",
                                       }}
+                                      ref={dropDownRef}
                                     >
                                       <ul className="sub-menu-list multi-column">
-                                        {series.first.map((genre) => {
-                                          return (
-                                            <li className="sub-menu-item">
-                                              <Link
-                                                to={`/browse/series/${genre}`}
-                                                className="sub-menu-link"
-                                                onClick={() =>
-                                                  setSubMenu(false)
-                                                }
-                                              >
-                                                {genre}
-                                              </Link>
-                                            </li>
-                                          );
-                                        })}
+                                        {props.category == "series"
+                                          ? series.first.map((genre) => {
+                                              return (
+                                                <li
+                                                  key={genre}
+                                                  className="sub-menu-item"
+                                                >
+                                                  <Link
+                                                    to={`/browse/series/${genre}`}
+                                                    className="sub-menu-link"
+                                                    onClick={() =>
+                                                      setSubMenu(false)
+                                                    }
+                                                  >
+                                                    {genre}
+                                                  </Link>
+                                                </li>
+                                              );
+                                            })
+                                          : movies.first.map((genre) => {
+                                              return (
+                                                <li
+                                                  key={genre}
+                                                  className="sub-menu-item"
+                                                >
+                                                  <Link
+                                                    to={`/browse/movies/${genre}`}
+                                                    className="sub-menu-link"
+                                                    onClick={() =>
+                                                      setSubMenu(false)
+                                                    }
+                                                  >
+                                                    {genre}
+                                                  </Link>
+                                                </li>
+                                              );
+                                            })}
                                       </ul>
                                       <ul className="sub-menu-list multi-column">
-                                        {series.second.map((genre) => {
-                                          return (
-                                            <li className="sub-menu-item">
-                                              <Link
-                                                to={`/browse/series/${genre}`}
-                                                className="sub-menu-link"
-                                                onClick={() =>
-                                                  setSubMenu(false)
-                                                }
-                                              >
-                                                {genre}
-                                              </Link>
-                                            </li>
-                                          );
-                                        })}
+                                        {props.category == "series"
+                                          ? series.second.map((genre) => {
+                                              return (
+                                                <li
+                                                  key={genre}
+                                                  className="sub-menu-item"
+                                                >
+                                                  <Link
+                                                    to={`/browse/series/${genre}`}
+                                                    className="sub-menu-link"
+                                                    onClick={() =>
+                                                      setSubMenu(false)
+                                                    }
+                                                  >
+                                                    {genre}
+                                                  </Link>
+                                                </li>
+                                              );
+                                            })
+                                          : movies.second.map((genre) => {
+                                              return (
+                                                <li
+                                                  key={genre}
+                                                  className="sub-menu-item"
+                                                >
+                                                  <Link
+                                                    to={`/browse/movies/${genre}`}
+                                                    className="sub-menu-link"
+                                                    onClick={() =>
+                                                      setSubMenu(false)
+                                                    }
+                                                  >
+                                                    {genre}
+                                                  </Link>
+                                                </li>
+                                              );
+                                            })}
                                       </ul>
                                       <ul className="sub-menu-list multi-column">
-                                        {series.third.map((genre) => {
-                                          return (
-                                            <li className="sub-menu-item">
-                                              <Link
-                                                to={`/browse/series/${genre}`}
-                                                className="sub-menu-link"
-                                                onClick={() =>
-                                                  setSubMenu(false)
-                                                }
-                                              >
-                                                {genre}
-                                              </Link>
-                                            </li>
-                                          );
-                                        })}
+                                        {props.category == "series"
+                                          ? series.third.map((genre) => {
+                                              return (
+                                                <li
+                                                  key={genre}
+                                                  className="sub-menu-item"
+                                                >
+                                                  <Link
+                                                    to={`/browse/series/${genre}`}
+                                                    className="sub-menu-link"
+                                                    onClick={() =>
+                                                      setSubMenu(false)
+                                                    }
+                                                  >
+                                                    {genre}
+                                                  </Link>
+                                                </li>
+                                              );
+                                            })
+                                          : movies.third.map((genre) => {
+                                              return (
+                                                <li
+                                                  key={genre}
+                                                  className="sub-menu-item"
+                                                >
+                                                  <Link
+                                                    to={`/browse/movies/${genre}`}
+                                                    className="sub-menu-link"
+                                                    onClick={() =>
+                                                      setSubMenu(false)
+                                                    }
+                                                  >
+                                                    {genre}
+                                                  </Link>
+                                                </li>
+                                              );
+                                            })}
                                       </ul>
                                     </div>
                                   )}

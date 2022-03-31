@@ -47,7 +47,7 @@ export default function New(props) {
     <TitleCardsStyle>
       <h2 className="row-header" onMouseOver={() => props.setRow(props.row)}>
         <div className="row-title">
-          <div className="row-header-title">신규 콘텐츠</div>
+          <div className="row-header-title">넷플릭스의 새로운 콘텐츠</div>
           <div className="arrow-header"></div>
         </div>
         <ContainerStyle>
@@ -76,6 +76,8 @@ export default function New(props) {
                               setModal={props.setModal}
                               setIndex={props.setIndex}
                               setContent={props.setContent}
+                              setYet={props.setYet}
+                              setReleaseDate={props.setReleaseDate}
                             />
                           );
                         })}

@@ -38,8 +38,6 @@ export default function ThisWeek(props) {
     }
   }, []);
 
-  store.subscribe(getThisWeek);
-
   return (
     <TitleCardsStyle>
       <h2 className="row-header" onMouseOver={() => props.setRow(props.row)}>
@@ -65,6 +63,7 @@ export default function ThisWeek(props) {
                         thisWeek.map((content, index) => {
                           return (
                             <Card
+                              notYet
                               key={index}
                               name={content.contentIdx}
                               content={content}
@@ -74,6 +73,8 @@ export default function ThisWeek(props) {
                               setModal={props.setModal}
                               setIndex={props.setIndex}
                               setContent={props.setContent}
+                              setYet={props.setYet}
+                              setReleaseDate={props.setReleaseDate}
                             />
                           );
                         })}

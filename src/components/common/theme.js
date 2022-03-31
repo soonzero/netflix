@@ -15,20 +15,74 @@ export default function Theme(props) {
 
   const getContents = async (theme) => {
     setIsLoading(true);
-    try {
-      const contents = await axios({
-        method: "GET",
-        url: `/browse/genre/series?userIdx=${userIdx}&profileIdx=${profileIdx}&genre=${theme}`,
-        baseURL: "https://rtflix.site/",
-        headers: {
-          "X-ACCESS-TOKEN": token,
-        },
-      });
-      setContents(contents.data.result);
-      props.setModalInfo(contents.data.result);
-      setIsLoading(false);
-    } catch (e) {
-      console.log(e);
+    if (props.category == "series") {
+      if (props.theme != "세계 여성의 달") {
+        try {
+          const contents = await axios({
+            method: "GET",
+            url: `/browse/genre/series?userIdx=${userIdx}&profileIdx=${profileIdx}&genre=${theme}`,
+            baseURL: "https://rtflix.site/",
+            headers: {
+              "X-ACCESS-TOKEN": token,
+            },
+          });
+          setContents(contents.data.result);
+          props.setModalInfo(contents.data.result);
+          setIsLoading(false);
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        try {
+          const contents = await axios({
+            method: "GET",
+            url: `/browse/genre/series?userIdx=${userIdx}&profileIdx=${profileIdx}&genre=${theme} 시리즈`,
+            baseURL: "https://rtflix.site/",
+            headers: {
+              "X-ACCESS-TOKEN": token,
+            },
+          });
+          setContents(contents.data.result);
+          props.setModalInfo(contents.data.result);
+          setIsLoading(false);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    } else if (props.category == "movies") {
+      if (props.theme != "세계 여성의 달") {
+        try {
+          const contents = await axios({
+            method: "GET",
+            url: `/browse/genre/movie?userIdx=${userIdx}&profileIdx=${profileIdx}&genre=${theme}`,
+            baseURL: "https://rtflix.site/",
+            headers: {
+              "X-ACCESS-TOKEN": token,
+            },
+          });
+          setContents(contents.data.result);
+          props.setModalInfo(contents.data.result);
+          setIsLoading(false);
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        try {
+          const contents = await axios({
+            method: "GET",
+            url: `/browse/genre/movie?userIdx=${userIdx}&profileIdx=${profileIdx}&genre=${theme} 영화`,
+            baseURL: "https://rtflix.site/",
+            headers: {
+              "X-ACCESS-TOKEN": token,
+            },
+          });
+          setContents(contents.data.result);
+          props.setModalInfo(contents.data.result);
+          setIsLoading(false);
+        } catch (e) {
+          console.log(e);
+        }
+      }
     }
   };
 
@@ -74,6 +128,8 @@ export default function Theme(props) {
                                 setModal={props.setModal}
                                 setIndex={props.setIndex}
                                 setContent={props.setContent}
+                                setYet={props.setYet}
+                                setReleaseDate={props.setReleaseDate}
                               />
                             );
                           })}

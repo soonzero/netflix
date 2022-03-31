@@ -455,6 +455,7 @@ const MainCardsContainerStyle = styled.div`
       span {
         display: inline-block;
         padding: 1.2em;
+        line-height: 1.25;
       }
     }
 
@@ -491,16 +492,24 @@ export default function Main() {
   const [answer, setAnswer] = useState(undefined);
 
   function answerHandler(number) {
-    if (answer !== number) {
-      setAnswer(number);
-    } else {
+    if (answer == number) {
       setAnswer(undefined);
+    } else {
+      setAnswer(number);
     }
   }
 
   useEffect(() => {
-    if (sessionStorage.getItem("user") != null) {
+    if (localStorage.getItem("user")) {
+      sessionStorage.setItem(
+        "user",
+        JSON.parse(JSON.stringify(localStorage.getItem("user")))
+      );
       navigate(`/browse`);
+    } else {
+      if (sessionStorage.getItem("user") != null) {
+        navigate(`/browse`);
+      }
     }
   }, []);
 

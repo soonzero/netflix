@@ -411,7 +411,7 @@ export default function RowContainer(props) {
 
   return (
     <ContainerStyle mylist={props.mylist}>
-      {/* {!props.mylist && (
+      {!props.mylist && (
         <div className="row-container">
           <div className="ptrack-container">
             <div className="row-content slider-hover-trigger-layer">
@@ -422,10 +422,10 @@ export default function RowContainer(props) {
                       <b className="indicator-icon icon-left-caret"></b>
                     </span>
                     <ul className="pagination-indicator">
-                      <li className="active"></li>
+                      {/* <li className="active"></li>
                       <li></li>
                       <li></li>
-                      <li></li>
+                      <li></li> */}
                     </ul>
                   </>
                 )}
@@ -443,7 +443,7 @@ export default function RowContainer(props) {
             </div>
           </div>
         </div>
-      )} */}
+      )}
       {props.mylist && sliderItems(props.items)}
     </ContainerStyle>
   );

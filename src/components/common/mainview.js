@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import TitleCard from "./titlecard";
 import { useEffect } from "react";
-import Top10 from "./top10";
-import New from "./new";
-import ThisWeek from "./thisweek";
 import { ReactComponent as DetailInfo } from "images/detailinfo-main.svg";
 import { ReactComponent as Play } from "images/play-main.svg";
 
@@ -426,7 +422,10 @@ export default function MainView(props) {
                     <div className="info-wrapper">
                       <div className="info-wrapper-fade">
                         <div className="episode-title-container"></div>
-                        <div className="synopsis">{mainContent.summary}</div>
+                        {mainContent.summary ==
+                        "공개예정이라 줄거리X" ? null : (
+                          <div className="synopsis">{mainContent.summary}</div>
+                        )}
                       </div>
                     </div>
                     <div className="billboard-links button-layer forward-leaning">

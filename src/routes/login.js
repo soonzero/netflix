@@ -340,7 +340,7 @@ export default function Login() {
   const [validEmail, setValidEmail] = useState(false);
   const [password, setPassword] = useState("");
   const [validPassword, setValidPassword] = useState(false);
-  const [remember, setRemember] = useState(true);
+  const [remember, setRemember] = useState(false);
 
   const onChangeHandler = (event) => {
     if (event.target.name == "email") {
@@ -365,6 +365,9 @@ export default function Login() {
             },
           });
           if (login.data.code == 1000) {
+            if (remember) {
+              localStorage.setItem("user", JSON.stringify(login.data.result));
+            }
             sessionStorage.setItem("user", JSON.stringify(login.data.result));
             if (login.data.result.hasMembership == 0) {
               alert("가입된 멤버십이 없습니다.");

@@ -28,7 +28,7 @@ export default function Similar(props) {
         </div>
         <span className="duration ellipsized">
           <span className="test-dur-string">
-            {props.type == "S"
+            {props.contents.type == "S"
               ? `시즌 ${props.contents.seasonsCount}개`
               : props.contents.runningTime}
           </span>

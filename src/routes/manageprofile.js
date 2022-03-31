@@ -6,11 +6,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function ManageProfiles() {
   const navigate = useNavigate();
-  useEffect(() => {
-    if (sessionStorage.getItem("user") == null) {
-      navigate(`/login`);
-    }
-  }, []);
 
   return (
     <>

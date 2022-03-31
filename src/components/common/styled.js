@@ -144,6 +144,9 @@ input {
           line-height: 1;
         }
 
+body {
+  background-color: #141414;
+}
         
 /* HTML5 display-role reset for older browsers */
 article,
@@ -1822,6 +1825,12 @@ export const ModalStyle = styled.div`
         display: block;
       }
     }
+  }
+
+  .supplemental-message {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
   }
 `;
 

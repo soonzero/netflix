@@ -29,41 +29,8 @@ export default function Browse() {
   const selectedProfile = sessionStorage.getItem("selectedProfile");
   const [row, setRow] = useState();
   const [modalInfo, setModalInfo] = useState();
-
-  const foreignMovie = [
-    {
-      title: "애덤 프로젝트",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABeTraESWinzhSJIaPesk37GZej5XwuZg5uaYDAgAd8Le73K7jxf6DaXx2CbmanXCXUJtucEPszMv0dmilfyaGK4PAyyeMx0GCIh43hBbUg_Uw5jR0qnlqZC_mpZA.jpg?r=7ba`,
-    },
-    {
-      title: "돈 룩 업",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABahVYGWhYyf2fMuO5eWzaQXCBg_Jp6blF-7yEKGK3li3BoxO9at6_T148Nf1fhp3wgGcPPhBDFvUYjyulpm-qgq4zBE2nSrWYjvkYgVHcKNJ0QOCd6mKhmDhw8gl.jpg?r=371`,
-    },
-    {
-      title: "블랙 크랩",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABaDJj_ri5gK8RhHfhcwJgkZKLiTbruDiWnj_ibEq1k1yTRS09qL7gSQ-g-MkrjE1EMZ4NWDFLJy6kRCy5WFtiovDxW-HZ_voupSxyvDmjVpvvSSeYkepAjhFuKbm2jjc27x56NWVRKe-eBzYBpzTblVxiHVqdNDXripemMVagms126ApODa1X_4.jpg?r=eb8`,
-    },
-    {
-      title: "구조견 루비",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABSLSw8vp56EEHXoM89rr3a_HWGLXWv2Ncc7bmWCPuMEUKxGHqC3-3Mf_H_YeNFoNIuW8yGmqGHAcRH-XTDEW_s407Pg9gCfNmF9rAXIazqXLk_Df1-NNfIDIMNar.jpg?r=4cf`,
-    },
-    {
-      title: "인 타임",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABbJHbTGw07w7T2BZOvD_-x_48tOXdWz_fz3VIpZynuudoCVsc2qN5W3qN83LHyUXkJt63fT1Fyl98iB4wgOvzqRrTvg.webp?r=84c`,
-    },
-    {
-      title: "이미테이션 게임",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABWVTp1CoYHKW1KwMkmm0HmXY1F3SeRlvUZDu_hSxkpLl4KcHJbgJTyUpUpm_KnlgX_5Or5UluekHFMXfrAJ0UfW7ux0.webp?r=233`,
-    },
-    {
-      title: "인턴",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABfyRE92_CeVKVNxiVOOGFZqz3dVyJ1Wbyxk80gyoSvxhKSXAeHJvgPLnvXZtf9VcWBjkorPYwY1GaaTjsxMLsrCgVYc.webp?r=14c`,
-    },
-    {
-      title: "트루먼쇼",
-      image: `https://occ-0-993-325.1.nflxso.net/dnm/api/v6/X194eJsgWBDE2aQbaNdmCXGUP-Y/AAAABXT-fHBaLnYtjtNrh1qB5ap4yjJSAybcAB3re4Ml10i5554NzpEfToBjLQQf5SkGqSx_goGc7gJCMhLmTKh82o3IoCc.webp?r=408`,
-    },
-  ];
+  const [yet, setYet] = useState();
+  const [releaseDate, setReleaseDate] = useState();
 
   const getMyList = async () => {
     const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
@@ -93,13 +60,12 @@ export default function Browse() {
   }, [profile]);
 
   useEffect(() => {
-    if (sessionStorage.getItem("selectedProfile")) {
-      setIsLoading(false);
-    }
-
     if (sessionStorage.getItem("user") == null) {
       navigate(`/login`);
     } else {
+      if (sessionStorage.getItem("selectedProfile")) {
+        setIsLoading(false);
+      }
       getMyList();
       setDisplay(false);
     }
@@ -114,132 +80,169 @@ export default function Browse() {
     function scrollListener() {
       window.addEventListener("scroll", handleScroll);
     }
-    scrollListener();
+    if (modal == "detail" || modal == "mini") {
+      window.removeEventListener("scroll", handleScroll);
+    } else {
+      scrollListener();
+    }
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [scrollY]);
 
   return (
-    <HomeStyle>
-      {!display ? (
-        <>
-          {!isLoading && myList && (
-            <div
-              style={{
-                position: modal == "detail" && "fixed",
-                top: modal == "detail" && "0",
-                right: modal == "detail" && "0",
-                left: modal == "detail" && "0",
-              }}
-            >
-              <Header display={sessionStorage.getItem("selectedProfile")} />
-              <div className="main-view">
-                <div className="main-view-container">
-                  <MainView
-                    contents="main"
-                    foreignMovie={foreignMovie}
-                    modal={modal}
-                    setModal={setModal}
-                    setModalInfo={setModalInfo}
-                    setContent={setContent}
-                  />
-                  {myList.length != 0 && (
-                    <List
-                      row={0}
+    <>
+      <HomeStyle>
+        {!display ? (
+          <>
+            {!isLoading && myList && (
+              <div
+                style={{
+                  position: modal == "detail" && "fixed",
+                  top: modal == "detail" && "0",
+                  right: modal == "detail" && "0",
+                  left: modal == "detail" && "0",
+                }}
+              >
+                <Header
+                  display={sessionStorage.getItem("selectedProfile")}
+                  setIsLoading={setIsLoading}
+                  setProfile={setProfile}
+                />
+                <div className="main-view">
+                  <div className="main-view-container">
+                    <MainView
+                      contents="main"
+                      modal={modal}
+                      setModal={setModal}
+                      setModalInfo={setModalInfo}
+                      setContent={setContent}
+                    />
+                    {myList.length != 0 && (
+                      <List
+                        row={0}
+                        setRow={setRow}
+                        setIndex={setIndex}
+                        modal={modal}
+                        setModal={setModal}
+                        setContent={setContent}
+                        setModalInfo={setModalInfo}
+                        yet={yet}
+                        setYet={setYet}
+                        releaseDate={releaseDate}
+                        setReleaseDate={setReleaseDate}
+                      />
+                    )}
+                    <Top10
+                      row={myList.length != 0 ? 1 : 0}
+                      setModalInfo={setModalInfo}
                       setRow={setRow}
                       setIndex={setIndex}
                       modal={modal}
                       setModal={setModal}
                       setContent={setContent}
-                      setModalInfo={setModalInfo}
+                      yet={yet}
+                      setYet={setYet}
+                      releaseDate={releaseDate}
+                      setReleaseDate={setReleaseDate}
                     />
-                  )}
-                  <Top10
-                    row={myList.length != 0 ? 1 : 0}
-                    setModalInfo={setModalInfo}
-                    setRow={setRow}
-                    setIndex={setIndex}
-                    modal={modal}
-                    setModal={setModal}
-                    setContent={setContent}
-                  />
-                  {/* {foreignMovie && (
-                    <TitleCard items={foreignMovie} headerTitle="해외 영화" />
-                  )} */}
-                  <New
-                    row={myList.length != 0 ? 2 : 1}
-                    setIndex={setIndex}
-                    setModalInfo={setModalInfo}
-                    setRow={setRow}
-                    modal={modal}
-                    setModal={setModal}
-                    setContent={setContent}
-                  />
-                  <ThisWeek
-                    row={myList.length != 0 ? 3 : 2}
-                    setIndex={setIndex}
-                    setModalInfo={setModalInfo}
-                    setRow={setRow}
-                    modal={modal}
-                    setModal={setModal}
-                    setContent={setContent}
-                  />
-                  <Theme
-                    row={myList.length != 0 ? 4 : 3}
-                    setModalInfo={setModalInfo}
-                    setRow={setRow}
-                    setIndex={setIndex}
-                    modal={modal}
-                    setModal={setModal}
-                    setContent={setContent}
-                    theme="미국 시리즈"
-                  />
-                  <Theme
-                    row={myList.length != 0 ? 5 : 4}
-                    setModalInfo={setModalInfo}
-                    setRow={setRow}
-                    setIndex={setIndex}
-                    modal={modal}
-                    setModal={setModal}
-                    setContent={setContent}
-                    theme="한국 드라마"
-                  />
-                  <Theme
-                    row={myList.length != 0 ? 6 : 5}
-                    setModalInfo={setModalInfo}
-                    setRow={setRow}
-                    setIndex={setIndex}
-                    modal={modal}
-                    setModal={setModal}
-                    setContent={setContent}
-                    theme="영국 드라마"
-                  />
-                  <Theme
-                    row={myList.length != 0 ? 7 : 6}
-                    setModalInfo={setModalInfo}
-                    setRow={setRow}
-                    setIndex={setIndex}
-                    modal={modal}
-                    setModal={setModal}
-                    setContent={setContent}
-                    theme="아시아 드라마"
-                  />
+                    <New
+                      row={myList.length != 0 ? 2 : 1}
+                      setIndex={setIndex}
+                      setModalInfo={setModalInfo}
+                      setRow={setRow}
+                      modal={modal}
+                      setModal={setModal}
+                      setContent={setContent}
+                      yet={yet}
+                      setYet={setYet}
+                      releaseDate={releaseDate}
+                      setReleaseDate={setReleaseDate}
+                    />
+                    <ThisWeek
+                      row={myList.length != 0 ? 3 : 2}
+                      setIndex={setIndex}
+                      setModalInfo={setModalInfo}
+                      setRow={setRow}
+                      modal={modal}
+                      setModal={setModal}
+                      setContent={setContent}
+                      yet={yet}
+                      setYet={setYet}
+                      releaseDate={releaseDate}
+                      setReleaseDate={setReleaseDate}
+                    />
+                    <Theme
+                      row={myList.length != 0 ? 4 : 3}
+                      setModalInfo={setModalInfo}
+                      setRow={setRow}
+                      setIndex={setIndex}
+                      modal={modal}
+                      setModal={setModal}
+                      setContent={setContent}
+                      theme="미국 시리즈"
+                      yet={yet}
+                      setYet={setYet}
+                      releaseDate={releaseDate}
+                      setReleaseDate={setReleaseDate}
+                    />
+                    <Theme
+                      row={myList.length != 0 ? 5 : 4}
+                      setModalInfo={setModalInfo}
+                      setRow={setRow}
+                      setIndex={setIndex}
+                      modal={modal}
+                      setModal={setModal}
+                      setContent={setContent}
+                      theme="한국 드라마"
+                      yet={yet}
+                      setYet={setYet}
+                      releaseDate={releaseDate}
+                      setReleaseDate={setReleaseDate}
+                    />
+                    <Theme
+                      row={myList.length != 0 ? 6 : 5}
+                      setModalInfo={setModalInfo}
+                      setRow={setRow}
+                      setIndex={setIndex}
+                      modal={modal}
+                      setModal={setModal}
+                      setContent={setContent}
+                      theme="영국 드라마"
+                      yet={yet}
+                      setYet={setYet}
+                      releaseDate={releaseDate}
+                      setReleaseDate={setReleaseDate}
+                    />
+                    <Theme
+                      row={myList.length != 0 ? 7 : 6}
+                      setModalInfo={setModalInfo}
+                      setRow={setRow}
+                      setIndex={setIndex}
+                      modal={modal}
+                      setModal={setModal}
+                      setContent={setContent}
+                      theme="아시아 드라마"
+                      yet={yet}
+                      setYet={setYet}
+                      releaseDate={releaseDate}
+                      setReleaseDate={setReleaseDate}
+                    />
+                  </div>
                 </div>
+                <Footer home center dark />
               </div>
-              <Footer home center dark />
-            </div>
-          )}
-          {selectedProfile == null && (
-            <SelectProfile
-              setProfile={setProfile}
-              setIsLoading={setIsLoading}
-            />
-          )}
-        </>
-      ) : (
-        <Loading />
-      )}
+            )}
+            {selectedProfile == null && (
+              <SelectProfile
+                setProfile={setProfile}
+                setIsLoading={setIsLoading}
+              />
+            )}
+          </>
+        ) : null}
+      </HomeStyle>
       {(modal == "mini" || modal == "detail") && (
         <Modal
           row={row}
@@ -248,8 +251,10 @@ export default function Browse() {
           modal={modal}
           setModal={setModal}
           modalInfo={modalInfo}
+          releaseDate={releaseDate}
+          yet={yet}
         />
       )}
-    </HomeStyle>
+    </>
   );
 }

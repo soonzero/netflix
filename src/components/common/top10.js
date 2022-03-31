@@ -74,6 +74,8 @@ export default function Top10(props) {
                                 setModal={props.setModal}
                                 setIndex={props.setIndex}
                                 setContent={props.setContent}
+                                setYet={props.setYet}
+                                setReleaseDate={props.setReleaseDate}
                               />
                             );
                           })}

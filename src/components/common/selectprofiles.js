@@ -17,8 +17,14 @@ const MainStyle = styled.div`
   line-height: 1.4;
   color: white;
 
+  b {
+    font-weight: 600;
+  }
+
   ul {
     padding: 0;
+    margin-top: 25.6px;
+    margin-bottom: 25.6px;
   }
 
   li {
@@ -373,6 +379,15 @@ const MainStyle = styled.div`
       margin: 0.83em 0;
     }
 
+    h2.profile-entry-header {
+      margin: 0 0 7px 0;
+      color: #ccc;
+
+      svg {
+        vertical-align: middle;
+      }
+    }
+
     .profile-button {
       display: inline-block;
       margin-right: 20px;
@@ -501,12 +516,196 @@ const MainStyle = styled.div`
       margin-left: -0.7em;
     }
   }
+
+  .avatar-box {
+    position: relative;
+
+    .avatar-edit-icon {
+      cursor: pointer;
+      position: absolute;
+      bottom: 7%;
+      left: 7%;
+      border: none;
+      background-color: transparent;
+      height: 35px;
+      padding: 1px 6px;
+
+      svg {
+        width: 28px;
+        height: 28px;
+        max-width: 45px;
+        max-height: 45px;
+        background-color: rgba(0, 0, 0, 0.7);
+        filter: drop-shadow(1px 1px 2px #000);
+        border-radius: 5rem;
+        color: white;
+      }
+    }
+  }
+
+  .profile-edit-inputs {
+    position: relative;
+    display: flex;
+    box-orient: horizontal;
+    box-direction: normal;
+    flex-direction: row;
+    box-align: center;
+    align-items: center;
+  }
+
+  .profile-entry {
+    label {
+      display: inline;
+    }
+
+    input[type="text"] {
+      width: 18em;
+      height: 2em;
+      background: #666;
+      border: 1px solid transparent;
+      margin: 0 0.8em 0 0;
+      padding: 0.2em 0.6em;
+      color: white;
+      font-size: 1.3vw;
+      text-indent: 0.1vw;
+    }
+  }
+
+  .profile-name-entry:focus {
+    outline: none;
+  }
+
+  .profile-entry-dropdowns {
+    display: flex;
+    box-orient: vertical;
+    box-direction: normal;
+    flex-direction: column;
+
+    .profile-dropdown {
+      margin-top: 1rem;
+
+      .profile-dropdown-label {
+        font-size: 1.3vw;
+        margin-bottom: 7px;
+        color: #ccc;
+      }
+
+      .nf-dropdown.theme-lakira {
+        min-width: 18rem;
+      }
+    }
+  }
+
+  .nf-dropdown.theme-lakira {
+    position: relative;
+    text-align: left;
+
+    .label {
+      height: 2.5rem;
+      padding-left: 10px;
+      line-height: 2.5rem;
+      letter-spacing: 1px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      display: inline-block;
+      color: white;
+      background-color: black;
+      appearance: none;
+      border-radius: 0;
+      position: relative;
+      padding-right: 50px;
+
+      .arrow {
+        border-color: #fff transparent transparent;
+        border-style: solid;
+        border-width: 5px 5px 0;
+        height: 0;
+        position: absolute;
+        right: 10px;
+        top: 44%;
+        width: 0;
+      }
+    }
+  }
+
+  .profile-entry-lock {
+    margin: 1.5vw 0 0 0;
+    border-top: 1px solid #333;
+    padding: 1.5vw 0 0 0;
+
+    svg {
+      width: 1.3vw;
+      height: 1.3vw;
+      margin-right: 1vw;
+    }
+  }
+
+  .profile-entry-restrictions {
+    margin: 1.5vw 0 0 0;
+    border-top: 1px solid #333;
+    padding: 1.5vw 0 0 0;
+    font-size: 1vw;
+
+    .profile-maturity-label {
+      border-radius: 2px;
+      background-color: #333;
+      padding: 7px 10px;
+      font-weight: 600;
+      margin-right: 5px;
+    }
+
+    .profile-button {
+      font-size: 1vw;
+      margin: 1em 0 1em 0;
+    }
+  }
+
+  .profile-entry-autoplay {
+    margin: 1.5vw 0 0 0;
+    border-top: 1px solid #333;
+    padding: 1.5vw 0 0 0;
+
+    .autoplay-option {
+      display: flex;
+      box-align: center;
+      align-items: center;
+      margin: 5px 0;
+      font-size: 0.9vw;
+    }
+  }
+
+  .profile-entry {
+    input[type="checkbox"] {
+      display: none;
+
+      &:checked + label {
+        border: 1px solid #333;
+        color: #99a1a7;
+      }
+    }
+  }
+
+  .svg-icon {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .visually-hidden {
+    clip: rect(1px, 1px, 1px, 1px) !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    white-space: nowrap !important;
+    width: 1px !important;
+  }
 `;
 
 export default function SelectProfiles(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [profiles, setProfiles] = useState();
+  const [change, setChange] = useState(false);
   const [display, setDisplay] = useState(true);
   const [addProfile, setAddProfile] = useState(false);
   const [name, setName] = useState();
@@ -516,17 +715,52 @@ export default function SelectProfiles(props) {
   const [two, setTwo] = useState();
   const [three, setThree] = useState();
   const [four, setFour] = useState();
+  const [newProfileName, setNewProfileName] = useState();
+  const [isLocked, setIsLocked] = useState();
+
+  const nameInputHandler = (event) => {
+    setNewProfileName(event.target.value);
+  };
+
+  useEffect(() => {
+    setNewProfileName(newProfileName);
+  }, [newProfileName]);
 
   const selectProfile = async (event) => {
+    const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+    const token = JSON.parse(sessionStorage.getItem("user")).jwt;
     const profile = event.currentTarget.getAttribute("profileidx");
     const pinNumber = event.currentTarget.getAttribute("unlock");
-    if (pinNumber != "N") {
-      sessionStorage.setItem("unlock", profile);
-      setUnlock(true);
+    if (!props.manage) {
+      if (pinNumber != "N") {
+        sessionStorage.setItem("unlock", profile);
+        setUnlock(true);
+      } else {
+        sessionStorage.setItem("selectedProfile", profile);
+        setDisplay(false);
+        props.setProfile(profile);
+      }
     } else {
-      sessionStorage.setItem("selectedProfile", profile);
-      setDisplay(false);
-      props.setProfile(profile);
+      sessionStorage.setItem("change", profile);
+      try {
+        const lockInfo = await axios({
+          method: "GET",
+          url: `/profile/info?userIdx=${userIdx}&profileIdx=${profile}`,
+          baseURL: "https://rtflix.site",
+          headers: {
+            "X-ACCESS-TOKEN": token,
+          },
+        });
+        console.log();
+        if (lockInfo.data.result.lockPin != "N") {
+          setIsLocked(true);
+        } else {
+          setIsLocked(false);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+      setChange(true);
     }
   };
 
@@ -649,6 +883,37 @@ export default function SelectProfiles(props) {
   };
 
   useEffect(() => {
+    getAllProfiles();
+  }, [change]);
+
+  const changeProfileName = async () => {
+    const userIdx = JSON.parse(sessionStorage.getItem("user")).userIdx;
+    const token = JSON.parse(sessionStorage.getItem("user")).jwt;
+    if (newProfileName.length > 0) {
+      try {
+        const change = await axios({
+          method: "PATCH",
+          url: "profile/info/name",
+          baseURL: "https://rtflix.site",
+          headers: {
+            "X-ACCESS-TOKEN": token,
+          },
+          data: {
+            userIdx: userIdx,
+            profileIdx: sessionStorage.getItem("change"),
+            profileName: newProfileName,
+          },
+        });
+        if ((change.data.code = 1000)) {
+          setChange(false);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
+  useEffect(() => {
     setName(name);
   }, [name]);
 
@@ -674,7 +939,6 @@ export default function SelectProfiles(props) {
         <MainStyle edit>
           {!addProfile && (
             <>
-              {/* {getAllProfiles != null && ( */}
               {unlock ? (
                 <div className="centered-div profile-pin-prompt">
                   <div className="profile-pin-dismiss">
@@ -758,6 +1022,158 @@ export default function SelectProfiles(props) {
                         PIN 번호를 잊으셨나요?
                       </span>
                     </a>
+                  </div>
+                </div>
+              ) : change ? (
+                <div className="centered-div">
+                  <div className="profile-actions-container">
+                    <h1>프로필 변경</h1>
+                    <div className="profile-metadata profile-entry">
+                      <div className="main-profile-avatar">
+                        <div className="avatar-box">
+                          <img src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/K6hjPJd6cR6FpVELC5Pd6ovHRSk/AAAABWu33TcylnaLZwSdtgKR6mr0O63afqQLxZbzHYQZLkCJ9bgMTtsf6tzs_ua2BuTpAVPbhxnroiEA-_bqJmKWiXblO9h-.png?r=f71" />
+                          <button className="avatar-edit-icon">
+                            <svg
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="svg-icon svg-icon-edit"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                clipRule="evenodd"
+                                d="M22.2071 7.79285L15.2071 0.792847L13.7929 2.20706L20.7929 9.20706L22.2071 7.79285ZM13.2071 3.79285C12.8166 3.40232 12.1834 3.40232 11.7929 3.79285L2.29289 13.2928C2.10536 13.4804 2 13.7347 2 14V20C2 20.5522 2.44772 21 3 21H9C9.26522 21 9.51957 20.8946 9.70711 20.7071L19.2071 11.2071C19.5976 10.8165 19.5976 10.1834 19.2071 9.79285L13.2071 3.79285ZM17.0858 10.5L8.58579 19H4V14.4142L12.5 5.91417L17.0858 10.5Z"
+                                fill="currentColor"
+                              ></path>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="profile-edit-parent">
+                        <div className="profile-edit-inputs">
+                          <label
+                            htmlFor="profile-name-entry"
+                            className="visually-hidden"
+                          >
+                            프로필 이름
+                          </label>
+                          <input
+                            type="text"
+                            className="profile-name-entry"
+                            id="profile-name-entry"
+                            placeholder="이름"
+                            value={newProfileName}
+                            onChange={nameInputHandler}
+                          />
+                        </div>
+                        <div className="profile-entry-dropdowns">
+                          <div className="profile-dropdown">
+                            <h2 className="profile-dropdown-label">언어</h2>
+                            <div className="nf-dropdown theme-lakira">
+                              <div className="label">
+                                한국어
+                                <span className="arrow"></span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {!isLocked ? null : (
+                          <div className="profile-entry-lock">
+                            <h2 className="profile-entry-header">
+                              <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="svg-icon svg-icon-profile-lock"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  clipRule="evenodd"
+                                  d="M7 8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V9H19C20.1046 9 21 9.89543 21 11V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V11C3 9.89543 3.89543 9 5 9H7V8ZM15 8V9H9V8C9 6.34315 10.3431 5 12 5C13.6569 5 15 6.34315 15 8ZM5 11V19H19V11H5ZM11 13V17H13V13H11Z"
+                                  fill="currentColor"
+                                ></path>
+                              </svg>
+                              <span>
+                                프로필 잠금 기능이
+                                <strong> 켜져 </strong>
+                                있습니다.
+                              </span>
+                            </h2>
+                          </div>
+                        )}
+                        <div className="profile-entry-restrictions">
+                          <h2 className="profile-entry-header">
+                            관람등급 설정:
+                          </h2>
+                          <div>
+                            <ul>
+                              <li className="profile-maturity-label">
+                                모든 관람등급
+                              </li>
+                            </ul>
+                            <p>
+                              이 프로필에서는 <b>모든 관람등급</b>의 콘텐츠가
+                              표시됩니다.
+                            </p>
+                          </div>
+                          <div>
+                            <a className="profile-button">수정</a>
+                          </div>
+                        </div>
+                        <div className="profile-entry-autoplay">
+                          <h2 className="profile-entry-header">
+                            자동 재생 설정
+                          </h2>
+                          <div className="autoplay-option">
+                            <input
+                              type="checkbox"
+                              id="next-episode-profile"
+                              checked
+                            />
+                            <label htmlFor="next-episode-profile">
+                              {/* <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="svg-icon svg-icon-check-mark"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  clipRule="evenodd"
+                                  d="M8.68239 19.7312L23.6824 5.73115L22.3178 4.26904L8.02404 17.6098L2.70718 12.293L1.29297 13.7072L7.29297 19.7072C7.67401 20.0882 8.28845 20.0988 8.68239 19.7312Z"
+                                  fill="currentColor"
+                                ></path>
+                              </svg> */}
+                            </label>
+                            <span className="next-episode-marker">
+                              모든 디바이스에서 시리즈의 다음 화 자동 재생
+                            </span>
+                          </div>
+                          <div className="autoplay-option">
+                            <input type="checkbox" id="videomerch-profile" />
+                            <label htmlFor="videomerch-profile"></label>
+                            <span className="videomerch-marker">
+                              모든 디바이스에서 탐색 중 미리보기 자동 재생
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      className="profile-button preferred-action"
+                      type="button"
+                      onClick={changeProfileName}
+                    >
+                      저장
+                    </button>
+                    <button className="profile-button">취소</button>
+                    <button className="profile-button">프로필 삭제</button>
                   </div>
                 </div>
               ) : (
@@ -860,7 +1276,6 @@ export default function SelectProfiles(props) {
                   </span>
                 </div>
               )}
-              {/* )} */}
             </>
           )}
           {addProfile && (
@@ -873,7 +1288,7 @@ export default function SelectProfiles(props) {
                 </h2>
                 <div className="profile-metadata profile-entry">
                   <div className="main-profile-avatar">
-                    <img src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/K6hjPJd6cR6FpVELC5Pd6ovHRSk/AAAABTYctxxbe-UkKEdlMxXm4FVGD6DqTHkQ0TQ5CQJ9jbOMnG0CYxYcSICcTUQz8DrB7CpKUGpqJVMtEqksLlvSJx2ac3Ak.png?r=a41" />
+                    <img src="https://occ-0-993-325.1.nflxso.net/dnm/api/v6/K6hjPJd6cR6FpVELC5Pd6ovHRSk/AAAABWu33TcylnaLZwSdtgKR6mr0O63afqQLxZbzHYQZLkCJ9bgMTtsf6tzs_ua2BuTpAVPbhxnroiEA-_bqJmKWiXblO9h-.png?r=f71" />
                   </div>
                   <div className="profile-add-parent">
                     <div className="profile-entry-inputs">

@@ -8,6 +8,7 @@ import New from "components/common/new";
 import Modal from "components/common/modal";
 import ThisWeek from "components/common/thisweek";
 import { useNavigate } from "react-router-dom";
+import Loading from "components/common/loading";
 
 const LatestStyle = styled.div`
   background-color: #141414;
@@ -21,54 +22,78 @@ export default function Latest() {
   const [index, setIndex] = useState();
   const [content, setContent] = useState();
   const [row, setRow] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [yet, setYet] = useState();
+  const [releaseDate, setReleaseDate] = useState();
 
   useEffect(() => {
     if (sessionStorage.getItem("user") == null) {
       navigate(`/login`);
     }
+    setIsLoading(false);
   }, []);
 
   return (
     <LatestStyle>
-      <Header fixed />
-      <Top10
-        row={0}
-        setRow={setRow}
-        setModalInfo={setModalInfo}
-        setIndex={setIndex}
-        modal={modal}
-        setModal={setModal}
-        setContent={setContent}
-      />
-      <New
-        row={1}
-        setRow={setRow}
-        setModalInfo={setModalInfo}
-        setIndex={setIndex}
-        modal={modal}
-        setModal={setModal}
-        setContent={setContent}
-      />
-      <ThisWeek
-        row={2}
-        setRow={setRow}
-        setModalInfo={setModalInfo}
-        setIndex={setIndex}
-        modal={modal}
-        setModal={setModal}
-        setContent={setContent}
-      />
-      <Footer center home />
-      {(modal == "mini" || modal == "detail") && (
-        <Modal
-          noMain
-          row={row}
-          content={content}
-          index={index}
-          modal={modal}
-          setModal={setModal}
-          modalInfo={modalInfo}
-        />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <Header fixed />
+          <Top10
+            row={0}
+            setRow={setRow}
+            setModalInfo={setModalInfo}
+            setIndex={setIndex}
+            modal={modal}
+            setModal={setModal}
+            setContent={setContent}
+            yet={yet}
+            setYet={setYet}
+            releaseDate={releaseDate}
+            setReleaseDate={setReleaseDate}
+          />
+          <New
+            row={1}
+            setRow={setRow}
+            setModalInfo={setModalInfo}
+            setIndex={setIndex}
+            modal={modal}
+            setModal={setModal}
+            setContent={setContent}
+            yet={yet}
+            setYet={setYet}
+            releaseDate={releaseDate}
+            setReleaseDate={setReleaseDate}
+          />
+          <ThisWeek
+            row={2}
+            setRow={setRow}
+            setModalInfo={setModalInfo}
+            setIndex={setIndex}
+            modal={modal}
+            setModal={setModal}
+            setContent={setContent}
+            yet={yet}
+            setYet={setYet}
+            releaseDate={releaseDate}
+            setReleaseDate={setReleaseDate}
+          />
+          <Footer center home />
+          {(modal == "mini" || modal == "detail") && (
+            <Modal
+              noMain
+              row={row}
+              content={content}
+              index={index}
+              modal={modal}
+              setModal={setModal}
+              modalInfo={modalInfo}
+              releaseDate={releaseDate}
+              yet={yet}
+            />
+          )}
+        </>
       )}
     </LatestStyle>
   );
