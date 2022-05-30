@@ -109,7 +109,7 @@ export default function Theme(props) {
             onMouseOver={() => props.setRow(props.row)}
           >
             <a className="row-title">
-              <div className="row-header-title">넷플릭스의 새로운 콘텐츠</div>
+              <div className="row-header-title">{props.theme}</div>
               <div className="arrow-header">
                 <div className="see-all">모두 보기</div>
                 <div className="arrow-chevron icon-right"></div>
